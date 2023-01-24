@@ -1,0 +1,102 @@
+{
+  "features": [
+    {
+      "name": "Appear Offline",
+      "image": "https://picsum.photos/32",
+      "description": "The booster plays offline, so the process is undetectable from your friend list."
+    },
+    {
+      "name": "VPN Protection",
+      "image": "https://picsum.photos/32",
+      "description": "Your account remains safe with our automated VPN system.."
+    },
+    {
+      "name": "Order Tracking",
+      "image": "https://picsum.photos/32",
+      "description": "Spectate, chat with the booster, and follow your match history in the client's area."
+    },
+    {
+      "name": "24/7 Support",
+      "image": "https://picsum.photos/32",
+      "description": "Use our live support to receive premium help whenever you are in need."
+    }
+  ],
+  "feedbacks": [
+    {
+      "stars": 5,
+      "title": "Good service",
+      "message": "Good bost, good people, good service",
+      "author": {
+        "avatar": "https://picsum.photos/32",
+        "username": "Anonymous"
+      }
+    },
+    {
+      "stars": 5,
+      "title": "Good service",
+      "message": "Good bost, good people, good service",
+      "author": {
+        "avatar": "https://picsum.photos/32",
+        "username": "Anonymous"
+      }
+    },
+    {
+      "stars": 5,
+      "title": "Good service",
+      "message": "Good bost, good people, good service",
+      "author": {
+        "avatar": "https://picsum.photos/32",
+        "username": "Anonymous"
+      }
+    },
+    {
+      "stars": 5,
+      "title": "Good service",
+      "message": "Good bost, good people, good service",
+      "author": {
+        "avatar": "https://picsum.photos/32",
+        "username": "Anonymous"
+      }
+    },
+    {
+      "stars": 5,
+      "title": "Good service",
+      "message": "Good bost, good people, good service",
+      "author": {
+        "avatar": "https://picsum.photos/32",
+        "username": "Anonymous"
+      }
+    },
+    {
+      "stars": 5,
+      "title": "Good service",
+      "message": "Good bost, good people, good service",
+      "author": {
+        "avatar": "https://picsum.photos/32",
+        "username": "Anonymous"
+      }
+    }
+  ],
+  "faq": [
+    {
+      "question": "What is a LoL smurf account?",
+      "answer": "A LoL smurf account is a secondary account that experience players use to play against lower-skilled opponents. Smurfs are typically a lower rank than the player's main account, giving theme a significant advantage."
+    },
+    {
+      "question": "What is a LoL smurf account?",
+      "answer": "A LoL smurf account is a secondary account that experience players use to play against lower-skilled opponents. Smurfs are typically a lower rank than the player's main account, giving theme a significant advantage."
+    },
+    {
+      "question": "What is a LoL smurf account?",
+      "answer": "A LoL smurf account is a secondary account that experience players use to play against lower-skilled opponents. Smurfs are typically a lower rank than the player's main account, giving theme a significant advantage."
+    },
+    {
+      "question": "What is a LoL smurf account?",
+      "answer": "A LoL smurf account is a secondary account that experience players use to play against lower-skilled opponents. Smurfs are typically a lower rank than the player's main account, giving theme a significant advantage."
+    },
+    {
+      "question": "What is a LoL smurf account?",
+      "answer": "A LoL smurf account is a secondary account that experience players use to play against lower-skilled opponents. Smurfs are typically a lower rank than the player's main account, giving theme a significant advantage."
+    }
+  ]
+}
