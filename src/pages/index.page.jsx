@@ -1,17 +1,27 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import {
+  faAngleLeft,
+  faAngleRight,
+  faLongArrowLeft,
+  faLongArrowRight,
+} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import styled from "styled-components";
+
+import axios from "axios";
 
 import Header from "../components/header.component";
 import AccountCard from "../components/account-card.component";
 import FeatureCard from "../components/feature-card.component";
 import FeedbackCard from "../components/feedback-card.component";
-import axios from "axios";
 import FaqCard from "../components/faq-card.component";
 import Button from "../components/utils/button.component";
 import Footer from "../components/footer.component";
 import HeroBanner from "../components/hero-banner.component";
+
+import Colors from "../utils/colors.util";
 
 export default function Index() {
   const [features, setFeatures] = useState([]);
@@ -35,14 +45,24 @@ export default function Index() {
       <Main>
         <Section>
           <SectionHeader>
-            <SectionHeaderTitle>Lorem ipsum</SectionHeaderTitle>
-            <SectionHeaderDescription>Lorem ipsum</SectionHeaderDescription>
+            <SectionHeaderTitle>What we offer</SectionHeaderTitle>
+            <SectionHeaderDescription>
+              Featured Services{" "}
+            </SectionHeaderDescription>
           </SectionHeader>
           <SectionContent>
             <Accounts>
               <AccountsHeader>
                 <AccountsHeaderRegion>EU-West</AccountsHeaderRegion>
                 <AccountsHeaderLink to="/">Change server</AccountsHeaderLink>
+                <AccountsHeaderCarouselButtons>
+                  <AccountsHeaderCarouselButton>
+                    <AccountsHeaderCarouselButtonIcon icon={faAngleLeft} />
+                  </AccountsHeaderCarouselButton>
+                  <AccountsHeaderCarouselButton>
+                    <AccountsHeaderCarouselButtonIcon icon={faAngleRight} />
+                  </AccountsHeaderCarouselButton>
+                </AccountsHeaderCarouselButtons>
               </AccountsHeader>
               <AccountsContent>
                 <AccountCard />
@@ -59,9 +79,11 @@ export default function Index() {
               </SectionHeaderDescription>
             </SectionHeader>
             <SectionContent>
-              {features.map((feature, key) => {
-                return <FeatureCard key={`feature_${key}`} data={feature} />;
-              })}
+              <Features>
+                {features.map((feature, key) => {
+                  return <FeatureCard key={`feature_${key}`} data={feature} />;
+                })}
+              </Features>
             </SectionContent>
           </Section>
         ) : null}
@@ -71,9 +93,29 @@ export default function Index() {
               <SectionHeaderTitle>Our Community</SectionHeaderTitle>
             </SectionHeader>
             <SectionContent>
-              {feedbacks.map((feedback, key) => {
-                return <FeedbackCard key={`feedback_${key}`} data={feedback} />;
-              })}
+              <Feedbacks>
+                <FeedbacksHeader>
+                  <FeedbacksHeaderCarouselButtons>
+                    <FeedbacksHeaderCarouselButton>
+                      <FeedbacksHeaderCarouselButtonIcon
+                        icon={faLongArrowLeft}
+                      />
+                    </FeedbacksHeaderCarouselButton>
+                    <FeedbacksHeaderCarouselButton>
+                      <FeedbacksHeaderCarouselButtonIcon
+                        icon={faLongArrowRight}
+                      />
+                    </FeedbacksHeaderCarouselButton>
+                  </FeedbacksHeaderCarouselButtons>
+                </FeedbacksHeader>
+                <FeedbacksContent>
+                  {feedbacks.map((feedback, key) => {
+                    return (
+                      <FeedbackCard key={`feedback_${key}`} data={feedback} />
+                    );
+                  })}
+                </FeedbacksContent>
+              </Feedbacks>
             </SectionContent>
           </Section>
         ) : null}
@@ -87,7 +129,13 @@ export default function Index() {
             <SectionContent>
               <Faq>
                 {faq.map((item, key) => {
-                  return <FaqCard key={`faq_${key}`} data={item} />;
+                  return (
+                    <FaqCard
+                      key={`faq_${key}`}
+                      data={item}
+                      defaultActive={key === 0 ? true : false}
+                    />
+                  );
                 })}
               </Faq>
               <Button title={"Show more"} type="submit" />
@@ -103,16 +151,95 @@ export default function Index() {
 
 const StyledIndex = styled.div``;
 const Main = styled.main``;
-const Section = styled.section``;
+const Section = styled.section`
+  padding: 20px;
+`;
 const SectionHeader = styled.div``;
-const SectionHeaderTitle = styled.h2``;
-const SectionHeaderDescription = styled.p``;
+const SectionHeaderTitle = styled.h2`
+  margin: 0;
+  color: white;
+  text-align: center;
+`;
+const SectionHeaderDescription = styled.p`
+  margin: 0;
+  text-align: center;
+  color: ${Colors.primary};
+  font-weight: 700;
+`;
 const SectionContent = styled.div``;
 
 const Accounts = styled.div``;
-const AccountsHeader = styled.div``;
-const AccountsHeaderRegion = styled.h2``;
-const AccountsHeaderLink = styled(Link)``;
-const AccountsContent = styled.div``;
+const AccountsHeader = styled.div`
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+`;
+const AccountsHeaderRegion = styled.h2`
+  color: white;
+  margin: 20px 0 0 0;
+  text-align: center;
+`;
+const AccountsHeaderLink = styled(Link)`
+  color: ${Colors.primary};
+  font-weight: 700;
+  text-transform: uppercase;
+`;
+const AccountsHeaderCarouselButtons = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin: 10px 0 0 0;
+`;
+const AccountsHeaderCarouselButton = styled.button`
+  background-color: transparent;
+  border: 2px solid ${Colors.primary};
+  border-radius: 5px;
+  padding: 3px 8px;
+`;
+const AccountsHeaderCarouselButtonIcon = styled(FontAwesomeIcon)`
+  color: ${Colors.primary};
+  font-size: 1.2rem;
+`;
+const AccountsContent = styled.div`
+  margin: 20px 0 0 0;
+`;
 
-const Faq = styled.div``;
+const Features = styled.div`
+  margin: 20px 0 0 0;
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 30px;
+`;
+
+const Feedbacks = styled.div``;
+const FeedbacksHeader = styled.div`
+  margin: 20px 0 0 0;
+`;
+const FeedbacksHeaderCarouselButtons = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, 50px);
+  justify-content: center;
+`;
+const FeedbacksHeaderCarouselButton = styled.button`
+  font-size: 1.2rem;
+  background-color: transparent;
+  border: none;
+`;
+const FeedbacksHeaderCarouselButtonIcon = styled(FontAwesomeIcon)`
+  color: rgba(255, 255, 255, 0.3);
+  font-size: 1.5rem;
+  &:last-child {
+    color: red;
+  }
+`;
+const FeedbacksContent = styled.div`
+  margin: 20px 0 0 0;
+`;
+
+const Faq = styled.div`
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 20px;
+  margin: 20px 0 0 0;
+`;

@@ -77,6 +77,23 @@
       }
     }
   ],
+  "guarantee": [
+    {
+      "icon": "fa-star",
+      "title": "10 Years of Expertise",
+      "description": "Secure Smurf Shop's help center includes 24/7 live chat support and phone assistance, offering any help related to your ELO boost."
+    },
+    {
+      "icon": "fa-shield",
+      "title": "Secured Private Data",
+      "description": "We use VPN protection to maximize LoL boost safety and 256 bit SSL encryption to maximize client data security."
+    },
+    {
+      "icon": "fa-memo-circle-check",
+      "title": "Refund Policy",
+      "description": "Our refund policy gives more flexibility for clients. Buyers are eligible to receive full or partial refunds according to the progress."
+    }
+  ],
   "faq": [
     {
       "question": "What is a LoL smurf account?",

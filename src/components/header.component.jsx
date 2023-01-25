@@ -29,9 +29,7 @@ export default function Header() {
         </HeaderTitle>
         <HeaderDescription>
           Lorem ipsum, dolor sit amet consectetur adipisicing elit. Recusandae,
-          voluptatem. Quo, laudantium. Perferendis a consequuntur dolor laborum
-          autem laudantium rem et aliquam non est vel, dolorum id voluptate odit
-          corporis.
+          voluptatem.
         </HeaderDescription>
         <HeaderButtons>
           <Button
@@ -59,26 +57,57 @@ const Navbar = styled.nav`
   padding: 20px;
 `;
 const NavbarWrapper = styled.div`
-display: flex;
-align-items: center;
-justify-content: space-between;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 `;
 const NavbarBrand = styled.h4`
   margin: 0;
   color: white;
 `;
-const NavbarRight = styled.div``;
-const NavbarRightCustomer = styled(Link)``;
-const NavbarRightCustomerIcon = styled(FontAwesomeIcon)`
-color: ${Colors.primary};
-font-size: 1.2rem;
+const NavbarRight = styled.div`
+  display: flex;
+  align-items: center;
 `;
-const NavbarRightToggle = styled.button`
-background-color: transparent;
+const NavbarRightCustomer = styled(Link)`
+margin-right: 10px;
+`;
+const NavbarRightCustomerIcon = styled(FontAwesomeIcon)`
+  color: ${Colors.primary};
+  font-size: 1.2rem;
+`;
+const NavbarRightToggle = styled.div`
+  background-color: white;
+  width: 25px;
+  height: 1px;
+  position: relative;
+  &::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: -5px;
+    background-color: inherit;
+    width: 25px;
+    height: 1px;
+  }
+  &::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 5px;
+    background-color: inherit;
+    width: 25px;
+    height: 1px;
+  }
 `;
 const HeaderContent = styled.div`
-padding: 20px;
+  padding: 20px;
 `;
-const HeaderTitle = styled.h2``;
-const HeaderDescription = styled.p``;
+const HeaderTitle = styled.h2`
+margin: 0;
+color: white;
+`;
+const HeaderDescription = styled.p`
+color: rgba(255,255,255,0.7);
+`;
 const HeaderButtons = styled.div``;
