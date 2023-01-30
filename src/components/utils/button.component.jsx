@@ -1,21 +1,21 @@
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 
 import styled from "styled-components";
 
-export const ButtonStyles = {
-  outlined: {},
-  filled: {},
-};
+import ButtonStyles from "../../utils/button-styles.util";
+import Colors from "../../utils/colors.util";
 
 export default function Button({
   type,
+  icon,
   title,
   bgColor,
   onClick,
   width,
   font,
   align,
-  customStyles = ButtonStyles.filled,
+  theme = ButtonStyles.filled,
 }) {
   return (
     <StyledButton
@@ -25,9 +25,9 @@ export default function Button({
       width={width}
       font={font}
       align={align}
-      style={customStyles}
+      style={theme}
     >
-      {title}
+      {icon ? <ButtonIcon icon={icon} /> : null} {title}
     </StyledButton>
   );
 }
@@ -49,5 +49,18 @@ const StyledButton = styled.button`
   font-weight: ${(props) => props.font};
   width: ${(props) => props.width};
   background-color: ${(props) => props.bgColor};
-  box-shadow: 10px 10px 60px rgb(0 0 0 / 7%);
+  transition: 0.2s;
+
+  &:hover {
+    transition: 0.2s;
+    background-color: ${Colors.primary} !important;
+    color: white !important;
+    -moz-box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.07);
+    -webkit-box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.07);
+    box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.07);
+  }
+`;
+const ButtonIcon = styled(FontAwesomeIcon)`
+  color: white;
+  margin: 0 5px 0 0;
 `;

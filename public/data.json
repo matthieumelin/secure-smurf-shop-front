@@ -1,29 +1,25 @@
 {
   "features": [
     {
-      "name": "Appear Offline",
-      "image": "https://picsum.photos/32",
-      "description": "The booster plays offline, so the process is undetectable from your friend list."
+      "name": "Instant Delivery 24/7",
+      "image": "account-feature-icon-1.svg",
+      "description": "After buying an LoL account, our automated delivery system creates your unique order."
     },
     {
-      "name": "VPN Protection",
-      "image": "https://picsum.photos/32",
-      "description": "Your account remains safe with our automated VPN system.."
+      "name": "Lifetime Guarantee",
+      "image": "account-feature-icon-2.svg",
+      "description": "We include Guarantee options for all Account buyers up to lifelong protection."
     },
     {
-      "name": "Order Tracking",
-      "image": "https://picsum.photos/32",
-      "description": "Spectate, chat with the booster, and follow your match history in the client's area."
-    },
-    {
-      "name": "24/7 Support",
-      "image": "https://picsum.photos/32",
-      "description": "Use our live support to receive premium help whenever you are in need."
+      "name": "E-mail & Password Change",
+      "image": "account-feature-icon-3.svg",
+      "description": "You get the chance to change both the e-mail and password of your new LoL Account."
     }
   ],
   "feedbacks": [
     {
-      "stars": 5,
+      "rating": 5,
+      "date": "January 26, 2023",
       "title": "Good service",
       "message": "Good bost, good people, good service",
       "author": {
@@ -32,7 +28,8 @@
       }
     },
     {
-      "stars": 5,
+      "rating": 5,
+      "date": "January 26, 2023",
       "title": "Good service",
       "message": "Good bost, good people, good service",
       "author": {
@@ -41,7 +38,8 @@
       }
     },
     {
-      "stars": 5,
+      "rating": 3,
+      "date": "January 26, 2023",
       "title": "Good service",
       "message": "Good bost, good people, good service",
       "author": {
@@ -50,7 +48,8 @@
       }
     },
     {
-      "stars": 5,
+      "rating": 5,
+      "date": "January 26, 2023",
       "title": "Good service",
       "message": "Good bost, good people, good service",
       "author": {
@@ -59,7 +58,8 @@
       }
     },
     {
-      "stars": 5,
+      "rating": 5,
+      "date": "January 26, 2023",
       "title": "Good service",
       "message": "Good bost, good people, good service",
       "author": {
@@ -68,7 +68,8 @@
       }
     },
     {
-      "stars": 5,
+      "rating": 5,
+      "date": "January 26, 2023",
       "title": "Good service",
       "message": "Good bost, good people, good service",
       "author": {
@@ -114,6 +115,79 @@
     {
       "question": "What is a LoL smurf account?",
       "answer": "A LoL smurf account is a secondary account that experience players use to play against lower-skilled opponents. Smurfs are typically a lower rank than the player's main account, giving theme a significant advantage."
+    }
+  ],
+  "servers": [
+    {
+      "image": "na.png",
+      "name": "North America",
+      "short_name": "NA"
+    },
+    {
+      "image": "euw.webp",
+      "name": "EU-West",
+      "short_name": "EUW"
+    },
+    {
+      "image": "eune.png",
+      "name": "EU-Nordic & East",
+      "short_name": "EUNE"
+    }
+  ],
+  "experience": [
+    {
+      "id": 0,
+      "image": "smurf1.png",
+      "title": "Select your preferred account category",
+      "description": [
+        "There are various BE, skins, and champion specifications. Choose the one which fits most to your needs.",
+        "You can always talk to us on live chat if you need help."
+      ],
+      "features": [
+        "You can extend your guarantee.",
+        "Intuitive and straighforward purchase process."
+      ],
+      "card": {
+        "id": 0,
+        "icon": "1-icon.svg",
+        "title": "1 - Select Account",
+        "description": "Select yourt preferred account category."
+      }
+    },
+    {
+      "id": 1,
+      "image": "smurf2.png",
+      "title": "Buy with ease",
+      "description": [
+        "We have the leading payment solution brands at your service to provide you with the most diversified gateway portfolio.",
+        "We process payments immediately, and we deliver your account instantly."
+      ],
+      "features": [
+        "Payments accepted globally.",
+        "Safe ands encrypted transactions.",
+        "Crypto payments are available."
+      ],
+      "card": {
+        "id": 1,
+        "icon": "2-icon.svg",
+        "title": "2 - Complete Payment",
+        "description": "Choose your preferred payment method."
+      }
+    },
+    {
+      "id": 2,
+      "image": "smurf3.png",
+      "title": "Change the e-mail to your own",
+      "description": [
+        "You are all set! Enjoy the news skins, champions, and the perfecty MMR on your new LoL Account."
+      ],
+      "features": ["Lifetime Guarantee.", "24/7 Premium live Help."],
+      "card": {
+        "id": 2,
+        "icon": "3-icon.svg",
+        "title": "3 - Start Winning",
+        "description": "Receive your account details in the client's area."
+      }
     }
   ]
 }

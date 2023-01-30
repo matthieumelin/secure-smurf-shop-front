@@ -8,7 +8,45 @@ body {
   background-color: #212529;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+:root {
+  --primary-color: #9D4EDD;
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #ffffff;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: var(--primary-color);
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-color);
+}
+
+::-moz-selection { /* Code for Firefox */
+  color: white;
+  background: var(--primary-color);
+}
+
+::selection {
+  color: white;
+  background: var(--primary-color);
 }
