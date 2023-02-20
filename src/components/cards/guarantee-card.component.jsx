@@ -15,7 +15,7 @@ export default function GuaranteeCard({ data }) {
 const StyledGuaranteedCard = styled.div`
 background-color: ${Colors.gray};
 border-radius: 10px;
-padding: 30px;
+padding: 20px;
 `;
 const GuaranteeCardTitle = styled.h3`
 color: white;

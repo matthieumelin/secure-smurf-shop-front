@@ -1,13 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import {
-  faAngleLeft,
-  faAngleRight,
-  faCheck,
-  faLongArrowLeft,
-  faLongArrowRight,
-} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import styled from "styled-components";
 
@@ -17,22 +8,18 @@ import Header from "../components/header.component";
 import Footer from "../components/footer.component";
 import AccountCard from "../components/cards/account-card.component";
 import FeatureCard from "../components/cards/feature-card.component";
-import FeedbackCard from "../components/cards/feedback-card.component";
 import FaqCard from "../components/cards/faq-card.component";
 import GuaranteeCard from "../components/cards/guarantee-card.component";
-import HeroBanner from "../components/hero-banner.component";
+import Button from "../components/utils/button.component";
+import ServerCard from "../components/cards/server-card.component";
+import ExperienceCard from "../components/cards/experience-step.component";
 
 import Colors from "../utils/colors.util";
-import Button from "../components/utils/button.component";
-import ButtonStyles from "../utils/button-styles.util";
-import ServerCard from "../components/cards/server-card.component";
-import ExperienceCard from "../components/cards/experience/experience-step.component";
 
 export default function Index() {
   const [features, setFeatures] = useState([]);
   const [experience, setExperience] = useState([]);
   const [guarantee, setGuarantee] = useState([]);
-  const [feedbacks, setFeedbacks] = useState([]);
   const [faq, setFaq] = useState([]);
 
   const [servers, setServers] = useState([]);
@@ -42,25 +29,26 @@ export default function Index() {
   const [currentExperience, setCurrentExperience] = useState({});
 
   useEffect(() => {
+    const fetchData = async () => {
+      await axios
+        .get(`${process.env.REACT_APP_API_URL}/servers`)
+        .then((res) => setServers(res.data))
+        .catch((err) => console.error(err));
+    };
+
+    fetchData();
+
     axios
       .get("./data.json")
       .then((res) => {
         setFeatures(res.data.features);
-
         setExperience(res.data.experience);
-
-        setFeedbacks(res.data.feedbacks);
-
         setGuarantee(res.data.guarantee);
-
         setFaq(res.data.faq);
-
-        setServers(res.data.servers);
-        setCurrentServer(res.data.servers[0]);
-
+        setCurrentServer(servers[0]);
         setCurrentExperience(res.data.experience[0]);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => console.error(err));
   }, []);
 
   const selectServer = (server) => {
@@ -74,23 +62,21 @@ export default function Index() {
       <Main>
         <Section>
           <SectionHeader>
-            <SectionHeaderTitle>
-              Choose Your{" "}
-              <SectionHeaderTitleSpan>Server</SectionHeaderTitleSpan>
-            </SectionHeaderTitle>
+            <SectionHeaderTitle>Choose Your Server</SectionHeaderTitle>
           </SectionHeader>
           <SectionContent>
             {showServers ? (
               <Servers>
-                {servers.map((server, index) => {
-                  return (
-                    <ServerCard
-                      key={`server_${index}`}
-                      data={server}
-                      selectServer={selectServer}
-                    />
-                  );
-                })}
+                {servers &&
+                  servers.map((server, index) => {
+                    return (
+                      <ServerCard
+                        key={`server_${index}`}
+                        data={server}
+                        selectServer={selectServer}
+                      />
+                    );
+                  })}
               </Servers>
             ) : (
               <Accounts>
@@ -100,15 +86,20 @@ export default function Index() {
                   </AccountsHeaderRegion>
                   <Button
                     title={"Change server"}
-                    theme={ButtonStyles.outlined}
                     onClick={() => setShowServers(true)}
                   />
                   <AccountsHeaderCarouselButtons>
                     <AccountsHeaderCarouselButton>
-                      <AccountsHeaderCarouselButtonIcon icon={faAngleLeft} />
+                      <AccountsHeaderCarouselButtonIcon
+                        src={`${process.env.PUBLIC_URL}/assets/icons/chevron-left.svg`}
+                        alt="Previous"
+                      />
                     </AccountsHeaderCarouselButton>
                     <AccountsHeaderCarouselButton>
-                      <AccountsHeaderCarouselButtonIcon icon={faAngleRight} />
+                      <AccountsHeaderCarouselButtonIcon
+                        src={`${process.env.PUBLIC_URL}/assets/icons/chevron-right.svg`}
+                        alt="Next"
+                      />
                     </AccountsHeaderCarouselButton>
                   </AccountsHeaderCarouselButtons>
                 </AccountsHeader>
@@ -122,9 +113,7 @@ export default function Index() {
         {features.length ? (
           <Section>
             <SectionHeader>
-              <SectionHeaderTitle>
-                Our <SectionHeaderTitleSpan>Features</SectionHeaderTitleSpan>
-              </SectionHeaderTitle>
+              <SectionHeaderTitle>Our Features</SectionHeaderTitle>
             </SectionHeader>
             <SectionContent>
               <Features>
@@ -137,7 +126,6 @@ export default function Index() {
             </SectionContent>
           </Section>
         ) : null}
-        <HeroBanner />
         {experience.length ? (
           <Section style={{ backgroundColor: Colors.gray }}>
             <SectionHeader>
@@ -148,11 +136,11 @@ export default function Index() {
                 The effortless LoL Smurf Account buying process.
               </SectionHeaderDescription>
             </SectionHeader>
-            <SectionContent style={{ paddingBottom: 20 }}>
+            <SectionContent>
               <Experience>
                 <ExperienceStep>
                   <ExperienceStepImage
-                    src={`${process.env.PUBLIC_URL}/images/${currentExperience.image}`}
+                    src={`${process.env.PUBLIC_URL}/assets/images/${currentExperience.image}`}
                     alt={currentExperience.title}
                   />
                   <ExperienceStepInfos>
@@ -175,17 +163,15 @@ export default function Index() {
                             key={`experience_step_feature_${index}`}
                           >
                             <ExperienceStepInfosFeaturesItemIcon
-                              icon={faCheck}
+                              src={`${process.env.PUBLIC_URL}/assets/icons/done.svg`}
+                              alt="Check"
                             />{" "}
                             {feature}
                           </ExperienceStepInfosFeaturesItem>
                         );
                       })}
                     </ExperienceStepInfosFeatures>
-                    <Button
-                      theme={ButtonStyles.outlined}
-                      title={"Get started"}
-                    />
+                    <Button title={"Get started"} />
                   </ExperienceStepInfos>
                 </ExperienceStep>
                 <ExperiencePagination items={experience.length}>
@@ -223,45 +209,11 @@ export default function Index() {
             </SectionContent>
           </Section>
         ) : null}
-        {feedbacks.length ? (
-          <Section>
-            <SectionHeader>
-              <SectionHeaderTitle>
-                Our <SectionHeaderTitleSpan>Community</SectionHeaderTitleSpan>
-              </SectionHeaderTitle>
-            </SectionHeader>
-            <SectionContent>
-              <Feedbacks>
-                <FeedbacksHeader>
-                  <FeedbacksHeaderCarouselButtons>
-                    <FeedbacksHeaderCarouselButton>
-                      <FeedbacksHeaderCarouselButtonIcon
-                        icon={faLongArrowLeft}
-                      />
-                    </FeedbacksHeaderCarouselButton>
-                    <FeedbacksHeaderCarouselButton>
-                      <FeedbacksHeaderCarouselButtonIcon
-                        icon={faLongArrowRight}
-                      />
-                    </FeedbacksHeaderCarouselButton>
-                  </FeedbacksHeaderCarouselButtons>
-                </FeedbacksHeader>
-                <FeedbacksContent>
-                  {feedbacks.map((feedback, index) => {
-                    return (
-                      <FeedbackCard key={`feedback_${index}`} data={feedback} />
-                    );
-                  })}
-                </FeedbacksContent>
-              </Feedbacks>
-            </SectionContent>
-          </Section>
-        ) : null}
         {guarantee.length ? (
           <Section>
             <SectionHeader>
               <SectionHeaderTitle>
-                Your Satisfaction is Guaranteed
+                Your Satisfaction is Guarantee
               </SectionHeaderTitle>
               <SectionHeaderDescription>
                 About Secure Smurf Shop
@@ -308,10 +260,10 @@ export default function Index() {
 
 const StyledIndex = styled.div``;
 const Main = styled.main``;
-const Section = styled.section`
-  padding: 20px;
+const Section = styled.section``;
+const SectionHeader = styled.div`
+  margin: 30px 0;
 `;
-const SectionHeader = styled.div``;
 const SectionHeaderTitle = styled.h2`
   margin: 0;
   color: white;
@@ -320,9 +272,6 @@ const SectionHeaderTitle = styled.h2`
   @media screen and (min-width: 1024px) {
     font-size: 2.25rem;
   }
-`;
-const SectionHeaderTitleSpan = styled.span`
-  color: ${Colors.primary};
 `;
 const SectionHeaderDescription = styled.p`
   margin: 0;
@@ -335,6 +284,7 @@ const SectionHeaderDescription = styled.p`
   }
 `;
 const SectionContent = styled.div`
+  padding: 0 20px;
   @media screen and (min-width: 1024px) {
     max-width: 90%;
     margin: 30px auto;
@@ -346,12 +296,13 @@ const Servers = styled.div`
   grid-gap: 30px;
   row-gap: 20px;
   margin: 30px 0;
+  justify-content: center;
 
   @media screen and (min-width: 768px) {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, max-content);
   }
   @media screen and (min-width: 1024px) {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, max-content);
   }
 `;
 
@@ -437,14 +388,17 @@ const ExperienceStepInfosFeatures = styled.ul`
 `;
 const ExperienceStepInfosFeaturesItem = styled.li`
   color: white;
-  margin: 0 0 10px 0;
+  margin: 20px 0;
 `;
-const ExperienceStepInfosFeaturesItemIcon = styled(FontAwesomeIcon)`
+const ExperienceStepInfosFeaturesItemIcon = styled.img`
   color: ${Colors.primary};
   background-color: ${Colors.primaryLowOp};
   border-radius: 100px;
-  margin: 0 5px 0 0;
-  padding: 2px;
+  margin: 0 5px 10px 0;
+  padding: 5px;
+  display: block;
+  width: 24px;
+  height: 24px;
 `;
 const ExperiencePagination = styled.ul`
   display: grid;
@@ -459,6 +413,11 @@ const ExperiencePaginationItem = styled.li`
   background-color: ${Colors.lightGray};
   width: 8px;
   height: 8px;
+
+  &:hover {
+    cursor: pointer;
+  }
+
   ${(props) => {
     if (props.active) {
       return `
@@ -470,10 +429,10 @@ const ExperiencePaginationItem = styled.li`
   }}
 `;
 const ExperienceCards = styled.div`
+  margin: 0 0 30px 0;
   @media screen and (min-width: 1024px) {
     display: flex;
-    justify-content: space-between;
-    padding: 30px;
+    justify-content: space-evenly;
   }
 `;
 
@@ -505,12 +464,16 @@ const AccountsHeaderCarouselButton = styled.button`
   &:hover {
     transition: 0.2s;
     background-color: ${Colors.primary};
+    cursor: pointer;
   }
 `;
-const AccountsHeaderCarouselButtonIcon = styled(FontAwesomeIcon)`
+const AccountsHeaderCarouselButtonIcon = styled.img`
   color: ${Colors.primary};
   font-size: 1.2rem;
   transition: 0.2s;
+  display: block;
+  width: 18px;
+  height: 18px;
 
   ${AccountsHeaderCarouselButton}:hover & {
     transition: 0.2s;
@@ -518,59 +481,34 @@ const AccountsHeaderCarouselButtonIcon = styled(FontAwesomeIcon)`
   }
 `;
 const AccountsContent = styled.div`
-  margin: 20px 0 0 0;
+  margin: 30px 0 0 0;
+  display: grid;
+  justify-content: center;
+  @media screen and (min-width: 1024px) {
+    grid-template-columns: repeat(1, 250px);
+  }
 `;
 
 const Features = styled.div`
-  margin: 30xp 0;
+  margin: 30px 0;
   display: grid;
   grid-template-columns: repeat(1, 1fr);
   gap: 30px;
 
   @media screen and (min-width: 1024px) {
     grid-template-columns: repeat(3, 1fr);
+    margin: 30px 0 60px 0;
   }
 `;
-
-const Feedbacks = styled.div``;
-const FeedbacksHeader = styled.div`
-  margin: 20px 0 0 0;
-`;
-const FeedbacksHeaderCarouselButtons = styled.div`
-  display: grid;
-  grid-template-columns: repeat(2, 50px);
-  justify-content: center;
-`;
-const FeedbacksHeaderCarouselButton = styled.button`
-  font-size: 1.2rem;
-  background-color: transparent;
-  border: none;
-`;
-const FeedbacksHeaderCarouselButtonIcon = styled(FontAwesomeIcon)`
-  color: rgba(255, 255, 255, 0.3);
-  font-size: 1.5rem;
-  transition: 0.2s;
-
-  ${FeedbacksHeaderCarouselButton}:hover & {
-    transition: 0.2s;
-    color: ${Colors.primary};
-  }
-`;
-const FeedbacksContent = styled.div`
-  margin: 20px 0 0 0;
-  display: grid;
-  gap: 20px;
-
-  @media screen and (min-width: 1024px) {
-    grid-template-columns: repeat(3, 1fr);
-  }
-`;
-
 const Guarantee = styled.div`
   display: grid;
   grid-template-columns: repeat(1, 1fr);
   gap: 20px;
-  margin: 20px 0 0 0;
+  margin: 30px 0 0 0;
+
+  @media screen and (min-width: 1024px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
 `;
 
 const Faq = styled.div`

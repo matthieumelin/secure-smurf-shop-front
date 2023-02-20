@@ -45,8 +45,10 @@ const HeroBannerContent = styled.div`
 `;
 const HeroBannerBreak = styled.br``;
 const HeroBannerWrapper = styled.div`
-display: flex;
-align-items: center;
+@media screen and (min-width: 1024px) {
+  display: flex;
+  align-items: center;
+}
 `;
 const HeroBannerIcon = styled.img`
   display: block;
@@ -71,10 +73,10 @@ const HeroBannerDescription = styled.p`
   color: rgba(255, 255, 255, 0.7);
   text-align: center;
   font-weight: 700;
-  max-width: 50%;
 
   @media screen and (min-width: 1024px) {
     text-align: left;
     font-size: 1.25rem;
+    max-width: 50%;
   }
 `;

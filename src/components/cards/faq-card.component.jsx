@@ -2,20 +2,21 @@ import React, { useState } from "react";
 
 import styled from "styled-components";
 
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronUp, faChevronDown } from "@fortawesome/free-solid-svg-icons";
 import Colors from "../../utils/colors.util";
 
 export default function FaqCard({ defaultActive, data }) {
   const [isToggled, setToggled] = useState(defaultActive);
 
   return (
-    <StyledFaq onClick={() => setToggled(!isToggled)}>
+    <StyledFaq isToggled={isToggled} onClick={() => setToggled(!isToggled)}>
       <FaqHeader>
         <FaqHeaderQuestion>{data.question}</FaqHeaderQuestion>
         <FaqHeaderToggleButton>
           <FaqHeaderToggleButtonIcon
-            icon={isToggled ? faChevronUp : faChevronDown}
+            src={`${process.env.PUBLIC_URL}/assets/icons/${
+              isToggled ? "chevron-up.svg" : "chevron-down.svg"
+            }`}
+            alt="Toggle"
           />
         </FaqHeaderToggleButton>
       </FaqHeader>
@@ -28,12 +29,13 @@ export default function FaqCard({ defaultActive, data }) {
 
 const StyledFaq = styled.div`
   padding: 20px;
-  background-color: ${Colors.gray};
+  background-color: ${(props) =>
+    props.isToggled ? Colors.primaryLowOp : Colors.gray};
   border-radius: 10px;
   transition: 0.2s;
-  cursor: pointer;
 
   &:hover {
+    cursor: pointer;
     transition: 0.2s;
     background-color: ${Colors.primaryLowOp};
   }
@@ -46,6 +48,7 @@ const FaqHeader = styled.div`
 const FaqHeaderQuestion = styled.h4`
   margin: 0;
   color: white;
+  width: 200px;
 
   @media screen and (min-width: 1024px) {
     font-size: 1.5rem;
@@ -55,9 +58,12 @@ const FaqHeaderToggleButton = styled.button`
   background-color: transparent;
   border: none;
 `;
-const FaqHeaderToggleButtonIcon = styled(FontAwesomeIcon)`
+const FaqHeaderToggleButtonIcon = styled.img`
   color: white;
   font-size: 1.5rem;
+  width: 24px;
+  height: 24px;
+  display: block;
 `;
 const FaqBody = styled.div`
   overflow: hidden;

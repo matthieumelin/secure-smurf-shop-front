@@ -6,7 +6,7 @@ export default function FeatureCard({ data }) {
   return (
     <StyledFeatureCard>
       <FeatureCardImage
-        src={`${process.env.PUBLIC_URL}/images/${data.image}`}
+        src={`${process.env.PUBLIC_URL}/assets/icons/${data.image}`}
         alt={data.name}
       />
       <FeatuerCardInfos>

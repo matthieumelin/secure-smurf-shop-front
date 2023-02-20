@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 import styled from "styled-components";
+
 import Colors from "../utils/colors.util";
 
 export default function Footer() {
@@ -10,41 +11,95 @@ export default function Footer() {
       <FooterContent>
         <FooterWrapper>
           <FooterInfos>
-            <FooterBrand>Secure Smurf Shop</FooterBrand>
-            <FooterDescription>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Et
-              consequatur quam mollitia, ducimus iusto nobis aut illum nostrum
-              aperiam minus placeat itaque sit? Repellat, ratione repudiandae
-              iste dolor porro libero?
-            </FooterDescription>
+            <Link to="/">
+              <FooterBrand
+                src={`${process.env.PUBLIC_URL}/assets/images/logo.png`}
+                alt="Secure Smurf Shop"
+              />
+            </Link>
+            <FooterName>Buy LoL Smurf Accounts</FooterName>
+            <FooterSocials>
+              <FooterSocialsItem>
+                <FooterSocialsItemLink to="/">
+                  <FooterSocialsItemLinkIcon
+                    src={`${process.env.PUBLIC_URL}/assets/icons/twitter.svg`}
+                    alt="Twitter"
+                  />
+                </FooterSocialsItemLink>
+              </FooterSocialsItem>
+              <FooterSocialsItem>
+                <FooterSocialsItemLink to="/">
+                  <FooterSocialsItemLinkIcon
+                    src={`${process.env.PUBLIC_URL}/assets/icons/discord.svg`}
+                    alt="Discord"
+                  />
+                </FooterSocialsItemLink>
+              </FooterSocialsItem>
+              <FooterSocialsItem>
+                <FooterSocialsItemLink to="/">
+                  <FooterSocialsItemLinkIcon
+                    src={`${process.env.PUBLIC_URL}/assets/icons/instagram.svg`}
+                    alt="Instagram"
+                  />
+                </FooterSocialsItemLink>
+              </FooterSocialsItem>
+              <FooterSocialsItem>
+                <FooterSocialsItemLink to="/">
+                  <FooterSocialsItemLinkIcon
+                    src={`${process.env.PUBLIC_URL}/assets/icons/facebook.svg`}
+                    alt="Facebook"
+                  />
+                </FooterSocialsItemLink>
+              </FooterSocialsItem>
+            </FooterSocials>
           </FooterInfos>
           <FooterSections>
+            <FooterSection>
+              <FooterSectionTitle>Marketplace</FooterSectionTitle>
+              <FooterSectionLinks>
+                <FooterSectionLinksItem>
+                  <FooterSectionLinksItemLink>
+                    EUW LoL Smurf
+                  </FooterSectionLinksItemLink>
+                </FooterSectionLinksItem>
+                <FooterSectionLinksItem>
+                  <FooterSectionLinksItemLink>
+                    EUNE LoL Smurf
+                  </FooterSectionLinksItemLink>
+                </FooterSectionLinksItem>
+                <FooterSectionLinksItem>
+                  <FooterSectionLinksItemLink>
+                    NA LoL Smurf
+                  </FooterSectionLinksItemLink>
+                </FooterSectionLinksItem>
+              </FooterSectionLinks>
+            </FooterSection>
+            <FooterSection>
+              <FooterSectionTitle>Support</FooterSectionTitle>
+              <FooterSectionLinks>
+                <FooterSectionLinksItem>
+                  <FooterSectionLinksItemLink>
+                    Discord Server
+                  </FooterSectionLinksItemLink>
+                </FooterSectionLinksItem>
+                <FooterSectionLinksItem>
+                  <FooterSectionLinksItemLink>
+                    Payment Support
+                  </FooterSectionLinksItemLink>
+                </FooterSectionLinksItem>
+                <FooterSectionLinksItem>
+                  <FooterSectionLinksItemLink>
+                    Contact Us
+                  </FooterSectionLinksItemLink>
+                </FooterSectionLinksItem>
+              </FooterSectionLinks>
+            </FooterSection>
             <FooterSection>
               <FooterSectionTitle>Legal</FooterSectionTitle>
               <FooterSectionLinks>
                 <FooterSectionLinksItem>
                   <FooterSectionLinksItemLink>
-                    Terms of use
-                  </FooterSectionLinksItemLink>
-                </FooterSectionLinksItem>
-                <FooterSectionLinksItem>
-                  <FooterSectionLinksItemLink>
-                    Privacy policy
-                  </FooterSectionLinksItemLink>
-                </FooterSectionLinksItem>
-                <FooterSectionLinksItem>
-                  <FooterSectionLinksItemLink>
-                    DMCA Notice
-                  </FooterSectionLinksItemLink>
-                </FooterSectionLinksItem>
-                <FooterSectionLinksItem>
-                  <FooterSectionLinksItemLink>
-                    Partnership
-                  </FooterSectionLinksItemLink>
-                </FooterSectionLinksItem>
-                <FooterSectionLinksItem>
-                  <FooterSectionLinksItemLink>
-                    Newsletter
+                    Terms of Service
                   </FooterSectionLinksItemLink>
                 </FooterSectionLinksItem>
               </FooterSectionLinks>
@@ -52,11 +107,11 @@ export default function Footer() {
           </FooterSections>
         </FooterWrapper>
         <FooterCopyright>
-          &copy;{" "}
-          <FooterCopyrightSpan>
-            {new Date().getFullYear()} Secure Smurf Shop
-          </FooterCopyrightSpan>{" "}
-          - All Rights Reserved
+          LoLsmurf.fr isn't endorsed by Riot Games and doesn't reflect the views
+          or opinions of Riot Games or anyone officialy involved in producing or
+          managing League of Legends. League of Legends and Riot Games are
+          trademarks or registered trademarks of Riot Games , Inc. League of
+          Legends &copy; Riot Games, Inc.
         </FooterCopyright>
       </FooterContent>
     </StyledFooter>
@@ -65,11 +120,12 @@ export default function Footer() {
 
 const StyledFooter = styled.footer`
   padding: 20px;
-  margin: 30px 0 0 0;
   background-color: ${Colors.gray};
+    padding: 20px 0;
+  }
 `;
 const FooterContent = styled.div`
-  width: 90%;
+  width: 80%;
   margin: 0 auto;
 `;
 const FooterInfos = styled.div`
@@ -77,20 +133,58 @@ const FooterInfos = styled.div`
     max-width: 400px;
   }
 `;
+const FooterSocials = styled.ul`
+  display: grid;
+  grid-template-columns: repeat(4, 45px);
+  list-style: none;
+  padding: 0;
+`;
+const FooterSocialsItem = styled.li`
+  background-color: ${Colors.primaryLowOp};
+  border-radius: 100px;
+  padding: 8px;
+  height: 40px;
+  width: 40px;
+  &:hover {
+    cursor: pointer;
+  }
+`;
+const FooterSocialsItemLink = styled(Link)``;
+const FooterSocialsItemLinkIcon = styled.img`
+  display: block;
+  width: 24px;
+  height: 24px;
+
+  ${FooterSocialsItem}:hover & {
+    filter: invert(54%) sepia(66%) saturate(6362%) hue-rotate(250deg)
+      brightness(91%) contrast(90%);
+  }
+`;
 const FooterWrapper = styled.div`
   @media screen and (min-width: 1024px) {
     display: flex;
   }
 `;
-const FooterBrand = styled.h2`
+const FooterBrand = styled.img`
+  display: block;
+  height: 60px;
+  width: 60px;
+`;
+const FooterName = styled.h2`
   color: white;
-  margin: 0;
+  max-width: 180px;
 `;
-const FooterDescription = styled.p`
-  color: rgba(255, 255, 255, 0.7);
+const FooterSections = styled.div`
+  @media screen and (min-width: 1024px) {
+    margin: auto;
+    display: flex;
+  }
 `;
-const FooterSections = styled.div``;
-const FooterSection = styled.section``;
+const FooterSection = styled.section`
+  @media screen and (min-width: 1024px) {
+    width: 200px;
+  }
+`;
 const FooterSectionTitle = styled.h3`
   color: ${Colors.primary};
 
@@ -117,11 +211,11 @@ const FooterSectionLinksItemLink = styled(Link)`
 const FooterCopyright = styled.p`
   color: white;
   margin: 20px 0 0 0;
+  padding: 20px;
+  border-radius: 10px;
+  background-color: ${Colors.primaryLowOp};
 
   @media screen and (min-width: 1024px) {
     text-align: center;
   }
-`;
-const FooterCopyrightSpan = styled.span`
-  font-weight: 700;
 `;

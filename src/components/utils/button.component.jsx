@@ -1,66 +1,54 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React from "react";
+import React, { useEffect, useRef } from "react";
+import gsap from "gsap";
+import chroma from "chroma-js";
 
-import styled from "styled-components";
+export default function Button({ type, title, onClick }) {
+  const buttonRef = useRef(null);
 
-import ButtonStyles from "../../utils/button-styles.util";
-import Colors from "../../utils/colors.util";
+  useEffect(() => {
+    const gradientElem = document.createElement("div");
+    gradientElem.classList.add("gradient");
+    buttonRef.current.appendChild(gradientElem);
 
-export default function Button({
-  type,
-  icon,
-  title,
-  bgColor,
-  onClick,
-  width,
-  font,
-  align,
-  theme = ButtonStyles.filled,
-}) {
+    buttonRef.current.addEventListener("pointermove", (e) => {
+      const rect = buttonRef.current.getBoundingClientRect();
+
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+
+      gsap.to(buttonRef.current, {
+        "--pointer-x": `${x}px`,
+        "--pointer-y": `${y}px`,
+        duration: 0.6,
+      });
+
+      gsap.to(buttonRef.current, {
+        "--button-glow": chroma
+          .mix(
+            window
+              .getComputedStyle(buttonRef.current)
+              .getPropertyValue("--button-glow-start")
+              .trim(),
+            window
+              .getComputedStyle(buttonRef.current)
+              .getPropertyValue("--button-glow-end")
+              .trim(),
+            x / rect.width
+          )
+          .hex(),
+        duration: 0.2,
+      });
+    });
+  }, []);
+
   return (
-    <StyledButton
+    <button
       type={type}
-      bgColor={bgColor}
+      className="glow-button"
+      ref={buttonRef}
       onClick={onClick}
-      width={width}
-      font={font}
-      align={align}
-      style={theme}
     >
-      {icon ? <ButtonIcon icon={icon} /> : null} {title}
-    </StyledButton>
+      <span>{title}</span>
+    </button>
   );
 }
-
-const StyledButton = styled.button`
-  color: white;
-  border-radius: 20px;
-  border: none;
-  padding: 6px 20px;
-  font-family: inherit;
-  font-size: inherit;
-  ${(props) =>
-    props.align === "center"
-      ? `
-  display: block;
-  margin: 0 auto;
-  `
-      : null};
-  font-weight: ${(props) => props.font};
-  width: ${(props) => props.width};
-  background-color: ${(props) => props.bgColor};
-  transition: 0.2s;
-
-  &:hover {
-    transition: 0.2s;
-    background-color: ${Colors.primary} !important;
-    color: white !important;
-    -moz-box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.07);
-    -webkit-box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.07);
-    box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.07);
-  }
-`;
-const ButtonIcon = styled(FontAwesomeIcon)`
-  color: white;
-  margin: 0 5px 0 0;
-`;

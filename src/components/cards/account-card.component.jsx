@@ -6,14 +6,6 @@ import styled from "styled-components";
 import Button from "../utils/button.component";
 
 import Colors from "../../utils/colors.util";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faBolt,
-  faCartShopping,
-  faEnvelope,
-  faShield,
-  faTrophy,
-} from "@fortawesome/free-solid-svg-icons";
 
 export default function AccountCard({ data }) {
   return (
@@ -29,33 +21,27 @@ export default function AccountCard({ data }) {
       <AccountCardBody>
         <AccountCardBodyFeatures>
           <AccountCardBodyFeaturesItem>
-            <AccountCardBodyFeaturesItemIcon icon={faTrophy} />
+            <AccountCardBodyFeaturesItemIcon src="" alt="" />
             40,000 Blue Essence
           </AccountCardBodyFeaturesItem>
           <AccountCardBodyFeaturesItem>
-            <AccountCardBodyFeaturesItemIcon icon={faShield} />
+            <AccountCardBodyFeaturesItemIcon src="" alt="" />
             Life-time Warranty
           </AccountCardBodyFeaturesItem>
           <AccountCardBodyFeaturesItem>
-            <AccountCardBodyFeaturesItemIcon icon={faTrophy} />
+            <AccountCardBodyFeaturesItemIcon src="" alt="" />
             Fresh Unranked
           </AccountCardBodyFeaturesItem>
           <AccountCardBodyFeaturesItem>
-            <AccountCardBodyFeaturesItemIcon icon={faBolt} />
+            <AccountCardBodyFeaturesItemIcon src="" alt="" />
             Instant delivery
           </AccountCardBodyFeaturesItem>
           <AccountCardBodyFeaturesItem>
-            <AccountCardBodyFeaturesItemIcon icon={faEnvelope} />
+            <AccountCardBodyFeaturesItemIcon src="" alt="" />
             Full e-mail access
           </AccountCardBodyFeaturesItem>
         </AccountCardBodyFeatures>
-        <Button
-          icon={faCartShopping}
-          title={"Buy now"}
-          bgColor={Colors.primary}
-          width={"100%"}
-          font={"bold"}
-        />
+        <Button title={"Buy now"} width={"100%"} font={"bold"} />
       </AccountCardBody>
     </StyledAccountCard>
   );
@@ -106,9 +92,10 @@ const AccountCardBodyFeatures = styled.ul`
 const AccountCardBodyFeaturesItem = styled.li`
   color: white;
 `;
-const AccountCardBodyFeaturesItemIcon = styled(FontAwesomeIcon)`
+const AccountCardBodyFeaturesItemIcon = styled.img`
   color: ${Colors.primary};
   margin-right: 10px;
   width: 14px;
   height: 14px;
+  display: block;
 `;

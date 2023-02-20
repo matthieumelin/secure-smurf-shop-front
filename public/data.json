@@ -2,17 +2,17 @@
   "features": [
     {
       "name": "Instant Delivery 24/7",
-      "image": "account-feature-icon-1.svg",
+      "image": "account-feature-1.svg",
       "description": "After buying an LoL account, our automated delivery system creates your unique order."
     },
     {
       "name": "Lifetime Guarantee",
-      "image": "account-feature-icon-2.svg",
+      "image": "account-feature-2.svg",
       "description": "We include Guarantee options for all Account buyers up to lifelong protection."
     },
     {
       "name": "E-mail & Password Change",
-      "image": "account-feature-icon-3.svg",
+      "image": "account-feature-3.svg",
       "description": "You get the chance to change both the e-mail and password of your new LoL Account."
     }
   ],
@@ -81,13 +81,13 @@
   "guarantee": [
     {
       "icon": "fa-star",
-      "title": "10 Years of Expertise",
-      "description": "Secure Smurf Shop's help center includes 24/7 live chat support and phone assistance, offering any help related to your ELO boost."
+      "title": "3 Years of Expertise",
+      "description": "Secure Smurf Shop's help center includes 24/7 live chat support assistance, offering any help related to your accounts."
     },
     {
       "icon": "fa-shield",
       "title": "Secured Private Data",
-      "description": "We use VPN protection to maximize LoL boost safety and 256 bit SSL encryption to maximize client data security."
+      "description": "We use VPN protection to maximize safety and 256 bit SSL encryption to maximize client data security."
     },
     {
       "icon": "fa-memo-circle-check",
@@ -97,41 +97,20 @@
   ],
   "faq": [
     {
-      "question": "What is a LoL smurf account?",
-      "answer": "A LoL smurf account is a secondary account that experience players use to play against lower-skilled opponents. Smurfs are typically a lower rank than the player's main account, giving theme a significant advantage."
+      "question": "What is a LoL Smurf Shop ?",
+      "answer": "The LoL Smurf Shop is a premium store, where we sell our League Of Legends Smurf Accounts in the form of Packages. Each Package groups multiple League Of Legends Smurf Accounts that can be categorized with similar Blue Essence Amount, Level, MMR...etc"
     },
     {
-      "question": "What is a LoL smurf account?",
-      "answer": "A LoL smurf account is a secondary account that experience players use to play against lower-skilled opponents. Smurfs are typically a lower rank than the player's main account, giving theme a significant advantage."
+      "question": "What is a LoL Smurf Account ?",
+      "answer": "A League Of Legends Smurf Account is a ranked ready LoL account with no past ranked history and variable ready to use Blue Essence or champions capsules."
     },
     {
-      "question": "What is a LoL smurf account?",
-      "answer": "A LoL smurf account is a secondary account that experience players use to play against lower-skilled opponents. Smurfs are typically a lower rank than the player's main account, giving theme a significant advantage."
+      "question": "Is Smurfing allowed in League Of Legends? ",
+      "answer": "The short answer to the question 'Is Smurfing Allowed in League of Legends?' would be: Yes! You can create a secondary account whenever you want. Whether it's for playing with friends, test new champions, or just playing without the stress of the ranked games, smurfing is a common practice among LoL users."
     },
     {
-      "question": "What is a LoL smurf account?",
-      "answer": "A LoL smurf account is a secondary account that experience players use to play against lower-skilled opponents. Smurfs are typically a lower rank than the player's main account, giving theme a significant advantage."
-    },
-    {
-      "question": "What is a LoL smurf account?",
-      "answer": "A LoL smurf account is a secondary account that experience players use to play against lower-skilled opponents. Smurfs are typically a lower rank than the player's main account, giving theme a significant advantage."
-    }
-  ],
-  "servers": [
-    {
-      "image": "na.png",
-      "name": "North America",
-      "short_name": "NA"
-    },
-    {
-      "image": "euw.webp",
-      "name": "EU-West",
-      "short_name": "EUW"
-    },
-    {
-      "image": "eune.png",
-      "name": "EU-Nordic & East",
-      "short_name": "EUNE"
+      "question": "How does Lifetime Warranty work ?",
+      "answer": "In the rare case of an account ban, we provide a lifetime warranty. If your account gets banned for a reason that's unrelated to you, we provide you with a new one. No questions asked."
     }
   ],
   "experience": [
@@ -149,7 +128,7 @@
       ],
       "card": {
         "id": 0,
-        "icon": "1-icon.svg",
+        "icon": "1.svg",
         "title": "1 - Select Account",
         "description": "Select yourt preferred account category."
       }
@@ -169,7 +148,7 @@
       ],
       "card": {
         "id": 1,
-        "icon": "2-icon.svg",
+        "icon": "2.svg",
         "title": "2 - Complete Payment",
         "description": "Choose your preferred payment method."
       }
@@ -184,10 +163,23 @@
       "features": ["Lifetime Guarantee.", "24/7 Premium live Help."],
       "card": {
         "id": 2,
-        "icon": "3-icon.svg",
+        "icon": "3.svg",
         "title": "3 - Start Winning",
         "description": "Receive your account details in the client's area."
       }
     }
-  ]
+  ],
+  "contact": {
+    "cards": [
+      {
+        "icon": "support.svg",
+        "title": "Get in touch",
+        "description": "Our live supports is online 24/7. If you need fast help, do not hesitate to use Live Chat.",
+        "link": {
+          "name": "Chat now",
+          "path": "/"
+        }
+      }
+    ]
+  }
 }
