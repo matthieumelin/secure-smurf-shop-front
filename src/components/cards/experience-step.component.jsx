@@ -44,6 +44,7 @@ const StyledExperienceStepCard = styled.div`
 
   @media screen and (min-width: 1024px) {
     display: flex;
+    align-items: center;
   }
 
   ${(props) => {

@@ -1,9 +1,11 @@
 import React from "react";
-import { NavLink, useLocation } from "react-router-dom";
+import { Link, NavLink, useLocation } from "react-router-dom";
 
 import styled from "styled-components";
 
 import Colors from "../../utils/colors.util";
+
+import AppRoutes from "../../router/app.routes";
 
 export default function Header({ sidebarIsOpen, setSidebarIsOpen }) {
   const location = useLocation();
@@ -11,10 +13,12 @@ export default function Header({ sidebarIsOpen, setSidebarIsOpen }) {
   return (
     <StyledHeader>
       <Sidebar sidebarIsOpen={sidebarIsOpen}>
-        <SidebarLogo
-          src={`${process.env.PUBLIC_URL}/assets/images/logo.png`}
-          alt={process.env.REACT_APP_NAME}
-        />
+        <Link to={AppRoutes.Home}>
+          <SidebarLogo
+            src={`${process.env.PUBLIC_URL}/assets/images/logo_white.png`}
+            alt={process.env.REACT_APP_NAME}
+          />
+        </Link>
         <SidebarCloseButton onClick={() => setSidebarIsOpen(false)}>
           <SidebarCloseButtonIcon
             src={`${process.env.PUBLIC_URL}/assets/icons/close.svg`}
@@ -25,8 +29,8 @@ export default function Header({ sidebarIsOpen, setSidebarIsOpen }) {
           <SidebarMenu>
             <SidebarMenuItem>
               <SidebarMenuItemLink
-                to="/client-area"
-                data-active={location.pathname.includes("/client-area")}
+                to={AppRoutes.ClientArea}
+                data-active={location.pathname.includes(AppRoutes.ClientArea)}
               >
                 <SidebarMenuItemLinkIcon
                   src={`${process.env.PUBLIC_URL}/assets/icons/home.svg`}
@@ -37,11 +41,11 @@ export default function Header({ sidebarIsOpen, setSidebarIsOpen }) {
             </SidebarMenuItem>
             <SidebarMenuItem>
               <SidebarMenuItemLink
-                to="/orders"
-                data-active={location.pathname.includes("/orders")}
+                to={AppRoutes.Orders}
+                data-active={location.pathname.includes(AppRoutes.Orders)}
               >
                 <SidebarMenuItemLinkIcon
-                  src={`${process.env.PUBLIC_URL}/assets/icons/orders.svg`}
+                  src={`${process.env.PUBLIC_URL}/assets/icons/order.svg`}
                   alt="Orders"
                 />
                 Orders
@@ -49,8 +53,8 @@ export default function Header({ sidebarIsOpen, setSidebarIsOpen }) {
             </SidebarMenuItem>
             <SidebarMenuItem>
               <SidebarMenuItemLink
-                to="/profile"
-                data-active={location.pathname.includes("/profile")}
+                to={AppRoutes.Profile}
+                data-active={location.pathname.includes(AppRoutes.Profile)}
               >
                 <SidebarMenuItemLinkIcon
                   src={`${process.env.PUBLIC_URL}/assets/icons/profile.svg`}
@@ -61,7 +65,7 @@ export default function Header({ sidebarIsOpen, setSidebarIsOpen }) {
             </SidebarMenuItem>
           </SidebarMenu>
         </SidebarMenuContainer>
-        <NavLink to="/logout">
+        <NavLink to={AppRoutes.Logout}>
           <SidebarLogoutButton>
             <SidebarLogoutButtonIcon
               src={`${process.env.PUBLIC_URL}/assets/icons/logout.svg`}
@@ -141,6 +145,7 @@ const SidebarCloseButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
 
   @media screen and (min-width: 1024px) {
     display: none;
@@ -210,6 +215,15 @@ const SidebarLogoutButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: 0.2s;
+  cursor: pointer;
+
+  &:hover {
+    transition: 0.2s;
+    -moz-box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.07);
+    -webkit-box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.07);
+    box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.07);
+  }
 `;
 const SidebarLogoutButtonIcon = styled.img`
   display: block;

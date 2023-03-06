@@ -5,22 +5,24 @@ import styled from "styled-components";
 
 import Colors from "../utils/colors.util";
 
+import AppRoutes from "../router/app.routes";
+
 export default function Footer() {
   return (
     <StyledFooter>
       <FooterContent>
         <FooterWrapper>
           <FooterInfos>
-            <Link to="/">
+            <Link to={AppRoutes.Home}>
               <FooterBrand
                 src={`${process.env.PUBLIC_URL}/assets/images/logo.png`}
-                alt="Secure Smurf Shop"
+                alt={process.env.REACT_APP_NAME}
               />
             </Link>
             <FooterName>Buy LoL Smurf Accounts</FooterName>
             <FooterSocials>
               <FooterSocialsItem>
-                <FooterSocialsItemLink to="/">
+                <FooterSocialsItemLink to={AppRoutes.Home}>
                   <FooterSocialsItemLinkIcon
                     src={`${process.env.PUBLIC_URL}/assets/icons/twitter.svg`}
                     alt="Twitter"
@@ -28,15 +30,7 @@ export default function Footer() {
                 </FooterSocialsItemLink>
               </FooterSocialsItem>
               <FooterSocialsItem>
-                <FooterSocialsItemLink to="/">
-                  <FooterSocialsItemLinkIcon
-                    src={`${process.env.PUBLIC_URL}/assets/icons/discord.svg`}
-                    alt="Discord"
-                  />
-                </FooterSocialsItemLink>
-              </FooterSocialsItem>
-              <FooterSocialsItem>
-                <FooterSocialsItemLink to="/">
+                <FooterSocialsItemLink to={AppRoutes.Home}>
                   <FooterSocialsItemLinkIcon
                     src={`${process.env.PUBLIC_URL}/assets/icons/instagram.svg`}
                     alt="Instagram"
@@ -44,7 +38,7 @@ export default function Footer() {
                 </FooterSocialsItemLink>
               </FooterSocialsItem>
               <FooterSocialsItem>
-                <FooterSocialsItemLink to="/">
+                <FooterSocialsItemLink to={AppRoutes.Home}>
                   <FooterSocialsItemLinkIcon
                     src={`${process.env.PUBLIC_URL}/assets/icons/facebook.svg`}
                     alt="Facebook"
@@ -58,17 +52,17 @@ export default function Footer() {
               <FooterSectionTitle>Marketplace</FooterSectionTitle>
               <FooterSectionLinks>
                 <FooterSectionLinksItem>
-                  <FooterSectionLinksItemLink>
+                  <FooterSectionLinksItemLink to={AppRoutes.Store}>
                     EUW LoL Smurf
                   </FooterSectionLinksItemLink>
                 </FooterSectionLinksItem>
                 <FooterSectionLinksItem>
-                  <FooterSectionLinksItemLink>
+                  <FooterSectionLinksItemLink to={AppRoutes.Store}>
                     EUNE LoL Smurf
                   </FooterSectionLinksItemLink>
                 </FooterSectionLinksItem>
                 <FooterSectionLinksItem>
-                  <FooterSectionLinksItemLink>
+                  <FooterSectionLinksItemLink to={AppRoutes.Store}>
                     NA LoL Smurf
                   </FooterSectionLinksItemLink>
                 </FooterSectionLinksItem>
@@ -78,17 +72,7 @@ export default function Footer() {
               <FooterSectionTitle>Support</FooterSectionTitle>
               <FooterSectionLinks>
                 <FooterSectionLinksItem>
-                  <FooterSectionLinksItemLink>
-                    Discord Server
-                  </FooterSectionLinksItemLink>
-                </FooterSectionLinksItem>
-                <FooterSectionLinksItem>
-                  <FooterSectionLinksItemLink>
-                    Payment Support
-                  </FooterSectionLinksItemLink>
-                </FooterSectionLinksItem>
-                <FooterSectionLinksItem>
-                  <FooterSectionLinksItemLink>
+                  <FooterSectionLinksItemLink to={AppRoutes.Contact}>
                     Contact Us
                   </FooterSectionLinksItemLink>
                 </FooterSectionLinksItem>
@@ -98,7 +82,7 @@ export default function Footer() {
               <FooterSectionTitle>Legal</FooterSectionTitle>
               <FooterSectionLinks>
                 <FooterSectionLinksItem>
-                  <FooterSectionLinksItemLink>
+                  <FooterSectionLinksItemLink to={AppRoutes.ToS}>
                     Terms of Service
                   </FooterSectionLinksItemLink>
                 </FooterSectionLinksItem>
@@ -125,7 +109,7 @@ const StyledFooter = styled.footer`
   }
 `;
 const FooterContent = styled.div`
-  width: 80%;
+  width: 90%;
   margin: 0 auto;
 `;
 const FooterInfos = styled.div`

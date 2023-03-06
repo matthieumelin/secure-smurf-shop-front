@@ -1,5 +1,8 @@
+import moment from "moment";
 import React from "react";
 import { Helmet } from "react-helmet-async";
+import { useSelector } from "react-redux";
+import { Navigate } from "react-router";
 
 import styled from "styled-components";
 
@@ -9,24 +12,34 @@ import Navbar from "../../components/client-area/navbar.component";
 
 import Colors from "../../utils/colors.util";
 
+import AppRoutes from "../../router/app.routes";
+
 export default function ClientAreaIndex({ sidebarIsOpen, setSidebarIsOpen }) {
+  const token = useSelector((state) => state.user.token);
+  const data = useSelector((state) => state.user.data);
+
   const orders = [
     {
       id: 1,
       product: "Basic",
-      date: "2023-02-05",
+      date: new Date(Date.now()),
     },
     {
       id: 2,
       product: "Starter",
-      date: "2023-02-07",
+      date: new Date(Date.now()),
     },
     {
       id: 3,
       product: "Prime",
-      date: "2023-02-15",
+      date: new Date(Date.now()),
     },
   ];
+
+  if (!token) {
+    return <Navigate to={AppRoutes.Login} />;
+  }
+
   return (
     <StyledClientAreaIndex>
       <Helmet>
@@ -42,7 +55,7 @@ export default function ClientAreaIndex({ sidebarIsOpen, setSidebarIsOpen }) {
           <MainContent>
             <Container>
               <MainTitle>Welcome</MainTitle>
-              <MainUsername>cQ2GMfWl</MainUsername>
+              <MainUsername>{data.username}</MainUsername>
               <ProductCategories>
                 <ProductCategoryCard
                   data={{ icon: "diamond.svg", name: "Accounts And Smurfs" }}
@@ -55,31 +68,66 @@ export default function ClientAreaIndex({ sidebarIsOpen, setSidebarIsOpen }) {
                   </LatestOrdersHeaderTitle>
                   <LatestOrdersHeaderMore>See all</LatestOrdersHeaderMore>
                 </LatestOrdersHeader>
-                <LatestOrdersContent>
-                  <LatestOrdersTable>
-                    <LatestOrdersTableHeader>
-                      <LatestOrdersTableHeaderRow>
-                        ID
-                      </LatestOrdersTableHeaderRow>
-                      <LatestOrdersTableHeaderRow>
-                        Name
-                      </LatestOrdersTableHeaderRow>
-                      <LatestOrdersTableHeaderRow>
-                        Date
-                      </LatestOrdersTableHeaderRow>
-                    </LatestOrdersTableHeader>
-                  </LatestOrdersTable>
-                  {orders &&
-                    orders.map((order) => {
-                      return (
-                        <LatestOrder key={`order_${order.id}`}>
-                          <LatestOrderColumn>{order.id}</LatestOrderColumn>
-                          <LatestOrderColumn>{order.product}</LatestOrderColumn>
-                          <LatestOrderColumn>{order.date}</LatestOrderColumn>
-                        </LatestOrder>
-                      );
-                    })}
-                </LatestOrdersContent>
+                {orders.length ? (
+                  <LatestOrdersContent>
+                    <LatestOrdersTable>
+                      <LatestOrdersTableColumn>
+                        <LatestOrdersTableColumnTitle>
+                          ID
+                        </LatestOrdersTableColumnTitle>
+                        <LatestOrdersTableColumnDatas>
+                          {orders.map((order) => {
+                            return (
+                              <LatestOrdersTableColumnData
+                                key={`order_id_${order.id}`}
+                              >
+                                {order.id}
+                              </LatestOrdersTableColumnData>
+                            );
+                          })}
+                        </LatestOrdersTableColumnDatas>
+                      </LatestOrdersTableColumn>
+                      <LatestOrdersTableColumn>
+                        <LatestOrdersTableColumnTitle>
+                          Product
+                        </LatestOrdersTableColumnTitle>
+                        <LatestOrdersTableColumnDatas>
+                          {orders.map((order) => {
+                            return (
+                              <LatestOrdersTableColumnData
+                                key={`order_name_${order.id}`}
+                              >
+                                {order.product}
+                              </LatestOrdersTableColumnData>
+                            );
+                          })}
+                        </LatestOrdersTableColumnDatas>
+                      </LatestOrdersTableColumn>
+                      <LatestOrdersTableColumn>
+                        <LatestOrdersTableColumnTitle>
+                          Date
+                        </LatestOrdersTableColumnTitle>
+                        <LatestOrdersTableColumnDatas>
+                          {orders.map((order) => {
+                            return (
+                              <LatestOrdersTableColumnData
+                                key={`order_date_${order.id}`}
+                              >
+                                {moment(order.date).format("ll")}
+                              </LatestOrdersTableColumnData>
+                            );
+                          })}
+                        </LatestOrdersTableColumnDatas>
+                      </LatestOrdersTableColumn>
+                    </LatestOrdersTable>
+                  </LatestOrdersContent>
+                ) : (
+                  <LatestOrdersContent>
+                    <LatestOrdersMessage>
+                      No data to display
+                    </LatestOrdersMessage>
+                  </LatestOrdersContent>
+                )}
               </LatestOrders>
             </Container>
           </MainContent>
@@ -88,7 +136,7 @@ export default function ClientAreaIndex({ sidebarIsOpen, setSidebarIsOpen }) {
     </StyledClientAreaIndex>
   );
 }
-
+// id name date
 const StyledClientAreaIndex = styled.div``;
 const Wrapper = styled.div``;
 const Main = styled.main``;
@@ -140,20 +188,34 @@ const LatestOrdersContent = styled.div`
   margin: 20px 0 0 0;
   border-radius: 10px;
 `;
-const LatestOrdersTable = styled.div``;
-const LatestOrdersTableHeader = styled.div`
+const LatestOrdersTable = styled.div`
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column;
+  @media screen and (min-width: 1024px) {
+    flex-direction: row;
+    justify-content: space-between;
+  }
 `;
-const LatestOrdersTableHeaderRow = styled.p`
-  margin: 0;
+const LatestOrdersTableColumnTitle = styled.p`
   color: rgba(255, 255, 255, 0.7);
+  margin: 0;
 `;
-const LatestOrder = styled.div`
-  display: flex;
-  justify-content: space-between;
+const LatestOrdersTableColumn = styled.div`
+  margin: 0 0 10px 0;
+
+  &:last-child {
+    margin: 0;
+  }
+
+  @media screen and (min-width: 1024px) {
+    margin: 0;
+  }
 `;
-const LatestOrderColumn = styled.div`
+const LatestOrdersTableColumnDatas = styled.div``;
+const LatestOrdersTableColumnData = styled.div`
   color: white;
+`;
+const LatestOrdersMessage = styled.p`
+  color: white;
+  margin: 0;
 `;

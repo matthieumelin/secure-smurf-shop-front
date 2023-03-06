@@ -1,7 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
-import { Link } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { setData } from "../../redux/reducers/user.reducer";
+import { Link, Navigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
+import { ErrorMessage } from "@hookform/error-message";
+import Gravatar from "react-gravatar";
+
+import moment from "moment/moment";
 
 import styled from "styled-components";
 
@@ -12,15 +18,36 @@ import Colors from "../../utils/colors.util";
 
 import axios from "axios";
 
-export default function Profile({ sidebarIsOpen, setSidebarIsOpen }) {
+import AppRoutes from "../../router/app.routes";
+
+import ErrorContainer from "../../utils/error-container.util";
+
+export default function Profile({ toast, sidebarIsOpen, setSidebarIsOpen }) {
+  const token = useSelector((state) => state.user.token);
+  const userData = useSelector((state) => state.user.data);
+
   const [countries, setCountries] = useState([]);
   const [editPersonalDetails, setEditPersonalDetails] = useState(false);
+
+  const dispatch = useDispatch();
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm();
+  } = useForm(
+    userData
+      ? {
+          defaultValues: {
+            username: userData.username,
+            firstName: userData.firstName,
+            lastName: userData.lastName,
+            discord: userData.discord,
+            country: userData.country,
+          },
+        }
+      : null
+  );
 
   useEffect(() => {
     axios
@@ -30,6 +57,52 @@ export default function Profile({ sidebarIsOpen, setSidebarIsOpen }) {
       })
       .catch((err) => console.error(err));
   }, []);
+
+  const onSaveProfile = async (data) => {
+    await axios
+      .patch(`${process.env.REACT_APP_API_URL}/users/update`, {
+        currentUsername: userData.username,
+        currentFirstName: userData.firstName,
+        currentLastName: userData.lastName,
+        currentDiscord: userData.discord,
+        newUsername: data.username ? data.username : userData.username,
+        newFirstName: data.firstName ? data.firstName : userData.firstName,
+        newLastName: data.lastName ? data.lastName : userData.lastName,
+        newDiscord: data.discord ? data.discord : userData.discord,
+        country: data.country ? data.country : userData.country,
+        notifications: data.notifications
+          ? data.notifications
+          : userData.notifications,
+      })
+      .then((res) => {
+        if (res.status === 200) {
+          const newData = {
+            ...userData,
+            username: data.username,
+            firstName: data.firstName,
+            lastName: data.lastName,
+            discord: data.discord,
+            country: data.country,
+            notifications: data.notifications,
+          };
+
+          localStorage.setItem("data", JSON.stringify(newData));
+
+          dispatch(setData(newData));
+
+          setEditPersonalDetails(false);
+
+          toast.success(res.data.message);
+        }
+      })
+      .catch((err) => {
+        toast.error(err.response.data.message);
+      });
+  };
+
+  if (!token) {
+    return <Navigate to={AppRoutes.Login} />;
+  }
 
   return (
     <StyledClientAreaIndex>
@@ -47,32 +120,33 @@ export default function Profile({ sidebarIsOpen, setSidebarIsOpen }) {
             <MainTitle>Profile</MainTitle>
             <Menu>
               <MenuItem>
-                <MenuItemLink to="/profile" data-active={true}>
+                <MenuItemLink to={AppRoutes.Profile} data-active={true}>
                   Profile
                 </MenuItemLink>
               </MenuItem>
               <MenuItem>
-                <MenuItemLink to="/profile/billing">Billing</MenuItemLink>
+                <MenuItemLink to={AppRoutes.ProfileBilling}>
+                  Billing
+                </MenuItemLink>
               </MenuItem>
             </Menu>
             <Container>
               <Infos>
-                <InfosAvatar
-                  src="https://dashboard.boostroyal.com/assets/img/default-avatar.png"
-                  alt={"GeekLegend"}
-                />
-                <InfosUsername>GeekLegend</InfosUsername>
-                <InfosEmail>geeklegendofficiel@gmail.com</InfosEmail>
+                <InfosAvatar email={userData.email} size={80} />
+                <InfosUsername>{userData.username}</InfosUsername>
+                <InfosEmail>{userData.email}</InfosEmail>
                 <InfosId>
                   <InfosIdIcon
                     src={`${process.env.PUBLIC_URL}/assets/icons/id.svg`}
-                    alt="1"
+                    alt={userData.id}
                   />
-                  Account ID - 1
+                  Account ID - {userData.id}
                 </InfosId>
                 <InfosCreatedAt>
                   member since
-                  <InfosCreatedAtSpan>Feb 6, 2023</InfosCreatedAtSpan>
+                  <InfosCreatedAtSpan>
+                    {moment(userData.createdAt).format("ll")}
+                  </InfosCreatedAtSpan>
                 </InfosCreatedAt>
               </Infos>
               {editPersonalDetails ? (
@@ -88,9 +162,7 @@ export default function Profile({ sidebarIsOpen, setSidebarIsOpen }) {
                     >
                       <CustomButton
                         type="button"
-                        onClick={() =>
-                          setEditPersonalDetails(!editPersonalDetails)
-                        }
+                        onClick={handleSubmit(onSaveProfile)}
                       >
                         Save
                       </CustomButton>
@@ -122,101 +194,183 @@ export default function Profile({ sidebarIsOpen, setSidebarIsOpen }) {
                   </PersonalDetailsWrapper>
                   <PersonalDetailsContent>
                     <PersonalDetailsForm>
-                      <PersonalDetailsFormTitle>
-                        Personal info
-                      </PersonalDetailsFormTitle>
-                      <PersonalDetailsFormGroups>
-                        <PersonalDetailsFormGroup>
-                          <PersonalDetailsFormGroupLabel htmlFor="username">
-                            Username
-                          </PersonalDetailsFormGroupLabel>
-                          <PersonalDetailsFormGroupInput
-                            type="text"
-                            id="username"
-                            name="username"
-                            error={errors.username}
-                            {...register("username")}
-                          />
-                        </PersonalDetailsFormGroup>
-                        <PersonalDetailsFormGroup>
-                          <PersonalDetailsFormGroupLabel htmlFor="firstName">
-                            First name
-                          </PersonalDetailsFormGroupLabel>
-                          <PersonalDetailsFormGroupInput
-                            type="text"
-                            id="firstName"
-                            name="firstName"
-                            error={errors.firstName}
-                            {...register("firstName")}
-                          />
-                        </PersonalDetailsFormGroup>
-                        <PersonalDetailsFormGroup>
-                          <PersonalDetailsFormGroupLabel htmlFor="lastName">
-                            Last name
-                          </PersonalDetailsFormGroupLabel>
-                          <PersonalDetailsFormGroupInput
-                            type="text"
-                            id="lastName"
-                            name="lastName"
-                            error={errors.lastName}
-                            {...register("lastName")}
-                          />
-                        </PersonalDetailsFormGroup>
-                        <PersonalDetailsFormGroup>
-                          <PersonalDetailsFormGroupLabel htmlFor="discord">
-                            Discord
-                          </PersonalDetailsFormGroupLabel>
-                          <PersonalDetailsFormGroupInput
-                            type="text"
-                            id="discord"
-                            name="discord"
-                            error={errors.discord}
-                            {...register("discord")}
-                          />
-                        </PersonalDetailsFormGroup>
-                        <PersonalDetailsFormGroup>
-                          <PersonalDetailsFormGroupLabel htmlFor="country">
-                            Country
-                          </PersonalDetailsFormGroupLabel>
-                          <PersonalDetailsFormGroupSelect
-                            id="country"
-                            name="country"
-                            error={errors.country}
-                            {...register("country")}
-                          >
-                            {countries &&
-                              countries.map((country, index) => {
-                                return (
-                                  <PersonalDetailsFormGroupSelectOption
-                                    key={`country_${index}`}
-                                    value={country.code}
-                                  >
-                                    {country.name}
-                                  </PersonalDetailsFormGroupSelectOption>
-                                );
-                              })}
-                          </PersonalDetailsFormGroupSelect>
-                        </PersonalDetailsFormGroup>
-                      </PersonalDetailsFormGroups>
-                    </PersonalDetailsForm>
-                    <PersonalDetailsForm>
-                      <PersonalDetailsFormTitle>
-                        Notifications
-                      </PersonalDetailsFormTitle>
-                      <PersonalDetailsFormGroups>
-                        <PersonalDetailsFormGroupWrapper>
-                          <PersonalDetailsFormGroupLabel htmlFor="notifications">
-                            Receive promotional emails
-                          </PersonalDetailsFormGroupLabel>
-                          <PersonalDetailsFormGroupInput
-                            type="checkbox"
-                            id="notifications"
-                            name="notifications"
-                            error={errors.notifications}
-                            {...register("notifications")}
-                          />
-                        </PersonalDetailsFormGroupWrapper>
-                      </PersonalDetailsFormGroups>
+                      <PersonalDetailsFormSection>
+                        <PersonalDetailsFormSectionTitle>
+                          Personal info
+                        </PersonalDetailsFormSectionTitle>
+                        <PersonalDetailsFormGroups>
+                          <PersonalDetailsFormGroup>
+                            <PersonalDetailsFormGroupLabel htmlFor="username">
+                              Username
+                            </PersonalDetailsFormGroupLabel>
+                            <PersonalDetailsFormGroupInput
+                              type="text"
+                              id="username"
+                              name="username"
+                              error={errors.username}
+                              {...register("username")}
+                            />
+                            {errors.username && (
+                              <ErrorMessage
+                                errors={errors}
+                                name="username"
+                                as={<ErrorContainer />}
+                              />
+                            )}
+                          </PersonalDetailsFormGroup>
+                          <PersonalDetailsFormGroup>
+                            <PersonalDetailsFormGroupLabel htmlFor="firstName">
+                              First name
+                            </PersonalDetailsFormGroupLabel>
+                            <PersonalDetailsFormGroupInput
+                              type="text"
+                              id="firstName"
+                              name="firstName"
+                              error={errors.firstName}
+                              {...register("firstName")}
+                            />
+                            {errors.firstName && (
+                              <ErrorMessage
+                                errors={errors}
+                                name="firstName"
+                                as={<ErrorContainer />}
+                              />
+                            )}
+                          </PersonalDetailsFormGroup>
+                          <PersonalDetailsFormGroup>
+                            <PersonalDetailsFormGroupLabel htmlFor="lastName">
+                              Last name
+                            </PersonalDetailsFormGroupLabel>
+                            <PersonalDetailsFormGroupInput
+                              type="text"
+                              id="lastName"
+                              name="lastName"
+                              error={errors.lastName}
+                              {...register("lastName")}
+                            />
+                            {errors.lastName && (
+                              <ErrorMessage
+                                errors={errors}
+                                name="lastName"
+                                as={<ErrorContainer />}
+                              />
+                            )}
+                          </PersonalDetailsFormGroup>
+                          <PersonalDetailsFormGroup>
+                            <PersonalDetailsFormGroupLabel htmlFor="discord">
+                              Discord
+                            </PersonalDetailsFormGroupLabel>
+                            <PersonalDetailsFormGroupInput
+                              type="text"
+                              id="discord"
+                              name="discord"
+                              error={errors.discord}
+                              {...register("discord")}
+                            />
+                            {errors.discord && (
+                              <ErrorMessage
+                                errors={errors}
+                                name="discord"
+                                as={<ErrorContainer />}
+                              />
+                            )}
+                          </PersonalDetailsFormGroup>
+                          <PersonalDetailsFormGroup>
+                            <PersonalDetailsFormGroupLabel htmlFor="country">
+                              Country
+                            </PersonalDetailsFormGroupLabel>
+                            <PersonalDetailsFormGroupSelect
+                              id="country"
+                              name="country"
+                              error={errors.country}
+                              {...register("country")}
+                            >
+                              {countries &&
+                                countries.map((country, index) => {
+                                  return (
+                                    <PersonalDetailsFormGroupSelectOption
+                                      key={`country_${index}`}
+                                      value={country.name}
+                                    >
+                                      {country.name}
+                                    </PersonalDetailsFormGroupSelectOption>
+                                  );
+                                })}
+                            </PersonalDetailsFormGroupSelect>
+                            {errors.country && (
+                              <ErrorMessage
+                                errors={errors}
+                                name="country"
+                                as={<ErrorContainer />}
+                              />
+                            )}
+                          </PersonalDetailsFormGroup>
+                        </PersonalDetailsFormGroups>
+                      </PersonalDetailsFormSection>
+                      <PersonalDetailsFormSection>
+                        <PersonalDetailsFormSectionTitle>
+                          Change password
+                        </PersonalDetailsFormSectionTitle>
+                        <PersonalDetailsFormGroups>
+                          <PersonalDetailsFormGroup>
+                            <PersonalDetailsFormGroupLabel htmlFor="newPassword">
+                              New password
+                            </PersonalDetailsFormGroupLabel>
+                            <PersonalDetailsFormGroupInput
+                              type="password"
+                              id="newPassword"
+                              name="newPassword"
+                              error={errors.newPassword}
+                              {...register("newPassword")}
+                            />
+                            {errors.newPassword && (
+                              <ErrorMessage
+                                errors={errors}
+                                name="newPassword"
+                                as={<ErrorContainer />}
+                              />
+                            )}
+                          </PersonalDetailsFormGroup>
+                          <PersonalDetailsFormGroup>
+                            <PersonalDetailsFormGroupLabel htmlFor="currentPassword">
+                              Current password
+                            </PersonalDetailsFormGroupLabel>
+                            <PersonalDetailsFormGroupInput
+                              type="password"
+                              id="currentPassword"
+                              name="currentPassword"
+                              error={errors.currentPassword}
+                              {...register("currentPassword")}
+                            />
+                            {errors.currentPassword && (
+                              <ErrorMessage
+                                errors={errors}
+                                name="currentPassword"
+                                as={<ErrorContainer />}
+                              />
+                            )}
+                          </PersonalDetailsFormGroup>
+                        </PersonalDetailsFormGroups>
+                      </PersonalDetailsFormSection>
+                      <PersonalDetailsFormSection>
+                        <PersonalDetailsFormSectionTitle>
+                          Notifications
+                        </PersonalDetailsFormSectionTitle>
+                        <PersonalDetailsFormGroups>
+                          <PersonalDetailsFormGroupWrapper>
+                            <PersonalDetailsFormGroupLabel htmlFor="notifications">
+                              Receive promotional emails
+                            </PersonalDetailsFormGroupLabel>
+                            <PersonalDetailsFormGroupInput
+                              type="checkbox"
+                              id="notifications"
+                              name="notifications"
+                              error={errors.notifications}
+                              {...register("notifications")}
+                            />
+                          </PersonalDetailsFormGroupWrapper>
+                        </PersonalDetailsFormGroups>
+                      </PersonalDetailsFormSection>
                     </PersonalDetailsForm>
                   </PersonalDetailsContent>
                 </PersonalDetails>
@@ -244,40 +398,54 @@ export default function Profile({ sidebarIsOpen, setSidebarIsOpen }) {
                           Username
                         </PersonalDetailsGroupName>
                         <PersonalDetailsGroupValue>
-                          GeekLegend
+                          {userData.username
+                            ? userData.username
+                            : "No username"}
                         </PersonalDetailsGroupValue>
                       </PersonalDetailsGroup>
                       <PersonalDetailsGroup>
                         <PersonalDetailsGroupName>
                           First Name
                         </PersonalDetailsGroupName>
-                        <PersonalDetailsGroupValue></PersonalDetailsGroupValue>
+                        <PersonalDetailsGroupValue>
+                          {userData.firstName
+                            ? userData.firstName
+                            : "No first name"}
+                        </PersonalDetailsGroupValue>
                       </PersonalDetailsGroup>
                       <PersonalDetailsGroup>
                         <PersonalDetailsGroupName>
                           Last Name
                         </PersonalDetailsGroupName>
-                        <PersonalDetailsGroupValue></PersonalDetailsGroupValue>
+                        <PersonalDetailsGroupValue>
+                          {userData.lastName
+                            ? userData.lastName
+                            : "No last name"}
+                        </PersonalDetailsGroupValue>
                       </PersonalDetailsGroup>
                       <PersonalDetailsGroup>
                         <PersonalDetailsGroupName>
                           Discord
                         </PersonalDetailsGroupName>
-                        <PersonalDetailsGroupValue></PersonalDetailsGroupValue>
+                        <PersonalDetailsGroupValue>
+                          {userData.discord ? userData.discord : "No discord"}
+                        </PersonalDetailsGroupValue>
                       </PersonalDetailsGroup>
                       <PersonalDetailsGroup>
                         <PersonalDetailsGroupName>
                           Email
                         </PersonalDetailsGroupName>
                         <PersonalDetailsGroupValue>
-                          geeklegendofficiel@gmail.com
+                          {userData.email}
                         </PersonalDetailsGroupValue>
                       </PersonalDetailsGroup>
                       <PersonalDetailsGroup>
                         <PersonalDetailsGroupName>
                           Country
                         </PersonalDetailsGroupName>
-                        <PersonalDetailsGroupValue></PersonalDetailsGroupValue>
+                        <PersonalDetailsGroupValue>
+                          {userData.country ? userData.country : "No country"}
+                        </PersonalDetailsGroupValue>
                       </PersonalDetailsGroup>
                     </PersonalDetailsGroups>
                   </PersonalDetailsContent>
@@ -292,11 +460,7 @@ export default function Profile({ sidebarIsOpen, setSidebarIsOpen }) {
 }
 
 const StyledClientAreaIndex = styled.div``;
-const Wrapper = styled.div`
-  @media screen and (min-width: 1024px) {
-    display: flex;
-  }
-`;
+const Wrapper = styled.div``;
 const Main = styled.main`
   @media screen and (min-width: 1024px) {
     width: 100%;
@@ -350,9 +514,10 @@ const Infos = styled.div`
   margin: 30px 0 0 0;
   height: max-content;
 `;
-const InfosAvatar = styled.img`
+const InfosAvatar = styled(Gravatar)`
   display: block;
-  margin: 30px auto 0 auto;
+  margin: 20px auto;
+  border-radius: 100px;
 `;
 const InfosUsername = styled.h2`
   color: white;
@@ -431,8 +596,12 @@ const PersonalDetailsContent = styled.div`
   display: grid;
   row-gap: 30px;
 `;
-const PersonalDetailsForm = styled.form``;
-const PersonalDetailsFormTitle = styled.h3`
+const PersonalDetailsForm = styled.form`
+  display: grid;
+  gap: 30px;
+`;
+const PersonalDetailsFormSection = styled.div``;
+const PersonalDetailsFormSectionTitle = styled.h3`
   margin: 0;
   color: rgba(255, 255, 255, 0.6);
 `;
@@ -463,6 +632,8 @@ const PersonalDetailsFormGroupInput = styled.input`
   border: none;
   outline: none;
   margin: 10px 0 0;
+  color: white;
+  font-size: inherit;
 
   ${PersonalDetailsFormGroupWrapper} & {
     width: initial;
@@ -493,8 +664,8 @@ const PersonalDetailsFormGroupSelect = styled.select`
 const PersonalDetailsFormGroupSelectOption = styled.option``;
 const PersonalDetailsGroups = styled.div`
   display: grid;
-  grid-template-columns: repeat(1fr, 1fr);
-  grid-gap: 20px;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 10px;
 `;
 const PersonalDetailsGroup = styled.div``;
 const PersonalDetailsGroupName = styled.p`
@@ -514,4 +685,12 @@ const CustomButton = styled.button`
   font-weight: 600;
   padding: 10px 15px;
   cursor: pointer;
+  transition: 0.2s;
+
+  &:hover {
+    transition: 0.2s;
+    -moz-box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.07);
+    -webkit-box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.07);
+    box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.07);
+  }
 `;

@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from "react";
 import gsap from "gsap";
 import chroma from "chroma-js";
 
-export default function Button({ type, title, onClick }) {
+export default function Button({ type, title, onClick, disabled }) {
   const buttonRef = useRef(null);
 
   useEffect(() => {
@@ -47,6 +47,7 @@ export default function Button({ type, title, onClick }) {
       className="glow-button"
       ref={buttonRef}
       onClick={onClick}
+      disabled={disabled}
     >
       <span>{title}</span>
     </button>

@@ -1,19 +1,17 @@
-import React from "react";
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import React, { useEffect, useState, useRef } from "react";
+import { Link, Navigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { setToken, setData } from "../redux/reducers/user.reducer";
 import { useForm } from "react-hook-form";
 import { ErrorMessage } from "@hookform/error-message";
 import { Helmet } from "react-helmet-async";
+import ReCAPTCHA from "react-google-recaptcha";
 
 import jwtDecode from "jwt-decode";
 
 import styled from "styled-components";
 
-import Header from "../components/header.component";
-import Footer from "../components/footer.component";
 import Button from "../components/utils/button.component";
-import Toast, { ToastTypes } from "../components/utils/toast.component";
 
 import ErrorContainer from "../utils/error-container.util";
 import { PasswordRegEx, EmailRegEx } from "../utils/regex.util";
@@ -21,22 +19,57 @@ import Colors from "../utils/colors.util";
 
 import axios from "axios";
 
-export default function Login({ toast, setToast }) {
+import AppRoutes from "../router/app.routes";
+
+import IndexDOM from "../dom/index.dom";
+
+const FormTypes = {
+  LOGIN: "LOGIN",
+  REGISTER: "REGISTER",
+  FORGOT: "FORGOT",
+};
+
+export default function Login({ toast }) {
   const token = useSelector((state) => state.user.token);
+
   const dispatch = useDispatch();
 
-  const navigate = useNavigate();
+  const [captchaResponse, setCaptchaResponse] = useState(null);
+  const [formType, setFormType] = useState(FormTypes.LOGIN);
+
+  const recaptchaRef = useRef();
 
   const {
     reset,
     register,
     handleSubmit,
-    clearErrors,
     formState: { errors },
   } = useForm({
-    email: "",
-    password: "",
+    mode: "onChange",
+    reValidateMode: "onChange",
   });
+
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = "initial";
+    };
+  });
+
+  useEffect(() => {
+    reset();
+    setCaptchaResponse(null);
+    recaptchaRef.current.reset();
+  }, [formType]);
+
+  const onChange = (value) => {
+    setCaptchaResponse(value);
+  };
+
+  const onChangeFormType = (event, type) => {
+    event.preventDefault();
+    setFormType(type);
+  };
 
   const onSubmit = async (data) => {
     await axios
@@ -56,114 +89,285 @@ export default function Login({ toast, setToast }) {
           dispatch(setToken(accessToken));
 
           reset();
-          setToast({ type: ToastTypes.SUCCESS, message: res.data.message });
+
+          recaptchaRef.current.reset();
+
+          toast.success(res.data.message);
         }
       })
       .catch((err) => {
-        setToast({
-          type: ToastTypes.ERROR,
-          message: err.response.data.message,
-        });
+        toast.error(err.response.data.message);
       });
   };
 
   if (token) {
-    return <Navigate to="/" />;
+    return <Navigate to={AppRoutes.Home} />;
   }
 
   return (
     <StyledLogin>
       <Helmet>
-        <title>Login</title>
+        {formType === FormTypes.LOGIN ? (
+          <title>Login</title>
+        ) : formType === FormTypes.REGISTER ? (
+          <title>Register</title>
+        ) : (
+          <title>Forgot password</title>
+        )}
       </Helmet>
-      <Header />
-      <Main>
-        <Toast type={toast.type} message={toast.message} setToast={setToast} />
-        <Form onSubmit={handleSubmit(onSubmit)}>
-          <FormTitle>Sign In</FormTitle>
-          <FormText>
-            New user? <FormLink to="/register">Create an account</FormLink>
-          </FormText>
-          <FormGroups>
+      <FormContainer>
+        {formType === FormTypes.LOGIN ? (
+          <Form onSubmit={handleSubmit(onSubmit)}>
+            <FormWrapper>
+              <FormWrapperTitle>Sign In</FormWrapperTitle>
+              <FormWrapperClose to={AppRoutes.Home}>
+                <FormWrapperCloseIcon
+                  src={`${process.env.PUBLIC_URL}/assets/icons/close.svg`}
+                  alt="Close"
+                />
+              </FormWrapperClose>
+            </FormWrapper>
+            <FormText>
+              New user?{" "}
+              <FormLink
+                onClick={(event) => onChangeFormType(event, FormTypes.REGISTER)}
+              >
+                Create an account
+              </FormLink>
+            </FormText>
             <FormGroups>
-              <FormGroup>
-                <FormGroupLabel htmlFor="email">Email</FormGroupLabel>
-                <FormGroupInput
-                  type="email"
-                  id="email"
-                  name="email"
-                  error={errors.email}
-                  {...register("email", {
-                    required: {
-                      value: true,
-                      message: "You must enter your email.",
-                    },
-                    pattern: {
-                      value: EmailRegEx,
-                      message: "Invalid email format.",
-                    },
-                  })}
-                />
-                {errors.email && (
-                  <ErrorMessage
-                    errors={errors}
+              <FormGroups>
+                <FormGroup>
+                  <FormGroupLabel htmlFor="email">Email</FormGroupLabel>
+                  <FormGroupInput
+                    type="email"
+                    id="email"
                     name="email"
-                    as={<ErrorContainer />}
+                    error={errors.email}
+                    {...register("email", {
+                      required: {
+                        value: true,
+                        message: "You must enter your email.",
+                      },
+                      pattern: {
+                        value: EmailRegEx,
+                        message: "Invalid email format.",
+                      },
+                    })}
                   />
-                )}
-              </FormGroup>
-              <FormGroup>
-                <FormGroupLabel htmlFor="password">Password</FormGroupLabel>
-                <FormGroupInput
-                  type="password"
-                  id="password"
-                  name="password"
-                  error={errors.password}
-                  {...register("password", {
-                    required: {
-                      value: true,
-                      message: "You must enter your password.",
-                    },
-                    minLength: {
-                      value: 8,
-                      message: "Your password must be at least 8 characters.",
-                    },
-                    pattern: {
-                      value: PasswordRegEx,
-                      message: "Invalid password format.",
-                    },
-                  })}
-                />
-                {errors.password && (
-                  <ErrorMessage
-                    errors={errors}
+                  {errors.email && (
+                    <ErrorMessage
+                      errors={errors}
+                      name="email"
+                      as={<ErrorContainer />}
+                    />
+                  )}
+                </FormGroup>
+                <FormGroup>
+                  <FormGroupLabel htmlFor="password">Password</FormGroupLabel>
+                  <FormGroupInput
+                    type="password"
+                    id="password"
                     name="password"
-                    as={<ErrorContainer />}
+                    error={errors.password}
+                    {...register("password", {
+                      required: {
+                        value: true,
+                        message: "You must enter your password.",
+                      },
+                      minLength: {
+                        value: 8,
+                        message: "Your password must be at least 8 characters.",
+                      },
+                      pattern: {
+                        value: PasswordRegEx,
+                        message: "Invalid password format.",
+                      },
+                    })}
                   />
-                )}
-              </FormGroup>
-              <FormLink to="/">Forgot password?</FormLink>
-              <FormGroup>
-                <Button type={"submit"} title="Sign in" />
-              </FormGroup>
+                  {errors.password && (
+                    <ErrorMessage
+                      errors={errors}
+                      name="password"
+                      as={<ErrorContainer />}
+                    />
+                  )}
+                </FormGroup>
+                <FormGroup>
+                  <FormLink
+                    onClick={(event) =>
+                      onChangeFormType(event, FormTypes.FORGOT)
+                    }
+                  >
+                    Forgot password?
+                  </FormLink>
+                </FormGroup>
+                <FormGroupRecaptcha>
+                  <ReCAPTCHA
+                    ref={recaptchaRef}
+                    sitekey={process.env.REACT_APP_CAPTCHA_KEY}
+                    onChange={onChange}
+                  />
+                  {errors.captcha && (
+                    <ErrorMessage
+                      errors={errors}
+                      name="captcha"
+                      as={<ErrorContainer />}
+                    />
+                  )}
+                </FormGroupRecaptcha>
+                <FormGroup>
+                  <Button
+                    type={"submit"}
+                    title="Sign in"
+                    disabled={!captchaResponse}
+                  />
+                </FormGroup>
+              </FormGroups>
             </FormGroups>
-          </FormGroups>
-        </Form>
-      </Main>
-      <Footer />
+          </Form>
+        ) : formType === FormTypes.REGISTER ? (
+          <Form onSubmit={handleSubmit(onSubmit)}>
+            <FormWrapper>
+              <FormWrapperTitle>Create an account</FormWrapperTitle>
+              <FormWrapperClose to={AppRoutes.Home}>
+                <FormWrapperCloseIcon
+                  src={`${process.env.PUBLIC_URL}/assets/icons/close.svg`}
+                  alt="Close"
+                />
+              </FormWrapperClose>
+            </FormWrapper>
+            <FormText>
+              Already have an account?{" "}
+              <FormLink
+                onClick={(event) => onChangeFormType(event, FormTypes.LOGIN)}
+              >
+                Sign in
+              </FormLink>
+            </FormText>
+            <FormGroups>
+              <FormGroups>
+                <FormGroup>
+                  <FormGroupLabel htmlFor="username">Username</FormGroupLabel>
+                  <FormGroupInput
+                    type="text"
+                    id="username"
+                    name="username"
+                    error={errors.username}
+                    {...register("username", {
+                      required: {
+                        value: true,
+                        message: "You must enter your username.",
+                      },
+                    })}
+                  />
+                  {errors.username && (
+                    <ErrorMessage
+                      errors={errors}
+                      name="username"
+                      as={<ErrorContainer />}
+                    />
+                  )}
+                </FormGroup>
+                <FormGroup>
+                  <FormGroupLabel htmlFor="email">Email</FormGroupLabel>
+                  <FormGroupInput
+                    type="email"
+                    id="email"
+                    name="email"
+                    error={errors.email}
+                    {...register("email", {
+                      required: {
+                        value: true,
+                        message: "You must enter your email.",
+                      },
+                      pattern: {
+                        value: EmailRegEx,
+                        message: "Invalid email format.",
+                      },
+                    })}
+                  />
+                  {errors.email && (
+                    <ErrorMessage
+                      errors={errors}
+                      name="email"
+                      as={<ErrorContainer />}
+                    />
+                  )}
+                </FormGroup>
+                <FormGroup>
+                  <FormGroupLabel htmlFor="password">Password</FormGroupLabel>
+                  <FormGroupInput
+                    type="password"
+                    id="password"
+                    name="password"
+                    error={errors.password}
+                    {...register("password", {
+                      required: {
+                        value: true,
+                        message: "You must enter your password.",
+                      },
+                      minLength: {
+                        value: 8,
+                        message: "Your password must be at least 8 characters.",
+                      },
+                      pattern: {
+                        value: PasswordRegEx,
+                        message: "Invalid password format.",
+                      },
+                    })}
+                  />
+                  {errors.password && (
+                    <ErrorMessage
+                      errors={errors}
+                      name="password"
+                      as={<ErrorContainer />}
+                    />
+                  )}
+                </FormGroup>
+                <FormGroupRecaptcha>
+                  <ReCAPTCHA
+                    ref={recaptchaRef}
+                    sitekey={process.env.REACT_APP_CAPTCHA_KEY}
+                    onChange={onChange}
+                  />
+                </FormGroupRecaptcha>
+                <FormGroup>
+                  <Button type="submit" title="Submit" />
+                </FormGroup>
+              </FormGroups>
+            </FormGroups>
+          </Form>
+        ) : (
+          <Form></Form>
+        )}
+      </FormContainer>
+      <IndexDOM />
     </StyledLogin>
   );
 }
 
 const StyledLogin = styled.div``;
-const Main = styled.main``;
+const FormContainer = styled.div`
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 999;
+`;
 const Form = styled.form`
   background-color: ${Colors.gray};
   padding: 30px;
   display: flex;
   flex-direction: column;
   justify-content: center;
-
+  width: 100%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   @media screen and (min-width: 1024px) {
     max-width: 425px;
     margin: 60px auto;
@@ -171,17 +375,35 @@ const Form = styled.form`
     border: 2px solid ${Colors.primary};
   }
 `;
-const FormTitle = styled.h1`
+const FormWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`;
+const FormWrapperTitle = styled.h1`
   margin: 0;
   color: white;
+`;
+const FormWrapperClose = styled(Link)`
+  text-decoration: none;
+  border-radius: 100px;
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  padding: 10px;
+`;
+const FormWrapperCloseIcon = styled.img`
+  display: block;
+  width: 18px;
+  height: 18px;
 `;
 const FormText = styled.p`
   color: rgba(255, 255, 255, 0.7);
 `;
-const FormLink = styled(Link)`
+const FormLink = styled.button`
   color: ${Colors.primary};
-  text-decoration: none;
-  font-weight: 600;
+  font-size: inherit;
+  font-weight: inherit;
+  background-color: transparent;
+  border: none;
 `;
 const FormGroups = styled.div``;
 const FormGroup = styled.div`
@@ -204,4 +426,12 @@ const FormGroupInput = styled.input`
   color: #ffffff;
   outline: none;
   font-family: inherit;
+`;
+const FormGroupRecaptcha = styled.div`
+  transform: scale(0.85);
+  transform-origin: 0 0;
+
+  @media screen and (min-width: 425px) {
+    transform: scale(1);
+  }
 `;

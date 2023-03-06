@@ -1,6 +1,8 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 import styled from "styled-components";
+import AppRoutes from "../router/app.routes";
 
 import Navbar from "./navbar.component";
 
@@ -26,7 +28,9 @@ export default function Header() {
             instantly 24/7.
           </HeaderDescription>
           <HeaderButtons>
-            <Button title={"Buy account"} type={"submit"} />
+            <Link to={AppRoutes.Store}>
+              <Button title={"Buy account"} type={"submit"} />
+            </Link>
             <Button title={"Buy LoL Scripts"} type={"submit"} />
           </HeaderButtons>
         </HeaderWrapper>
@@ -72,8 +76,6 @@ const HeaderContent = styled.div`
     display: flex;
     align-items: center;
     position: relative;
-    max-width: 90%;
-    margin: 0 auto;
   }
 `;
 const HeaderWrapper = styled.div``;

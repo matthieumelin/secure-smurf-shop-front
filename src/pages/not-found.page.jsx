@@ -10,6 +10,8 @@ import Button from "../components/utils/button.component";
 
 import Colors from "../utils/colors.util";
 
+import AppRoutes from "../router/app.routes";
+
 export default function NotFound() {
   return (
     <StyledNotFound>
@@ -22,7 +24,7 @@ export default function NotFound() {
         <NotFoundDescription>
           The page you were looking for does not exist.
         </NotFoundDescription>
-        <NotFoundLink to="/">
+        <NotFoundLink to={AppRoutes.Home}>
           <Button
             bgColor={Colors.primary}
             title="Go back"

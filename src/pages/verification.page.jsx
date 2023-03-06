@@ -1,24 +1,25 @@
-import React from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Navigate, Link, useNavigate, useParams } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import { ErrorMessage } from "@hookform/error-message";
+import ReCAPTCHA from "react-google-recaptcha";
 
 import styled from "styled-components";
 
-import Header from "../components/header.component";
-import Footer from "../components/footer.component";
 import Button from "../components/utils/button.component";
 
 import ErrorContainer from "../utils/error-container.util";
 import Colors from "../utils/colors.util";
 
-import { ToastTypes } from "../components/utils/toast.component";
-
 import axios from "axios";
 
-export default function Verification({ setToast }) {
+import AppRoutes from "../router/app.routes";
+
+import IndexDOM from "../dom/index.dom";
+
+export default function Verification({ toast }) {
   const accessToken = useSelector((state) => state.user.token);
 
   const { token } = useParams();
@@ -36,6 +37,13 @@ export default function Verification({ setToast }) {
     },
   });
 
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = "initial";
+    };
+  });
+
   const onSubmit = async (data) => {
     await axios
       .post(`${process.env.REACT_APP_API_URL}/users/verify`, {
@@ -44,20 +52,17 @@ export default function Verification({ setToast }) {
       .then((res) => {
         if (res.status === 200) {
           reset();
-          navigate("/login");
-          setToast({ type: ToastTypes.SUCCESS, message: res.data.message });
+          navigate(AppRoutes.Login);
+          toast.success(res.data.message);
         }
       })
       .catch((err) => {
-        setToast({
-          type: ToastTypes.ERROR,
-          message: err.response.data.message,
-        });
+        toast.error(err.response.data.message);
       });
   };
 
   if (accessToken) {
-    return <Navigate to="/" />;
+    return <Navigate to={AppRoutes.Home} />;
   }
 
   return (
@@ -65,13 +70,12 @@ export default function Verification({ setToast }) {
       <Helmet>
         <title>Verification</title>
       </Helmet>
-      <Header />
-      <Main>
+      <FormContainer>
         <Form onSubmit={handleSubmit(onSubmit)}>
           <FormTitle>Verification</FormTitle>
           <FormText>
             Didn't receive anything?{" "}
-            <FormLink to="/resend">Send request.</FormLink>
+            <FormLink to={AppRoutes.Resend}>Send request.</FormLink>
           </FormText>
           <FormGroups>
             <FormGroup>
@@ -101,21 +105,33 @@ export default function Verification({ setToast }) {
             </FormGroup>
           </FormGroups>
         </Form>
-      </Main>
-      <Footer />
+      </FormContainer>
+      <IndexDOM />
     </StyledVerification>
   );
 }
 
 const StyledVerification = styled.div``;
-const Main = styled.main``;
+const FormContainer = styled.div`
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 999;
+`;
 const Form = styled.form`
   background-color: ${Colors.gray};
   padding: 30px;
   display: flex;
   flex-direction: column;
   justify-content: center;
-
+  width: 100%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   @media screen and (min-width: 1024px) {
     max-width: 425px;
     margin: 60px auto;

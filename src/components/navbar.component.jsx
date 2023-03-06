@@ -1,11 +1,13 @@
 import React, { useState } from "react";
-import { Link, NavLink } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
 import styled from "styled-components";
 
 import Button from "./utils/button.component";
 
 import Colors from "../utils/colors.util";
+
+import AppRoutes from "../router/app.routes";
 
 export default function Navbar() {
   const [mobileNavbarIsOpen, setMobileNavbarIsOpen] = useState(false);
@@ -14,7 +16,7 @@ export default function Navbar() {
     <StyledNavbar>
       <MobileNavbar mobileNavbarIsOpen={mobileNavbarIsOpen}>
         <MobileNavbarWrapper>
-          <NavLink to="/">
+          <NavLink to={AppRoutes.Home}>
             <MobileNavbarBrand
               src={`${process.env.PUBLIC_URL}/assets/images/logo_white.png`}
               alt="Secure Smurf Shop"
@@ -31,7 +33,7 @@ export default function Navbar() {
             <MobileNavbarMenu>
               <MobileNavbarMenuTitle>Services</MobileNavbarMenuTitle>
               <MobileNavbarMenuItem>
-                <MobileNavbarMenuItemLink to="/">
+                <MobileNavbarMenuItemLink to={AppRoutes.Home}>
                   <MobileNavbarMenuItemLinkIcon
                     src={`${process.env.PUBLIC_URL}/assets/icons/lol.png`}
                     alt="LoL Smurfs"
@@ -43,13 +45,13 @@ export default function Navbar() {
             <MobileNavbarMenu>
               <MobileNavbarMenuTitle>Other</MobileNavbarMenuTitle>
               <MobileNavbarMenuItem>
-                <MobileNavbarMenuItemLink to="/">
+                <MobileNavbarMenuItemLink to={AppRoutes.Home}>
                   Support
                 </MobileNavbarMenuItemLink>
               </MobileNavbarMenuItem>
             </MobileNavbarMenu>
           </MobileNavbarMenus>
-          <NavLink to="/login">
+          <NavLink to={AppRoutes.ClientArea}>
             <Button title={"Client Area"} />
           </NavLink>
         </MobileNavbarContent>
@@ -64,32 +66,34 @@ export default function Navbar() {
         <DesktopNavbarCenter>
           <DesktopNavbarMenu>
             <DesktopNavbarMenuItem>
-              <DesktopNavbarMenuItemLink to="/">Home</DesktopNavbarMenuItemLink>
+              <DesktopNavbarMenuItemLink to={AppRoutes.Home}>
+                Home
+              </DesktopNavbarMenuItemLink>
             </DesktopNavbarMenuItem>
             <DesktopNavbarMenuItem>
-              <DesktopNavbarMenuItemLink to="/">
+              <DesktopNavbarMenuItemLink to={AppRoutes.Home}>
                 Discord
               </DesktopNavbarMenuItemLink>
             </DesktopNavbarMenuItem>
             <DesktopNavbarMenuItem>
-              <DesktopNavbarMenuItemLink to="/">
+              <DesktopNavbarMenuItemLink to={AppRoutes.Store}>
                 Store
               </DesktopNavbarMenuItemLink>
             </DesktopNavbarMenuItem>
             <DesktopNavbarMenuItem>
-              <DesktopNavbarMenuItemLink to="/">
+              <DesktopNavbarMenuItemLink to={AppRoutes.Contact}>
                 Contact
               </DesktopNavbarMenuItemLink>
             </DesktopNavbarMenuItem>
             <DesktopNavbarMenuItem>
-              <DesktopNavbarMenuItemLink to="/">
+              <DesktopNavbarMenuItemLink to={AppRoutes.Home}>
                 Buy LoL Scripts
               </DesktopNavbarMenuItemLink>
             </DesktopNavbarMenuItem>
           </DesktopNavbarMenu>
         </DesktopNavbarCenter>
         <DesktopNavbarRight>
-          <NavLink to="/login">
+          <NavLink to={AppRoutes.ClientArea}>
             <Button title="Client Area" />
           </NavLink>
         </DesktopNavbarRight>
@@ -257,7 +261,7 @@ const DesktopNavbarMenu = styled.ul`
 `;
 const DesktopNavbarMenuItem = styled.li`
   @media screen and (min-width: 1024px) {
-    margin: 0 30px 0 0;
+    margin: 0 20px 0 0;
   }
 `;
 const DesktopNavbarMenuItemLink = styled(NavLink)`

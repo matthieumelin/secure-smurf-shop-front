@@ -9,4 +9,5 @@ export default function ErrorContainer({ children }) {
 
 const StyledErrorContainer = styled.p`
 color: ${Colors.red};
+margin: 10px 0 0 0;
 `;

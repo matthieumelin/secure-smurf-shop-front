@@ -1,26 +1,35 @@
 import React, { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 import socketIO from "socket.io-client";
 
 import Loading from "./components/loading.component";
-import Toast from "./components/utils/toast.component";
 
 import Index from "./pages/index.page";
-import Login from "./pages/login.page";
 import NotFound from "./pages/not-found.page";
-import Register from "./pages/register.page";
+import Login from "./pages/login.page";
+import Logout from "./pages/logout.page";
 import Verification from "./pages/verification.page";
 import Contact from "./pages/contact.page";
 import ClientAreaIndex from "./pages/client-area/index.page";
 import Profile from "./pages/client-area/profile.page";
 
+import AdminIndex from "./pages/admin/index.page";
+import AdminUsers from "./pages/admin/users.page";
+import AdminServers from "./pages/admin/servers.page";
+import AdminOrders from "./pages/admin/orders.page";
+import AdminProducts from "./pages/admin/products.page";
+
+import AuthVerify from "./user/auth-verify.user";
+
+import AppRoutes from "./router/app.routes";
+
 const socket = socketIO.connect("http://localhost:3030");
 
 export default function App() {
   const [appIsLoading, setAppIsLoading] = useState(true);
-
-  const [toast, setToast] = useState({});
 
   // Client area props
   const [sidebarIsOpen, setSidebarIsOpen] = useState(false);
@@ -37,19 +46,37 @@ export default function App() {
 
   return (
     <BrowserRouter>
-      <Toast type={toast.type} message={toast.message} setToast={setToast} />
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
       <Routes>
+        <Route path={AppRoutes.AdminDashboard} element={<AdminIndex />}>
+          <Route path={AppRoutes.AdminUsers} element={<AdminUsers />} />
+          <Route path={AppRoutes.AdminProducts} element={<AdminProducts />} />
+          <Route path={AppRoutes.AdminOrders} element={<AdminOrders />} />
+          <Route path={AppRoutes.AdminServers} element={<AdminServers />} />
+        </Route>
         <Route
-          path="/profile"
+          path={AppRoutes.Profile}
           element={
             <Profile
+              toast={toast}
               sidebarIsOpen={sidebarIsOpen}
               setSidebarIsOpen={setSidebarIsOpen}
             />
           }
         />
         <Route
-          path="/client-area"
+          path={AppRoutes.ClientArea}
           element={
             <ClientAreaIndex
               sidebarIsOpen={sidebarIsOpen}
@@ -57,28 +84,23 @@ export default function App() {
             />
           }
         />
-        <Route path="/contact" element={<Contact />} />
+        <Route path={AppRoutes.Contact} element={<Contact toast={toast} />} />
         <Route
-          path="/verification/"
-          element={<Verification toast={toast} setToast={setToast} />}
+          path={AppRoutes.Verification}
+          element={<Verification toast={toast} />}
         >
-          <Route
-            path=":token"
-            element={<Verification toast={toast} setToast={setToast} />}
-          />
+          <Route path=":token" element={<Verification toast={toast} />} />
         </Route>
-        <Route
-          path="/register"
-          element={<Register toast={toast} setToast={setToast} />}
-        />
-        <Route
-          path="/login"
-          element={<Login toast={toast} setToast={setToast} />}
-        />
-        <Route path="/404" element={<NotFound />} />
+        <Route path={AppRoutes.Logout} element={<Logout toast={toast} />} />
+        <Route path={AppRoutes.Login} element={<Login toast={toast} />} />
+        <Route path={AppRoutes.NotFound} element={<NotFound />} />
         <Route index element={<Index />} />
-        <Route path="*" element={<Navigate to="/404" replace />} />
+        <Route
+          path="*"
+          element={<Navigate to={AppRoutes.NotFound} replace />}
+        />
       </Routes>
+      <AuthVerify />
     </BrowserRouter>
   );
 }

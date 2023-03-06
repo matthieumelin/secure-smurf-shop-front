@@ -52,6 +52,7 @@ const FaqHeaderQuestion = styled.h4`
 
   @media screen and (min-width: 1024px) {
     font-size: 1.5rem;
+    width: initial;
   }
 `;
 const FaqHeaderToggleButton = styled.button`
