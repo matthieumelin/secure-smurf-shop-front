@@ -52,17 +52,17 @@ export default function Footer() {
               <FooterSectionTitle>Marketplace</FooterSectionTitle>
               <FooterSectionLinks>
                 <FooterSectionLinksItem>
-                  <FooterSectionLinksItemLink to={AppRoutes.Store}>
+                  <FooterSectionLinksItemLink to={AppRoutes.Home}>
                     EUW LoL Smurf
                   </FooterSectionLinksItemLink>
                 </FooterSectionLinksItem>
                 <FooterSectionLinksItem>
-                  <FooterSectionLinksItemLink to={AppRoutes.Store}>
+                  <FooterSectionLinksItemLink to={AppRoutes.Home}>
                     EUNE LoL Smurf
                   </FooterSectionLinksItemLink>
                 </FooterSectionLinksItem>
                 <FooterSectionLinksItem>
-                  <FooterSectionLinksItemLink to={AppRoutes.Store}>
+                  <FooterSectionLinksItemLink to={AppRoutes.Home}>
                     NA LoL Smurf
                   </FooterSectionLinksItemLink>
                 </FooterSectionLinksItem>
@@ -74,6 +74,11 @@ export default function Footer() {
                 <FooterSectionLinksItem>
                   <FooterSectionLinksItemLink to={AppRoutes.Contact}>
                     Contact Us
+                  </FooterSectionLinksItemLink>
+                </FooterSectionLinksItem>
+                <FooterSectionLinksItem>
+                  <FooterSectionLinksItemLink to={AppRoutes.Home}>
+                    Discord
                   </FooterSectionLinksItemLink>
                 </FooterSectionLinksItem>
               </FooterSectionLinks>

@@ -76,5 +76,4 @@ const ExperienceStepCardInfosTitle = styled.h3`
 const ExperienceStepCardInfosDescription = styled.p`
   margin: 10px 0 0 0;
   color: rgba(255, 255, 255, 0.7);
-  max-width: 250px;
 `;

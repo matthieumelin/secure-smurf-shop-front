@@ -9,7 +9,7 @@ import AppRoutes from "../../router/app.routes";
 
 export default function Header({ sidebarIsOpen, setSidebarIsOpen }) {
   const location = useLocation();
-
+  
   return (
     <StyledHeader>
       <Sidebar sidebarIsOpen={sidebarIsOpen}>

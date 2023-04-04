@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useState, useRef } from "react";
 import { Helmet } from "react-helmet-async";
 import { useForm } from "react-hook-form";
 import { ErrorMessage } from "@hookform/error-message";
@@ -8,19 +8,19 @@ import ReCAPTCHA from "react-google-recaptcha";
 import styled from "styled-components";
 import Footer from "../components/footer.component";
 import Navbar from "../components/navbar.component";
-import ContactCard from "../components/cards/contact-card.component";
-
-import axios from "axios";
+// import ContactCard from "../components/cards/contact-card.component";
 
 import AppRoutes from "../router/app.routes";
 
 import Colors from "../utils/colors.util";
 import { EmailRegEx } from "../utils/regex.util";
-
 import ErrorContainer from "../utils/error-container.util";
 
+import axios from "axios";
+import { API_ENDPOINTS } from "../api/api";
+
 export default function Contact({ toast }) {
-  const [cards, setCards] = useState([]);
+  // const [cards, setCards] = useState([]);
 
   const [captchaResponse, setCaptchaResponse] = useState(null);
 
@@ -40,16 +40,16 @@ export default function Contact({ toast }) {
     setCaptchaResponse(value);
   };
 
-  useEffect(() => {
-    axios
-      .get("./data.json")
-      .then((res) => setCards(res.data.contact.cards))
-      .catch((err) => console.error(err));
-  }, []);
+  // useEffect(() => {
+  //   axios
+  //     .get("./data.json")
+  //     .then((res) => setCards(res.data.contact.cards))
+  //     .catch((err) => console.error(err));
+  // }, []);
 
   const onSubmit = async (data) => {
     await axios
-      .post(`${process.env.REACT_APP_API_URL}/contact`, {
+      .post(API_ENDPOINTS.CONTACT, {
         email: data.email,
         category: data.category,
         message: data.message,
@@ -59,6 +59,8 @@ export default function Contact({ toast }) {
           reset();
 
           recaptchaRef.current.reset();
+
+          setCaptchaResponse(null);
 
           toast.success(res.data.message);
         }
@@ -84,96 +86,101 @@ export default function Contact({ toast }) {
         </HeaderContent>
       </Header>
       <Main>
-        <Cards>
+        {/* <Cards>
           {cards &&
             cards.map((card, index) => {
               return <ContactCard key={`contact_card_${index}`} data={card} />;
             })}
-        </Cards>
+        </Cards> */}
         <Form onSubmit={handleSubmit(onSubmit)}>
           <FormHeader>
             <FormHeaderTitle>How can we help you?</FormHeaderTitle>
             <FormHeaderDescription>
-              Do you have any questions? Grat, because we have answers!
+              Do you have any questions? Great, because we have answers!
             </FormHeaderDescription>
             <FormHeaderSocials>
-              <FormHeaderSocialItem>
-                <FormHeaderSocialItemLink to={AppRoutes.Home}>
-                  <FormHeaderSocialIcon
-                    src={`${process.env.PUBLIC_URL}/assets/icons/facebook.svg`}
-                    alt="Facebook"
-                  />
-                </FormHeaderSocialItemLink>
-              </FormHeaderSocialItem>
-              <FormHeaderSocialItem>
-                <FormHeaderSocialItemLink to={AppRoutes.Home}>
-                  <FormHeaderSocialIcon
-                    src={`${process.env.PUBLIC_URL}/assets/icons/instagram.svg`}
-                    alt="Instagram"
-                  />
-                </FormHeaderSocialItemLink>
-              </FormHeaderSocialItem>
-              <FormHeaderSocialItem>
-                <FormHeaderSocialItemLink to={AppRoutes.Home}>
-                  <FormHeaderSocialIcon
-                    src={`${process.env.PUBLIC_URL}/assets/icons/twitter.svg`}
-                    alt="Twitter"
-                  />
-                </FormHeaderSocialItemLink>
-              </FormHeaderSocialItem>
+              <FormHeaderSocialsTitle>Get in touch</FormHeaderSocialsTitle>
+              <FormHeaderSocialsMenu>
+                <FormHeaderSocialsMenuItem>
+                  <FormHeaderSocialsMenuItemLink to={AppRoutes.Home}>
+                    <FormHeaderSocialsMenuItemLinkIcon
+                      src={`${process.env.PUBLIC_URL}/assets/icons/facebook.svg`}
+                      alt="Facebook"
+                    />
+                  </FormHeaderSocialsMenuItemLink>
+                </FormHeaderSocialsMenuItem>
+                <FormHeaderSocialsMenuItem>
+                  <FormHeaderSocialsMenuItemLink to={AppRoutes.Home}>
+                    <FormHeaderSocialsMenuItemLinkIcon
+                      src={`${process.env.PUBLIC_URL}/assets/icons/instagram.svg`}
+                      alt="Instagram"
+                    />
+                  </FormHeaderSocialsMenuItemLink>
+                </FormHeaderSocialsMenuItem>
+                <FormHeaderSocialsMenuItem>
+                  <FormHeaderSocialsMenuItemLink to={AppRoutes.Home}>
+                    <FormHeaderSocialsMenuItemLinkIcon
+                      src={`${process.env.PUBLIC_URL}/assets/icons/twitter.svg`}
+                      alt="Twitter"
+                    />
+                  </FormHeaderSocialsMenuItemLink>
+                </FormHeaderSocialsMenuItem>
+              </FormHeaderSocialsMenu>
             </FormHeaderSocials>
           </FormHeader>
           <FormGroups>
-            <FormGroup>
-              <FormGroupLabel htmlFor="email">E-mail</FormGroupLabel>
-              <FormGroupInput
-                type="email"
-                id="email"
-                name="email"
-                error={errors.email}
-                {...register("email", {
-                  required: {
-                    value: true,
-                    message: "You must enter your email.",
-                  },
-                  pattern: {
-                    value: EmailRegEx,
-                    message: "Invalid email format.",
-                  },
-                })}
-              />
-              {errors.email && (
-                <ErrorMessage
-                  errors={errors}
+            <FormGroupWrapper>
+              <FormGroup>
+                <FormGroupLabel htmlFor="email">E-mail</FormGroupLabel>
+                <FormGroupInput
+                  type="email"
+                  id="email"
                   name="email"
-                  as={<ErrorContainer />}
+                  error={errors.email}
+                  {...register("email", {
+                    required: {
+                      value: true,
+                      message: "You must enter your email.",
+                    },
+                    pattern: {
+                      value: EmailRegEx,
+                      message: "Invalid email format.",
+                    },
+                  })}
                 />
-              )}
-            </FormGroup>
-            <FormGroup>
-              <FormGroupLabel htmlFor="email">Category</FormGroupLabel>
-              <FormGroupSelect
-                id="category"
-                name="category"
-                {...register("category")}
-              >
-                <FormGroupSelectOption value="General question">
-                  General question
-                </FormGroupSelectOption>
-                <FormGroupSelectOption value="Order issue">
-                  Order issue
-                </FormGroupSelectOption>
-                <FormGroupSelectOption value="Application">
-                  Application
-                </FormGroupSelectOption>
-                <FormGroupSelectOption value="Bug report">
-                  Bug report
-                </FormGroupSelectOption>
-                <FormGroupSelectOption value="Other">
-                  Other
-                </FormGroupSelectOption>
-              </FormGroupSelect>
-            </FormGroup>
+                {errors.email && (
+                  <ErrorMessage
+                    errors={errors}
+                    name="email"
+                    as={<ErrorContainer />}
+                  />
+                )}
+              </FormGroup>
+              <FormGroup>
+                <FormGroupLabel htmlFor="email">Category</FormGroupLabel>
+                <FormGroupSelect
+                  id="category"
+                  name="category"
+                  {...register("category")}
+                >
+                  <FormGroupSelectOption value="General question">
+                    General question
+                  </FormGroupSelectOption>
+                  <FormGroupSelectOption value="Order issue">
+                    Order issue
+                  </FormGroupSelectOption>
+                  <FormGroupSelectOption value="Application">
+                    Application
+                  </FormGroupSelectOption>
+                  <FormGroupSelectOption value="Bug report">
+                    Bug report
+                  </FormGroupSelectOption>
+                  <FormGroupSelectOption value="Other">
+                    Other
+                  </FormGroupSelectOption>
+                </FormGroupSelect>
+              </FormGroup>
+            </FormGroupWrapper>
             <FormGroup>
               <FormGroupLabel htmlFor="message">Message</FormGroupLabel>
               <FormGroupTextArea
@@ -196,7 +203,7 @@ export default function Contact({ toast }) {
                 />
               )}
             </FormGroup>
-            <FormGroup>
+            <FormGroupRecaptcha>
               <ReCAPTCHA
                 ref={recaptchaRef}
                 sitekey={process.env.REACT_APP_CAPTCHA_KEY}
@@ -209,7 +216,7 @@ export default function Contact({ toast }) {
                   as={<ErrorContainer />}
                 />
               )}
-            </FormGroup>
+            </FormGroupRecaptcha>
             <FormGroup>
               <FormSubmitButton type="submit" disabled={!captchaResponse}>
                 Send message
@@ -250,22 +257,21 @@ const Main = styled.main`
   margin: 0 auto;
   padding: 20px;
 `;
-const Cards = styled.section`
-  @media screen and (min-width: 1024px) {
-    display: grid;
-    grid-template-columns: repeat(2, 0.3fr);
-  }
-`;
+// const Cards = styled.section`
+//   @media screen and (min-width: 1024px) {
+//     display: grid;
+//     grid-template-columns: repeat(2, 0.3fr);
+//   }
+// `;
 const Form = styled.form`
-  padding: 20px;
+  padding: 30px;
   border-radius: 20px;
   margin: 30px 0 0 0;
   background-color: ${Colors.primaryLowOp};
 
   @media screen and (min-width: 1024px) {
-    padding: 30px;
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 325px 1fr;
     gap: 30px;
   }
 `;
@@ -281,15 +287,20 @@ const FormHeaderTitle = styled.h2`
 const FormHeaderDescription = styled.p`
   color: rgba(255, 255, 255, 0.7);
 `;
-const FormHeaderSocials = styled.ul`
+const FormHeaderSocials = styled.div``;
+const FormHeaderSocialsTitle = styled.h3`
+  color: white;
+  font-size: 1.3rem;
+`;
+const FormHeaderSocialsMenu = styled.ul`
   padding: 0;
   display: grid;
   grid-template-columns: repeat(3, max-content);
   gap: 10px;
   list-style: none;
 `;
-const FormHeaderSocialItem = styled.li``;
-const FormHeaderSocialItemLink = styled(Link)`
+const FormHeaderSocialsMenuItem = styled.li``;
+const FormHeaderSocialsMenuItemLink = styled(Link)`
   height: 32px;
   width: 32px;
   border-radius: 100px;
@@ -298,13 +309,21 @@ const FormHeaderSocialItemLink = styled(Link)`
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: 0.2s;
+
+  &:hover {
+    transition: 0.2s;
+    -moz-box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.07);
+    -webkit-box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.07);
+    box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.07);
+  }
 
   @media screen and (min-width: 1024px) {
     width: 42px;
     height: 42px;
   }
 `;
-const FormHeaderSocialIcon = styled.img`
+const FormHeaderSocialsMenuItemLinkIcon = styled.img`
   width: 18px;
   height: 18px;
 
@@ -313,11 +332,19 @@ const FormHeaderSocialIcon = styled.img`
     height: 20px;
   }
 `;
-const FormGroups = styled.div`
-  display: grid;
-  gap: 20px;
+const FormGroups = styled.div``;
+const FormGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin: 0 0 20px 0;
 `;
-const FormGroup = styled.div``;
+const FormGroupWrapper = styled.div`
+  @media screen and (min-width: 1024px) {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+`;
 const FormGroupLabel = styled.label`
   color: white;
 `;
@@ -325,7 +352,6 @@ const FormGroupInput = styled.input`
   margin: 10px 0 0 0;
   background-color: ${Colors.primaryLowOp};
   border-radius: 10px;
-  width: 100%;
   border: 1px solid ${(props) => (props.error ? Colors.red : "transparent")};
   padding: 11px 18px;
   color: #ffffff;
@@ -336,7 +362,6 @@ const FormGroupTextArea = styled.textarea`
   margin: 10px 0 0 0;
   background-color: ${Colors.primaryLowOp};
   border-radius: 10px;
-  width: 100%;
   min-height: 100px;
   border: 1px solid ${(props) => (props.error ? Colors.red : "transparent")};
   padding: 11px 18px;
@@ -349,7 +374,6 @@ const FormGroupSelect = styled.select`
   margin: 10px 0 0 0;
   background-color: ${Colors.primaryLowOp};
   border-radius: 10px;
-  width: 100%;
   border: 1px solid ${(props) => (props.error ? Colors.red : "transparent")};
   padding: 11px 18px;
   color: #ffffff;
@@ -363,6 +387,7 @@ const FormGroupRecaptcha = styled.div`
 
   @media screen and (min-width: 425px) {
     transform: scale(1);
+    margin: 0 0 20px 0;
   }
 `;
 const FormSubmitButton = styled.button`

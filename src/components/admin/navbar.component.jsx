@@ -1,4 +1,5 @@
 import React from "react";
+import { useSelector } from "react-redux";
 
 import styled from "styled-components";
 
@@ -6,14 +7,13 @@ import Gravatar from "react-gravatar";
 import Colors from "../../utils/colors.util";
 
 export default function AdminNavbar() {
+  const user = useSelector((state) => state.user.data);
+
   return (
     <StyledAdminNavbar>
       <AdminNavbarProfile>
-        <AdminNavbarProfileAvatar
-          email={"geeklegendofficiel@gmail.com"}
-          size={40}
-        />
-        <AdminNavbarProfileUsername>GeekLegend</AdminNavbarProfileUsername>
+        <AdminNavbarProfileAvatar email={user.username} size={40} />
+        <AdminNavbarProfileUsername>{user.username}</AdminNavbarProfileUsername>
       </AdminNavbarProfile>
     </StyledAdminNavbar>
   );

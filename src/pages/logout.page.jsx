@@ -16,7 +16,6 @@ export default function Logout({ toast }) {
 
     localStorage.clear();
 
-    console.log("trigger")
   //  toast.success("You are logged out.");
   }, [token, dispatch]);
 

@@ -15,12 +15,16 @@ import Verification from "./pages/verification.page";
 import Contact from "./pages/contact.page";
 import ClientAreaIndex from "./pages/client-area/index.page";
 import Profile from "./pages/client-area/profile.page";
+import ChangePassword from "./pages/change-password.page";
+import Checkout from "./pages/checkout/index.page";
+import CheckoutComplete from "./pages/checkout/checkout-complete.page";
 
 import AdminIndex from "./pages/admin/index.page";
-import AdminUsers from "./pages/admin/users.page";
+import AdminUsers from "./pages/admin/user/users.page";
 import AdminServers from "./pages/admin/servers.page";
 import AdminOrders from "./pages/admin/orders.page";
 import AdminProducts from "./pages/admin/products.page";
+import AdminUserPermissions from "./pages/admin/user/user-permissions.page";
 
 import AuthVerify from "./user/auth-verify.user";
 
@@ -38,6 +42,9 @@ export default function App() {
     setTimeout(() => {
       setAppIsLoading(false);
     }, 1000 * 3);
+    return () => {
+      setSidebarIsOpen(false);
+    };
   }, []);
 
   if (appIsLoading) {
@@ -59,12 +66,20 @@ export default function App() {
         theme="dark"
       />
       <Routes>
-        <Route path={AppRoutes.AdminDashboard} element={<AdminIndex />}>
-          <Route path={AppRoutes.AdminUsers} element={<AdminUsers />} />
-          <Route path={AppRoutes.AdminProducts} element={<AdminProducts />} />
-          <Route path={AppRoutes.AdminOrders} element={<AdminOrders />} />
-          <Route path={AppRoutes.AdminServers} element={<AdminServers />} />
-        </Route>
+        <Route path={AppRoutes.AdminDashboard} element={<AdminIndex />} />
+        <Route path={AppRoutes.AdminUsers} element={<AdminUsers />} />
+        <Route
+          path={AppRoutes.AdminUserPermissions}
+          element={<AdminUserPermissions />}
+        />
+        <Route path={AppRoutes.AdminProducts} element={<AdminProducts />} />
+        <Route path={AppRoutes.AdminOrders} element={<AdminOrders />} />
+        <Route path={AppRoutes.AdminServers} element={<AdminServers />} />
+        <Route
+          path={AppRoutes.CheckoutComplete}
+          element={<CheckoutComplete />}
+        />
+        <Route path={AppRoutes.Checkout} element={<Checkout />} />
         <Route
           path={AppRoutes.Profile}
           element={
@@ -91,6 +106,10 @@ export default function App() {
         >
           <Route path=":token" element={<Verification toast={toast} />} />
         </Route>
+        <Route
+          path={AppRoutes.ChangePassword}
+          element={<ChangePassword toast={toast} />}
+        />
         <Route path={AppRoutes.Logout} element={<Logout toast={toast} />} />
         <Route path={AppRoutes.Login} element={<Login toast={toast} />} />
         <Route path={AppRoutes.NotFound} element={<NotFound />} />

@@ -58,10 +58,12 @@ export default function Navbar() {
       </MobileNavbar>
       <DesktopNavbar>
         <DesktopNavbarLeft>
-          <DesktopNavbarBrand
-            src={`${process.env.PUBLIC_URL}/assets/images/logo_white.png`}
-            alt="Secure Smurf Shop"
-          />
+          <NavLink to={AppRoutes.Home}>
+            <DesktopNavbarBrand
+              src={`${process.env.PUBLIC_URL}/assets/images/logo_white.png`}
+              alt="Secure Smurf Shop"
+            />
+          </NavLink>
         </DesktopNavbarLeft>
         <DesktopNavbarCenter>
           <DesktopNavbarMenu>
@@ -73,11 +75,6 @@ export default function Navbar() {
             <DesktopNavbarMenuItem>
               <DesktopNavbarMenuItemLink to={AppRoutes.Home}>
                 Discord
-              </DesktopNavbarMenuItemLink>
-            </DesktopNavbarMenuItem>
-            <DesktopNavbarMenuItem>
-              <DesktopNavbarMenuItemLink to={AppRoutes.Store}>
-                Store
               </DesktopNavbarMenuItemLink>
             </DesktopNavbarMenuItem>
             <DesktopNavbarMenuItem>
@@ -269,6 +266,10 @@ const DesktopNavbarMenuItemLink = styled(NavLink)`
     color: white;
     text-decoration: none;
     font-weight: bold;
+    &:hover {
+      padding-bottom: 5px;
+      border-bottom: 2px solid ${Colors.primary};
+    }
   }
 `;
 const DesktopNavbarLeft = styled.div``;

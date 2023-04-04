@@ -11,17 +11,16 @@ import jwtDecode from "jwt-decode";
 
 import styled from "styled-components";
 
-import Button from "../components/utils/button.component";
-
 import ErrorContainer from "../utils/error-container.util";
 import { PasswordRegEx, EmailRegEx } from "../utils/regex.util";
 import Colors from "../utils/colors.util";
 
-import axios from "axios";
-
 import AppRoutes from "../router/app.routes";
 
 import IndexDOM from "../dom/index.dom";
+
+import axios from "axios";
+import { API_ENDPOINTS } from "../api/api";
 
 const FormTypes = {
   LOGIN: "LOGIN",
@@ -71,33 +70,84 @@ export default function Login({ toast }) {
     setFormType(type);
   };
 
+  const onKeyDown = (event) => {
+    if (event.keyCode === 13 || event.which === 13) {
+      event.preventDefault();
+      return false;
+    }
+  };
+
   const onSubmit = async (data) => {
-    await axios
-      .post(`${process.env.REACT_APP_API_URL}/users/login`, {
-        email: data.email,
-        password: data.password,
-      })
-      .then((res) => {
-        if (res.status === 200) {
-          const accessToken = res.data.accessToken;
-          const decoded = jwtDecode(accessToken);
+    switch (formType) {
+      case FormTypes.LOGIN:
+        await axios
+          .post(API_ENDPOINTS.USER_LOGIN, {
+            email: data.email,
+            password: data.password,
+          })
+          .then((res) => {
+            if (res.status === 200) {
+              const accessToken = res.data.accessToken;
+              const decoded = jwtDecode(accessToken);
 
-          localStorage.setItem("data", JSON.stringify(decoded));
-          localStorage.setItem("token", accessToken);
+              localStorage.setItem("data", JSON.stringify(decoded));
+              localStorage.setItem("token", accessToken);
 
-          dispatch(setData(decoded));
-          dispatch(setToken(accessToken));
+              dispatch(setData(decoded));
+              dispatch(setToken(accessToken));
 
-          reset();
+              reset();
 
-          recaptchaRef.current.reset();
+              recaptchaRef.current.reset();
 
-          toast.success(res.data.message);
-        }
-      })
-      .catch((err) => {
-        toast.error(err.response.data.message);
-      });
+              toast.success(res.data.message);
+            }
+          })
+          .catch((err) => {
+            toast.error(err.response.data.message);
+          });
+        break;
+      case FormTypes.REGISTER:
+        await axios
+          .post(API_ENDPOINTS.USER_REGISTER, {
+            username: data.username,
+            email: data.email,
+            password: data.password,
+          })
+          .then((res) => {
+            if (res.status === 201) {
+              reset();
+
+              recaptchaRef.current.reset();
+
+              toast.success(res.data.message);
+            }
+          })
+          .catch((err) => {
+            toast.error(err.response.data.message);
+          });
+        break;
+      case FormTypes.FORGOT:
+        await axios
+          .post(API_ENDPOINTS.USER_FORGOT_PASSWORD, {
+            email: data.email,
+          })
+          .then((res) => {
+            if (res.status === 200) {
+              reset();
+
+              recaptchaRef.current.reset();
+
+              toast.success(res.data.message);
+            }
+          })
+          .catch((err) => {
+            toast.error(err.response.data.message);
+          });
+        break;
+      default:
+        break;
+    }
   };
 
   if (token) {
@@ -107,17 +157,20 @@ export default function Login({ toast }) {
   return (
     <StyledLogin>
       <Helmet>
-        {formType === FormTypes.LOGIN ? (
-          <title>Login</title>
-        ) : formType === FormTypes.REGISTER ? (
-          <title>Register</title>
-        ) : (
-          <title>Forgot password</title>
-        )}
+        <title>
+          {formType === FormTypes.LOGIN
+            ? "Login"
+            : formType === FormTypes.REGISTER
+            ? "Register"
+            : "Forgot password"}
+        </title>
       </Helmet>
       <FormContainer>
         {formType === FormTypes.LOGIN ? (
-          <Form onSubmit={handleSubmit(onSubmit)}>
+          <Form
+            onSubmit={handleSubmit(onSubmit)}
+            onKeyDown={(event) => onKeyDown(event)}
+          >
             <FormWrapper>
               <FormWrapperTitle>Sign In</FormWrapperTitle>
               <FormWrapperClose to={AppRoutes.Home}>
@@ -217,17 +270,18 @@ export default function Login({ toast }) {
                   )}
                 </FormGroupRecaptcha>
                 <FormGroup>
-                  <Button
-                    type={"submit"}
-                    title="Sign in"
-                    disabled={!captchaResponse}
-                  />
+                  <FormGroupButton type={"submit"} disabled={!captchaResponse}>
+                    Sign in
+                  </FormGroupButton>
                 </FormGroup>
               </FormGroups>
             </FormGroups>
           </Form>
         ) : formType === FormTypes.REGISTER ? (
-          <Form onSubmit={handleSubmit(onSubmit)}>
+          <Form
+            onSubmit={handleSubmit(onSubmit)}
+            onKeyDown={(event) => onKeyDown(event)}
+          >
             <FormWrapper>
               <FormWrapperTitle>Create an account</FormWrapperTitle>
               <FormWrapperClose to={AppRoutes.Home}>
@@ -333,13 +387,77 @@ export default function Login({ toast }) {
                   />
                 </FormGroupRecaptcha>
                 <FormGroup>
-                  <Button type="submit" title="Submit" />
+                  <FormGroupButton type="submit" disabled={!captchaResponse}>
+                    Submit
+                  </FormGroupButton>
                 </FormGroup>
               </FormGroups>
             </FormGroups>
           </Form>
         ) : (
-          <Form></Form>
+          <Form
+            onSubmit={handleSubmit(onSubmit)}
+            onKeyDown={(event) => onKeyDown(event)}
+          >
+            <FormWrapper>
+              <FormWrapperTitle>Forgot password</FormWrapperTitle>
+              <FormWrapperClose to={AppRoutes.Home}>
+                <FormWrapperCloseIcon
+                  src={`${process.env.PUBLIC_URL}/assets/icons/close.svg`}
+                  alt="Close"
+                />
+              </FormWrapperClose>
+            </FormWrapper>
+            <FormText>
+              <FormLink
+                onClick={(event) => onChangeFormType(event, FormTypes.LOGIN)}
+              >
+                Go back
+              </FormLink>
+            </FormText>
+            <FormGroups>
+              <FormGroups>
+                <FormGroup>
+                  <FormGroupLabel htmlFor="email">Email</FormGroupLabel>
+                  <FormGroupInput
+                    type="email"
+                    id="email"
+                    name="email"
+                    error={errors.email}
+                    {...register("email", {
+                      required: {
+                        value: true,
+                        message: "You must enter your email.",
+                      },
+                      pattern: {
+                        value: EmailRegEx,
+                        message: "Invalid email format.",
+                      },
+                    })}
+                  />
+                  {errors.email && (
+                    <ErrorMessage
+                      errors={errors}
+                      name="email"
+                      as={<ErrorContainer />}
+                    />
+                  )}
+                </FormGroup>
+                <FormGroupRecaptcha>
+                  <ReCAPTCHA
+                    ref={recaptchaRef}
+                    sitekey={process.env.REACT_APP_CAPTCHA_KEY}
+                    onChange={onChange}
+                  />
+                </FormGroupRecaptcha>
+                <FormGroup>
+                  <FormGroupButton type="submit" disabled={!captchaResponse}>
+                    Submit
+                  </FormGroupButton>
+                </FormGroup>
+              </FormGroups>
+            </FormGroups>
+          </Form>
         )}
       </FormContainer>
       <IndexDOM />
@@ -404,6 +522,8 @@ const FormLink = styled.button`
   font-weight: inherit;
   background-color: transparent;
   border: none;
+  cursor: pointer;
+  padding: 0;
 `;
 const FormGroups = styled.div``;
 const FormGroup = styled.div`
@@ -434,4 +554,35 @@ const FormGroupRecaptcha = styled.div`
   @media screen and (min-width: 425px) {
     transform: scale(1);
   }
+`;
+const FormGroupButton = styled.button`
+  color: ${Colors.primary};
+  background-color: ${Colors.primaryLowOp};
+  border-radius: 20px;
+  border: none;
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 0.85rem;
+  padding: 11px 28px;
+  width: max-content;
+  display: block;
+  transition: 0.2s;
+
+  ${(props) => {
+    if (props.disabled) {
+      return `
+    background-color: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.3);
+    `;
+    } else {
+      return `
+    &:hover {
+      cursor: pointer;
+      transition: 0.2s;
+      color: white;
+      background-color: ${Colors.primary};
+    }
+    `;
+    }
+  }}
 `;

@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { setCheckout } from "../redux/reducers/checkout.reducer";
 
 import styled from "styled-components";
-
-import axios from "axios";
 
 import Header from "../components/header.component";
 import Footer from "../components/footer.component";
@@ -11,10 +12,14 @@ import FeatureCard from "../components/cards/feature-card.component";
 import FaqCard from "../components/cards/faq-card.component";
 import GuaranteeCard from "../components/cards/guarantee-card.component";
 import Button from "../components/utils/button.component";
-import ServerCard from "../components/cards/server-card.component";
+import ServerCard from "../components/cards/product-server-card.component";
 import ExperienceCard from "../components/cards/experience-step.component";
 
 import Colors from "../utils/colors.util";
+
+import axios from "axios";
+import { API_ENDPOINTS } from "../api/api";
+import AppRoutes from "../router/app.routes";
 
 export default function IndexDOM() {
   const [features, setFeatures] = useState([]);
@@ -22,17 +27,27 @@ export default function IndexDOM() {
   const [guarantee, setGuarantee] = useState([]);
   const [faq, setFaq] = useState([]);
 
-  const [servers, setServers] = useState([]);
-  const [showServers, setShowServers] = useState(true);
-  const [currentServer, setCurrentServer] = useState({});
+  const [productServers, setProductServers] = useState([]);
+  const [showProductServers, setShowProductServers] = useState(true);
+  const [currentProductServer, setCurrentProductServer] = useState({});
+
+  const [products, setProducts] = useState([]);
 
   const [currentExperience, setCurrentExperience] = useState({});
+
+  const dispatch = useDispatch();
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
       await axios
-        .get(`${process.env.REACT_APP_API_URL}/servers`)
-        .then((res) => setServers(res.data))
+        .get(API_ENDPOINTS.PRODUCT_SERVERS)
+        .then((res) => setProductServers(res.data))
+        .catch((err) => console.error(err));
+      await axios
+        .get(API_ENDPOINTS.PRODUCTS)
+        .then((res) => setProducts(res.data))
         .catch((err) => console.error(err));
     };
 
@@ -45,74 +60,105 @@ export default function IndexDOM() {
         setExperience(res.data.experience);
         setGuarantee(res.data.guarantee);
         setFaq(res.data.faq);
-        setCurrentServer(servers[0]);
+        setCurrentProductServer(productServers[0]);
         setCurrentExperience(res.data.experience[0]);
       })
       .catch((err) => console.error(err));
   }, []);
 
-  const selectServer = (server) => {
-    setCurrentServer(server);
-    setShowServers(false);
+  const onSelectProductServer = (server) => {
+    setCurrentProductServer(server);
+    setShowProductServers(false);
+  };
+
+  const onProcessToCheckout = (product) => {
+    sessionStorage.setItem("checkout", JSON.stringify(product));
+    dispatch(setCheckout(product));
+    navigate(AppRoutes.Checkout);
   };
 
   return (
     <StyledIndex>
       <Header />
       <Main>
-        {servers.length ? (
+        {productServers.length && products.length ? (
           <Section>
-            <SectionHeader>
-              <SectionHeaderTitle>Choose Your Server</SectionHeaderTitle>
-            </SectionHeader>
+            {!currentProductServer && (
+              <SectionHeader>
+                <SectionHeaderTitle>Choose Your Server</SectionHeaderTitle>
+              </SectionHeader>
+            )}
             <SectionContent>
-              {showServers ? (
+              {showProductServers ? (
                 <Servers>
-                  {servers &&
-                    servers.map((server, index) => {
-                      return (
-                        <ServerCard
-                          key={`server_${index}`}
-                          data={server}
-                          selectServer={selectServer}
-                        />
-                      );
-                    })}
+                  {productServers.map((productServer, index) => {
+                    return (
+                      <ServerCard
+                        key={`product_server_${index}`}
+                        data={productServer}
+                        onSelectProductServer={onSelectProductServer}
+                      />
+                    );
+                  })}
                 </Servers>
               ) : (
-                <Accounts>
-                  <AccountsHeader>
-                    <AccountsHeaderRegion>
-                      {currentServer.name}
-                    </AccountsHeaderRegion>
-                    <Button
-                      title={"Change server"}
-                      onClick={() => setShowServers(true)}
-                    />
-                    <AccountsHeaderCarouselButtons>
-                      <AccountsHeaderCarouselButton>
-                        <AccountsHeaderCarouselButtonIcon
-                          src={`${process.env.PUBLIC_URL}/assets/icons/chevron-left.svg`}
-                          alt="Previous"
-                        />
-                      </AccountsHeaderCarouselButton>
-                      <AccountsHeaderCarouselButton>
-                        <AccountsHeaderCarouselButtonIcon
-                          src={`${process.env.PUBLIC_URL}/assets/icons/chevron-right.svg`}
-                          alt="Next"
-                        />
-                      </AccountsHeaderCarouselButton>
-                    </AccountsHeaderCarouselButtons>
-                  </AccountsHeader>
-                  <AccountsContent>
-                    <AccountCard />
-                  </AccountsContent>
-                </Accounts>
+                <Products>
+                  <ProductsHeader>
+                    <ProductsHeaderRegion>
+                      <ProductsHeaderRegionHeader>
+                        <ProductsHeaderRegionHeaderTitle>
+                          {currentProductServer.name}
+                        </ProductsHeaderRegionHeaderTitle>
+                      </ProductsHeaderRegionHeader>
+                    </ProductsHeaderRegion>
+                  </ProductsHeader>
+                  <ProductsContent>
+                    <ProductsContentServers active={showProductServers}>
+                      {productServers
+                        .filter(
+                          (productServer) =>
+                            productServer !== currentProductServer
+                        )
+                        .map((productServer, index) => {
+                          return (
+                            <ProductsContentProductServers
+                              key={`product_server_${index}`}
+                            >
+                              <ProductsContentProductServer
+                                onClick={() =>
+                                  setCurrentProductServer(productServer)
+                                }
+                              >
+                                {productServer.name}
+                              </ProductsContentProductServer>
+                            </ProductsContentProductServers>
+                          );
+                        })}
+                    </ProductsContentServers>
+                    <ProductsContentProducts>
+                      {products
+                        .filter(
+                          (product) =>
+                            product.server.toUpperCase() ===
+                            currentProductServer.shortName.toUpperCase()
+                        )
+                        .map((product, index) => {
+                          return (
+                            <AccountCard
+                              key={`product_${index}`}
+                              data={product}
+                              onClick={() => onProcessToCheckout(product)}
+                            />
+                          );
+                        })}
+                    </ProductsContentProducts>
+                  </ProductsContent>
+                </Products>
               )}
             </SectionContent>
           </Section>
         ) : null}
-        {features.length ? (
+        {features.length && (
           <Section>
             <SectionHeader>
               <SectionHeaderTitle>Our Features</SectionHeaderTitle>
@@ -127,8 +173,8 @@ export default function IndexDOM() {
               </Features>
             </SectionContent>
           </Section>
-        ) : null}
-        {experience.length ? (
+        )}
+        {experience.length && (
           <Section style={{ backgroundColor: Colors.gray }}>
             <SectionHeader>
               <SectionHeaderTitle style={{ paddingTop: 30 }}>
@@ -210,8 +256,8 @@ export default function IndexDOM() {
               </Experience>
             </SectionContent>
           </Section>
-        ) : null}
-        {guarantee.length ? (
+        )}
+        {guarantee.length && (
           <Section>
             <SectionHeader>
               <SectionHeaderTitle>
@@ -231,8 +277,8 @@ export default function IndexDOM() {
               </Guarantee>
             </SectionContent>
           </Section>
-        ) : null}
-        {faq.length ? (
+        )}
+        {faq.length && (
           <Section>
             <SectionHeader>
               <SectionHeaderTitle>
@@ -253,21 +299,21 @@ export default function IndexDOM() {
               </Faq>
             </SectionContent>
           </Section>
-        ) : null}
+        )}
         <Footer />
       </Main>
     </StyledIndex>
   );
 }
 
-const StyledIndex = styled.div``;
+const StyledIndex = styled.div`
+  position: relative;
+`;
 const Main = styled.main``;
 const Section = styled.section``;
-const SectionHeader = styled.div`
-  margin: 30px 0;
-`;
+const SectionHeader = styled.div``;
 const SectionHeaderTitle = styled.h2`
-  margin: 0;
+  margin: 30px 0 0 0;
   color: white;
   text-align: center;
 
@@ -447,56 +493,50 @@ const ExperienceCards = styled.div`
   }
 `;
 
-const Accounts = styled.div``;
-const AccountsHeader = styled.div`
+const Products = styled.div``;
+const ProductsHeader = styled.div`
   display: flex;
   justify-content: center;
   flex-direction: column;
   align-items: center;
 `;
-const AccountsHeaderRegion = styled.h3`
+const ProductsHeaderRegion = styled.h3`
   color: white;
   margin: 20px 0;
   text-align: center;
 `;
-const AccountsHeaderCarouselButtons = styled.div`
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
+const ProductsHeaderRegionHeader = styled.div``;
+const ProductsHeaderRegionHeaderTitle = styled.h2`
+  margin: 0;
+`;
+const ProductsContent = styled.div``;
+const ProductsContentServers = styled.div`
+  display: ${(props) => (props.active ? "flex" : "none")};
+`;
+const ProductsContentProducts = styled.div`
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
   margin: 20px 0 0 0;
 `;
-const AccountsHeaderCarouselButton = styled.button`
-  background-color: transparent;
-  border: 2px solid ${Colors.primary};
-  border-radius: 5px;
-  padding: 3px 8px;
+const ProductsContentProductServers = styled.div``;
+const ProductsContentProductServer = styled.button`
+  background-color: ${Colors.primary};
+  border-radius: 10px;
+  color: white;
+  font-size: inherit;
+  font-weight: bold;
+  font-family: inherit;
+  border: none;
+  margin: 0 10px 10px 0;
+  cursor: pointer;
   transition: 0.2s;
 
   &:hover {
     transition: 0.2s;
-    background-color: ${Colors.primary};
-    cursor: pointer;
-  }
-`;
-const AccountsHeaderCarouselButtonIcon = styled.img`
-  color: ${Colors.primary};
-  font-size: 1.2rem;
-  transition: 0.2s;
-  display: block;
-  width: 18px;
-  height: 18px;
-
-  ${AccountsHeaderCarouselButton}:hover & {
-    transition: 0.2s;
-    color: white;
-  }
-`;
-const AccountsContent = styled.div`
-  margin: 30px 0 0 0;
-  display: grid;
-  justify-content: center;
-  @media screen and (min-width: 1024px) {
-    grid-template-columns: repeat(1, 250px);
+    -moz-box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.07);
+    -webkit-box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.07);
+    box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.07);
   }
 `;
 

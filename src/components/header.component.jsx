@@ -70,7 +70,6 @@ const HeaderVideo = styled.video`
 const HeaderVideoSource = styled.source``;
 const HeaderContent = styled.div`
   padding: 20px 20px 40px 20px;
-
   @media screen and (min-width: 1024px) {
     padding: 11rem 7rem;
     display: flex;

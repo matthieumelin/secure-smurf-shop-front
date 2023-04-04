@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useRef } from "react";
-import { Navigate, Link, useNavigate, useParams } from "react-router-dom";
+import React, { useEffect, useRef, useState } from "react";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
@@ -10,6 +10,7 @@ import styled from "styled-components";
 
 import ErrorContainer from "../utils/error-container.util";
 import Colors from "../utils/colors.util";
+import { PasswordRegEx } from "../utils/regex.util";
 
 import AppRoutes from "../router/app.routes";
 
@@ -18,27 +19,27 @@ import IndexDOM from "../dom/index.dom";
 import axios from "axios";
 import { API_ENDPOINTS } from "../api/api";
 
-export default function Verification({ toast }) {
-  const { token } = useParams();
+export default function ChangePassword({ toast }) {
+  const accessToken = useSelector((state) => state.user.token);
 
-  const [captchaResponse, setCaptchaResponse] = useState(null);
+  const { token } = useParams();
 
   const navigate = useNavigate();
 
-  const recaptchaRef = useRef();
+  const [captchaResponse, setCaptchaResponse] = useState(null);
 
-  const accessToken = useSelector((state) => state.user.token);
+  const newPasswordRef = useRef({});
+  const recaptchaRef = useRef();
 
   const {
     reset,
     register,
     handleSubmit,
+    watch,
     formState: { errors },
-  } = useForm({
-    defaultValues: {
-      token: token,
-    },
-  });
+  } = useForm();
+
+  newPasswordRef.current = watch("newPassword", "");
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -53,12 +54,14 @@ export default function Verification({ toast }) {
 
   const onSubmit = async (data) => {
     await axios
-      .post(API_ENDPOINTS.USER_VERIFY, {
-        token: data.token,
+      .put(API_ENDPOINTS.USER_CHANGE_PASSWORD, {
+        token: token,
+        newPassword: data.newPassword,
       })
       .then((res) => {
         if (res.status === 200) {
           reset();
+          recaptchaRef.current.reset();
           navigate(AppRoutes.Login);
           toast.success(res.data.message);
         }
@@ -73,36 +76,70 @@ export default function Verification({ toast }) {
   }
 
   return (
-    <StyledVerification>
+    <StyledResetPassword>
       <Helmet>
-        <title>Verification</title>
+        <title>Reset password</title>
       </Helmet>
       <FormContainer>
         <Form onSubmit={handleSubmit(onSubmit)}>
-          <FormTitle>Verification</FormTitle>
-          <FormText>
-            Didn't receive anything?{" "}
-            <FormLink to={AppRoutes.Resend}>Send request.</FormLink>
-          </FormText>
+          <FormTitle>Reset password</FormTitle>
           <FormGroups>
             <FormGroup>
-              <FormLabel htmlFor="token">Enter your token</FormLabel>
+              <FormLabel htmlFor="newPassword">New Password</FormLabel>
               <FormInput
-                type="text"
-                id="token"
-                name="token"
-                error={errors.token}
-                {...register("token", {
+                type="password"
+                id="newPassword"
+                name="newPassword"
+                error={errors.newPassword}
+                ref={newPasswordRef}
+                {...register("newPassword", {
                   required: {
                     value: true,
-                    message: "You must enter a token.",
+                    message: "You must enter your password.",
+                  },
+                  minLength: {
+                    value: 8,
+                    message: "Your password must be at least 8 characters.",
+                  },
+                  pattern: {
+                    value: PasswordRegEx,
+                    message: "Invalid password format.",
                   },
                 })}
               />
-              {errors.token && (
+              {errors.newPassword && (
                 <ErrorMessage
                   errors={errors}
-                  name="token"
+                  name="newPassword"
+                  as={<ErrorContainer />}
+                />
+              )}
+            </FormGroup>
+            <FormGroup>
+              <FormLabel htmlFor="confirmPassword">Confirm Password</FormLabel>
+              <FormInput
+                type="password"
+                id="confirmPassword"
+                name="confirmPassword"
+                error={errors.confirmPassword}
+                {...register("confirmPassword", {
+                  required: {
+                    value: true,
+                    message: "You must enter your password.",
+                  },
+                  minLength: {
+                    value: 8,
+                    message: "Your password must be at least 8 characters.",
+                  },
+                  validate: (value) =>
+                    value === newPasswordRef.current ||
+                    "The passwords do not match",
+                })}
+              />
+              {errors.confirmPassword && (
+                <ErrorMessage
+                  errors={errors}
+                  name="confirmPassword"
                   as={<ErrorContainer />}
                 />
               )}
@@ -123,11 +160,11 @@ export default function Verification({ toast }) {
         </Form>
       </FormContainer>
       <IndexDOM />
-    </StyledVerification>
+    </StyledResetPassword>
   );
 }
 
-const StyledVerification = styled.div``;
+const StyledResetPassword = styled.div``;
 const FormContainer = styled.div`
   position: fixed;
   top: 0;
@@ -156,16 +193,8 @@ const Form = styled.form`
   }
 `;
 const FormTitle = styled.h1`
-  margin: 0;
+  margin: 0 0 20px 0;
   color: white;
-`;
-const FormText = styled.p`
-  color: rgba(255, 255, 255, 0.7);
-`;
-const FormLink = styled(Link)`
-  color: ${Colors.primary};
-  text-decoration: none;
-  font-weight: 600;
 `;
 const FormGroups = styled.div``;
 const FormGroup = styled.div`
@@ -173,14 +202,6 @@ const FormGroup = styled.div`
 
   &:last-child {
     margin: 20px 0 0 0;
-  }
-`;
-const FormGroupRecaptcha = styled.div`
-  transform: scale(0.85);
-  transform-origin: 0 0;
-
-  @media screen and (min-width: 425px) {
-    transform: scale(1);
   }
 `;
 const FormLabel = styled.label`
@@ -196,6 +217,14 @@ const FormInput = styled.input`
   color: #ffffff;
   outline: none;
   font-family: inherit;
+`;
+const FormGroupRecaptcha = styled.div`
+  transform: scale(0.85);
+  transform-origin: 0 0;
+
+  @media screen and (min-width: 425px) {
+    transform: scale(1);
+  }
 `;
 const FormGroupButton = styled.button`
   color: ${Colors.primary};

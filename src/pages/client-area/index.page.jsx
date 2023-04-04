@@ -18,6 +18,7 @@ export default function ClientAreaIndex({ sidebarIsOpen, setSidebarIsOpen }) {
   const token = useSelector((state) => state.user.token);
   const data = useSelector((state) => state.user.data);
 
+  // static
   const orders = [
     {
       id: 1,
@@ -58,7 +59,11 @@ export default function ClientAreaIndex({ sidebarIsOpen, setSidebarIsOpen }) {
               <MainUsername>{data.username}</MainUsername>
               <ProductCategories>
                 <ProductCategoryCard
-                  data={{ icon: "diamond.svg", name: "Accounts And Smurfs" }}
+                  data={{
+                    icon: "diamond.svg",
+                    name: "Accounts And Smurfs",
+                    link: AppRoutes.Home,
+                  }}
                 />
               </ProductCategories>
               <LatestOrders>
@@ -136,7 +141,7 @@ export default function ClientAreaIndex({ sidebarIsOpen, setSidebarIsOpen }) {
     </StyledClientAreaIndex>
   );
 }
-// id name date
+
 const StyledClientAreaIndex = styled.div``;
 const Wrapper = styled.div``;
 const Main = styled.main``;

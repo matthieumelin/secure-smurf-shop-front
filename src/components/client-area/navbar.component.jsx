@@ -1,21 +1,23 @@
-import React, { useState } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 import styled from "styled-components";
-import Colors from "../../utils/colors.util";
 
 import AppRoutes from "../../router/app.routes";
 
 export default function Navbar({ setSidebarIsOpen }) {
-  const [inResearch, setInResearch] = useState(false);
+  // const [inResearch, setInResearch] = useState(false);
 
-  const onNavigate = (event) => {
-    const recentResearches = JSON.parse(
-      localStorage.getItem("recentResearches")
-    );
-    const newRecentResearches = recentResearches.push({});
-    localStorage.setItem("recentResearches", newRecentResearches);
-  };
+  const user = useSelector((state) => state.user.data);
+
+  // const onNavigate = (event) => {
+  //   const recentResearches = JSON.parse(
+  //     localStorage.getItem("recentResearches")
+  //   );
+  //   const newRecentResearches = recentResearches.push({});
+  //   localStorage.setItem("recentResearches", newRecentResearches);
+  // };
 
   return (
     <StyledNavbar>
@@ -33,7 +35,7 @@ export default function Navbar({ setSidebarIsOpen }) {
           />
         </Link>
       </NavbarLeft>
-      <NavbarCenter>
+      {/* <NavbarCenter>
         <NavbarSearchInputContainer onClick={() => setInResearch(true)}>
           <NavbarSearchInputIcon
             src={`${process.env.PUBLIC_URL}/assets/icons/search.svg`}
@@ -94,9 +96,9 @@ export default function Navbar({ setSidebarIsOpen }) {
             </NavbarSearchSection>
           </NavbarSearchContainer>
         </NavbarSearchInputContainer>
-      </NavbarCenter>
+      </NavbarCenter> */}
       <NavbarRight>
-        <NavbarButton type="button">
+        {/* <NavbarButton type="button">
           <NavbarButtonIcon
             src={`${process.env.PUBLIC_URL}/assets/icons/bell.svg`}
             alt="Notifications"
@@ -107,13 +109,21 @@ export default function Navbar({ setSidebarIsOpen }) {
             src={`${process.env.PUBLIC_URL}/assets/icons/bubble.svg`}
             alt="Messages"
           />
-        </NavbarButton>
-        <NavbarBuy to={AppRoutes.Store}>
-          <NavbarBuyIcon
+        </NavbarButton> */}
+        {user.permission.includes("admin") && (
+          <NavbarButton type="admin" to={AppRoutes.AdminDashboard}>
+            <NavbarButtonIcon
+              src={`${process.env.PUBLIC_URL}/assets/icons/gear.svg`}
+              alt="Admin dashboard"
+            />
+          </NavbarButton>
+        )}
+        <NavbarButton to={AppRoutes.Home}>
+          <NavbarButtonIcon
             src={`${process.env.PUBLIC_URL}/assets/icons/add.svg`}
             alt="Store"
           />
-        </NavbarBuy>
+        </NavbarButton>
       </NavbarRight>
     </StyledNavbar>
   );
@@ -135,65 +145,65 @@ const NavbarLeft = styled.div`
   grid-template-columns: repeat(2, 1fr);
   gap: 10px;
 `;
-const NavbarCenter = styled.div``;
-const NavbarSearchInputContainer = styled.div`
-  display: none;
+// const NavbarCenter = styled.div``;
+// const NavbarSearchInputContainer = styled.div`
+//   display: none;
 
-  @media screen and (min-width: 1024px) {
-    display: flex;
-    align-items: center;
-    background-color: ${Colors.primaryLowOp};
-    padding: 0.6rem 1rem;
-    border-radius: 20px;
-  }
-`;
-const NavbarSearchInputIcon = styled.img`
-  display: block;
-`;
-const NavbarSearchInput = styled.input`
-  display: none;
+//   @media screen and (min-width: 1024px) {
+//     display: flex;
+//     align-items: center;
+//     background-color: ${Colors.primaryLowOp};
+//     padding: 0.6rem 1rem;
+//     border-radius: 20px;
+//   }
+// `;
+// const NavbarSearchInputIcon = styled.img`
+//   display: block;
+// `;
+// const NavbarSearchInput = styled.input`
+//   display: none;
 
-  @media screen and (min-width: 1024px) {
-    display: block;
-    background-color: transparent;
-    outline: none;
-    color: white;
-    font-family: inherit;
-    font-size: inherit;
-    border: none;
-    margin: 0 0 0 10px;
-  }
-`;
-const NavbarSearchInputClear = styled.button``;
-const NavbarSearchContainer = styled.div`
-  position: absolute;
-  top: 120px;
-  background-color: ${Colors.primary};
-  padding: 30px;
-  border-radius: 20px;
-  opacity: ${(props) => (props.inResearch ? 1 : 0)};
-`;
-const NavbarSearchSection = styled.div``;
-const NavbarSearchSectionTitle = styled.p`
-  color: rgba(255, 255, 255, 0.7);
-  margin: 0;
-`;
-const NavbarSearchSectionMenu = styled.ul`
-  padding: 0;
-  margin: 10px 0 0 0;
-  list-style: none;
-`;
-const NavbarSearchSectionMenuItem = styled.li``;
-const NavbarSearchSectionMenuItemLink = styled(Link)`
-  display: flex;
-  align-items: center;
-  text-decoration: none;
-  color: white;
-`;
-const NavbarSearchSectionMenuItemLinkIcon = styled.img`
-  display: block;
-  margin: 0 10px 0 0;
-`;
+//   @media screen and (min-width: 1024px) {
+//     display: block;
+//     background-color: transparent;
+//     outline: none;
+//     color: white;
+//     font-family: inherit;
+//     font-size: inherit;
+//     border: none;
+//     margin: 0 0 0 10px;
+//   }
+// `;
+// const NavbarSearchInputClear = styled.button``;
+// const NavbarSearchContainer = styled.div`
+//   position: absolute;
+//   top: 120px;
+//   background-color: ${Colors.primary};
+//   padding: 30px;
+//   border-radius: 20px;
+//   opacity: ${(props) => (props.inResearch ? 1 : 0)};
+// `;
+// const NavbarSearchSection = styled.div``;
+// const NavbarSearchSectionTitle = styled.p`
+//   color: rgba(255, 255, 255, 0.7);
+//   margin: 0;
+// `;
+// const NavbarSearchSectionMenu = styled.ul`
+//   padding: 0;
+//   margin: 10px 0 0 0;
+//   list-style: none;
+// `;
+// const NavbarSearchSectionMenuItem = styled.li``;
+// const NavbarSearchSectionMenuItemLink = styled(Link)`
+//   display: flex;
+//   align-items: center;
+//   text-decoration: none;
+//   color: white;
+// `;
+// const NavbarSearchSectionMenuItemLinkIcon = styled.img`
+//   display: block;
+//   margin: 0 10px 0 0;
+// `;
 const NavbarRight = styled.div`
   display: flex;
   align-items: center;
@@ -217,31 +227,31 @@ const NavbarToggle = styled.button`
 const NavbarToggleIcon = styled.img`
   display: block;
 `;
-const NavbarButton = styled.button`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: ${Colors.primaryLowOp};
-  border: none;
-  border-radius: 15px;
-  padding: 10px;
-  margin: 0 10px 0 0;
-  transition: 0.2s;
-  cursor: pointer;
+// const NavbarButton = styled.button`
+//   display: flex;
+//   align-items: center;
+//   justify-content: center;
+//   background-color: ${Colors.primaryLowOp};
+//   border: none;
+//   border-radius: 15px;
+//   padding: 10px;
+//   margin: 0 10px 0 0;
+//   transition: 0.2s;
+//   cursor: pointer;
 
-  &:hover {
-    transition: 0.2s;
-    -moz-box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.07);
-    -webkit-box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.07);
-    box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.07);
-  }
-`;
-const NavbarButtonIcon = styled.img`
-  display: block;
-  height: 18px;
-  width: 18px;
-`;
-const NavbarBuy = styled(Link)`
+//   &:hover {
+//     transition: 0.2s;
+//     -moz-box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.07);
+//     -webkit-box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.07);
+//     box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.07);
+//   }
+// `;
+// const NavbarButtonIcon = styled.img`
+//   display: block;
+//   height: 18px;
+//   width: 18px;
+// `;
+const NavbarButton = styled(Link)`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -255,5 +265,23 @@ const NavbarBuy = styled(Link)`
   border-radius: 100px;
   box-shadow: 0px 4px 34px rgb(157 78 221 / 40%);
   margin: 0 0 0 10px;
+
+  ${(props) => {
+    if (props.type === "admin") {
+      return `
+      background-image: linear-gradient(
+        147.16deg,
+        #d62828 13.82%,
+        #A81D1D 35.53%,
+        #8D1A1A 76.05%
+      );
+      box-shadow: 0px 4px 34px rgb(214 40 40 / 40%);
+      `;
+    }
+  }}
 `;
-const NavbarBuyIcon = styled.img``;
+const NavbarButtonIcon = styled.img`
+  display: block;
+  width: 14px;
+  height: 14px;
+`;

@@ -14,13 +14,16 @@ import styled from "styled-components";
 import Header from "../../components/client-area/header.component";
 import Navbar from "../../components/client-area/navbar.component";
 
-import Colors from "../../utils/colors.util";
-
-import axios from "axios";
-
 import AppRoutes from "../../router/app.routes";
 
+import Colors from "../../utils/colors.util";
 import ErrorContainer from "../../utils/error-container.util";
+import { capitalizeFirstLetter } from "../../utils/string.util";
+
+import { PasswordRegEx, DiscordRegEx } from "../../utils/regex.util";
+
+import axios from "axios";
+import { API_ENDPOINTS } from "../../api/api";
 
 export default function Profile({ toast, sidebarIsOpen, setSidebarIsOpen }) {
   const token = useSelector((state) => state.user.token);
@@ -52,27 +55,22 @@ export default function Profile({ toast, sidebarIsOpen, setSidebarIsOpen }) {
   useEffect(() => {
     axios
       .get("./countries.json")
-      .then((res) => {
-        setCountries(res.data);
-      })
+      .then((res) => setCountries(res.data))
       .catch((err) => console.error(err));
   }, []);
 
   const onSaveProfile = async (data) => {
     await axios
-      .patch(`${process.env.REACT_APP_API_URL}/users/update`, {
-        currentUsername: userData.username,
-        currentFirstName: userData.firstName,
-        currentLastName: userData.lastName,
-        currentDiscord: userData.discord,
-        newUsername: data.username ? data.username : userData.username,
-        newFirstName: data.firstName ? data.firstName : userData.firstName,
-        newLastName: data.lastName ? data.lastName : userData.lastName,
-        newDiscord: data.discord ? data.discord : userData.discord,
-        country: data.country ? data.country : userData.country,
-        notifications: data.notifications
-          ? data.notifications
-          : userData.notifications,
+      .put(API_ENDPOINTS.USER_UPDATE, {
+        id: userData.id,
+        username: data.username,
+        firstName: data.firstName,
+        lastName: data.lastName,
+        discord: data.discord,
+        country: data.country,
+        notifications: data.notifications,
+        currentPassword: data.currentPassword,
+        newPassword: data.newPassword,
       })
       .then((res) => {
         if (res.status === 200) {
@@ -95,9 +93,7 @@ export default function Profile({ toast, sidebarIsOpen, setSidebarIsOpen }) {
           toast.success(res.data.message);
         }
       })
-      .catch((err) => {
-        toast.error(err.response.data.message);
-      });
+      .catch((err) => toast.error(err.response.data.message));
   };
 
   if (!token) {
@@ -133,15 +129,20 @@ export default function Profile({ toast, sidebarIsOpen, setSidebarIsOpen }) {
             <Container>
               <Infos>
                 <InfosAvatar email={userData.email} size={80} />
+                {!userData.permission.includes("user") && (
+                  <InfosBadge>
+                    {capitalizeFirstLetter(userData.permission)}
+                  </InfosBadge>
+                )}
                 <InfosUsername>{userData.username}</InfosUsername>
                 <InfosEmail>{userData.email}</InfosEmail>
-                <InfosId>
-                  <InfosIdIcon
+                <InfosItem>
+                  <InfosItemIcon
                     src={`${process.env.PUBLIC_URL}/assets/icons/id.svg`}
                     alt={userData.id}
                   />
                   Account ID - {userData.id}
-                </InfosId>
+                </InfosItem>
                 <InfosCreatedAt>
                   member since
                   <InfosCreatedAtSpan>
@@ -265,7 +266,12 @@ export default function Profile({ toast, sidebarIsOpen, setSidebarIsOpen }) {
                               id="discord"
                               name="discord"
                               error={errors.discord}
-                              {...register("discord")}
+                              {...register("discord", {
+                                pattern: {
+                                  value: DiscordRegEx,
+                                  message: "Invalid discord format.",
+                                },
+                              })}
                             />
                             {errors.discord && (
                               <ErrorMessage
@@ -321,7 +327,17 @@ export default function Profile({ toast, sidebarIsOpen, setSidebarIsOpen }) {
                               id="newPassword"
                               name="newPassword"
                               error={errors.newPassword}
-                              {...register("newPassword")}
+                              {...register("newPassword", {
+                                minLength: {
+                                  value: 8,
+                                  message:
+                                    "Your password must be at least 8 characters.",
+                                },
+                                pattern: {
+                                  value: PasswordRegEx,
+                                  message: "Invalid password format.",
+                                },
+                              })}
                             />
                             {errors.newPassword && (
                               <ErrorMessage
@@ -521,28 +537,39 @@ const InfosAvatar = styled(Gravatar)`
 `;
 const InfosUsername = styled.h2`
   color: white;
-  margin: 20px 0 0 0;
+  margin: 10px 0 0 0;
   font-weight: 500;
   text-align: center;
 `;
 const InfosEmail = styled.p`
-  margin: 0;
+  margin: 0 0 20px 0;
   color: rgba(255, 255, 255, 0.5);
   text-align: center;
 `;
-const InfosId = styled.p`
+const InfosBadge = styled.div`
+  background-color: ${Colors.red};
+  width: max-content;
+  font-size: 0.9rem;
+  font-weight: 700;
+  border-radius: 2px;
+  padding: 1px 5px;
+  color: white;
+  margin: 0 auto;
+`;
+const InfosItem = styled.p`
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
+  margin: 0;
 `;
-const InfosIdIcon = styled.img`
+const InfosItemIcon = styled.img`
   display: block;
   margin: 0 10px 0 0;
 `;
 const InfosCreatedAt = styled.p`
   color: rgba(255, 255, 255, 0.5);
-  margin: 0 auto;
+  margin: 10px auto 0 auto;
   display: flex;
   width: max-content;
   font-size: 0.9rem;
@@ -629,7 +656,7 @@ const PersonalDetailsFormGroupInput = styled.input`
   padding: 11px 18px;
   background: rgba(255, 255, 255, 0.05);
   border-radius: 10px;
-  border: none;
+  border: 1px solid ${(props) => (props.error ? Colors.red : "transparent")};
   outline: none;
   margin: 10px 0 0;
   color: white;
