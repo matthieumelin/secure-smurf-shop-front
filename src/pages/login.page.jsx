@@ -141,9 +141,7 @@ export default function Login({ toast }) {
               toast.success(res.data.message);
             }
           })
-          .catch((err) => {
-            toast.error(err.response.data.message);
-          });
+          .catch((err) => toast.error(err.response.data.message));
         break;
       default:
         break;

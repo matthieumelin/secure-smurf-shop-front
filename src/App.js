@@ -15,9 +15,8 @@ import Verification from "./pages/verification.page";
 import Contact from "./pages/contact.page";
 import ClientAreaIndex from "./pages/client-area/index.page";
 import Profile from "./pages/client-area/profile.page";
+import Orders from "./pages/client-area/orders.page";
 import ChangePassword from "./pages/change-password.page";
-import Checkout from "./pages/checkout/index.page";
-import CheckoutComplete from "./pages/checkout/checkout-complete.page";
 
 import AdminIndex from "./pages/admin/index.page";
 import AdminUsers from "./pages/admin/user/users.page";
@@ -29,6 +28,7 @@ import AdminUserPermissions from "./pages/admin/user/user-permissions.page";
 import AuthVerify from "./user/auth-verify.user";
 
 import AppRoutes from "./router/app.routes";
+import CheckoutComplete from "./pages/checkout-complete.page";
 
 const socket = socketIO.connect("http://localhost:3030");
 
@@ -76,10 +76,15 @@ export default function App() {
         <Route path={AppRoutes.AdminOrders} element={<AdminOrders />} />
         <Route path={AppRoutes.AdminServers} element={<AdminServers />} />
         <Route
-          path={AppRoutes.CheckoutComplete}
-          element={<CheckoutComplete />}
+          path={AppRoutes.Orders}
+          element={
+            <Orders
+              toast={toast}
+              sidebarIsOpen={sidebarIsOpen}
+              setSidebarIsOpen={setSidebarIsOpen}
+            />
+          }
         />
-        <Route path={AppRoutes.Checkout} element={<Checkout />} />
         <Route
           path={AppRoutes.Profile}
           element={
@@ -98,6 +103,10 @@ export default function App() {
               setSidebarIsOpen={setSidebarIsOpen}
             />
           }
+        />
+        <Route
+          path={AppRoutes.CheckoutComplete}
+          element={<CheckoutComplete />}
         />
         <Route path={AppRoutes.Contact} element={<Contact toast={toast} />} />
         <Route

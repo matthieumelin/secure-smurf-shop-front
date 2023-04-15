@@ -4,7 +4,7 @@ import styled from "styled-components";
 
 import Colors from "../../utils/colors.util";
 
-export default function AccountCard({ data, onClick }) {
+export default function AccountCard({ data, loading, onClick }) {
   const parsedFeatures = JSON.parse(data.features);
 
   return (
@@ -42,9 +42,9 @@ export default function AccountCard({ data, onClick }) {
             <AccountCardBuyButton
               type="submit"
               onClick={onClick}
-              disabled={!data.stock}
+              disabled={!data.stock || loading}
             >
-              Buy now
+              {loading ? "Processing..." : "Buy now"}
             </AccountCardBuyButton>
             {data.stock <= 10 ? (
               <AccountCardBuyLimitedStock>
@@ -127,8 +127,17 @@ const AccountCardBuyButton = styled.button`
   padding: 10px 20px;
   font-size: inherit;
   font-family: inherit;
+  font-weight: bold;
   width: 100%;
   cursor: pointer;
+  transition: 0.2s;
+
+  &:hover {
+    transition: 0.2s;
+    -moz-box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.07);
+    -webkit-box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.07);
+    box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.07);
+  }
 
   ${(props) => {
     if (props.disabled) {
@@ -149,5 +158,5 @@ const AccountCardBuyLimitedStockIcon = styled.img`
   display: block;
   width: 22px;
   height: 22px;
-  margin: 0 10px 0 0;
+  margin: 0 5px 0 0;
 `;

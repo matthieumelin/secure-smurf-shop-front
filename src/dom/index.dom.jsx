@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { setCheckout } from "../redux/reducers/checkout.reducer";
+import { loadStripe } from "@stripe/stripe-js";
 
 import styled from "styled-components";
 
@@ -21,6 +22,8 @@ import axios from "axios";
 import { API_ENDPOINTS } from "../api/api";
 import AppRoutes from "../router/app.routes";
 
+const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_KEY);
+
 export default function IndexDOM() {
   const [features, setFeatures] = useState([]);
   const [experience, setExperience] = useState([]);
@@ -35,8 +38,12 @@ export default function IndexDOM() {
 
   const [currentExperience, setCurrentExperience] = useState({});
 
-  const dispatch = useDispatch();
+  const [loading, setLoading] = useState(false);
 
+  const token = useSelector((state) => state.user.token);
+  const userData = useSelector((state) => state.user.data);
+
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -71,10 +78,32 @@ export default function IndexDOM() {
     setShowProductServers(false);
   };
 
-  const onProcessToCheckout = (product) => {
+  const onProcessToCheckout = async (product) => {
+    if (!token) {
+      navigate(AppRoutes.Login);
+      return;
+    }
+
     sessionStorage.setItem("checkout", JSON.stringify(product));
     dispatch(setCheckout(product));
-    navigate(AppRoutes.Checkout);
+    setLoading(true);
+
+    await axios
+      .post(API_ENDPOINTS.STRIPE_CHECKOUT_SESSION, {
+        userId: userData.id,
+        productId: product.stripeId,
+      })
+      .then(async (res) => {
+        const stripe = await stripePromise;
+        const { error } = await stripe.redirectToCheckout({
+          sessionId: res.data.id,
+        });
+        if (error) {
+          console.error(error);
+        }
+        setLoading(false);
+      })
+      .catch((err) => console.error(err));
   };
 
   return (
@@ -147,6 +176,7 @@ export default function IndexDOM() {
                             <AccountCard
                               key={`product_${index}`}
                               data={product}
+                              loading={loading}
                               onClick={() => onProcessToCheckout(product)}
                             />
                           );

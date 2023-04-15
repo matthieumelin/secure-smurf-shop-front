@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useSelector } from "react-redux";
-import { Navigate, Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 
 import styled from "styled-components";
 
@@ -15,7 +15,7 @@ import AppRoutes from "../../router/app.routes";
 import axios from "axios";
 import { API_ENDPOINTS } from "../../api/api";
 
-export default function ClientAreaIndex({ sidebarIsOpen, setSidebarIsOpen }) {
+export default function Orders({ sidebarIsOpen, setSidebarIsOpen }) {
   const [orders, setOrders] = useState([]);
 
   const token = useSelector((state) => state.user.token);
@@ -41,9 +41,9 @@ export default function ClientAreaIndex({ sidebarIsOpen, setSidebarIsOpen }) {
   }
 
   return (
-    <StyledClientAreaIndex>
+    <StyledOrders>
       <Helmet>
-        <title>Dashboard</title>
+        <title>Orders</title>
       </Helmet>
       <Wrapper>
         <Header
@@ -54,40 +54,37 @@ export default function ClientAreaIndex({ sidebarIsOpen, setSidebarIsOpen }) {
           <Navbar setSidebarIsOpen={setSidebarIsOpen} />
           <MainContent>
             <Container>
-              <MainTitle>Welcome</MainTitle>
-              <MainUsername>{userData.username}</MainUsername>
-              <ProductCategories>
-                <ProductCategoryCard
-                  data={{
-                    icon: "diamond.svg",
-                    name: "Accounts And Smurfs",
-                    link: AppRoutes.Home,
-                  }}
-                />
-              </ProductCategories>
-              <LatestOrders>
-                <LatestOrdersHeader>
-                  <LatestOrdersHeaderTitle>
-                    Latest orders
-                  </LatestOrdersHeaderTitle>
-                  <LatestOrdersHeaderMore to={AppRoutes.Orders}>
-                    See all
-                  </LatestOrdersHeaderMore>
-                </LatestOrdersHeader>
+              <ContainerOrders>
+                <ContainerOrdersHeader>
+                  <ContainerOrdersHeaderTitle>
+                    Orders
+                  </ContainerOrdersHeaderTitle>
+                </ContainerOrdersHeader>
                 {orders.length ? (
-                  <LatestOrdersContent>
+                  <ContainerOrdersContent>
                     <Table>
                       <TableHeader>
                         <TableRow>
+                          <TableHead scope="col">Item</TableHead>
                           <TableHead scope="col">ID</TableHead>
+                          <TableHead scope="col">Price</TableHead>
+                          <TableHead scope="col">Status</TableHead>
                           <TableHead scope="col">Actions</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
                         {orders.map((order, index) => {
+                          console.log(order);
                           return (
                             <TableRow key={`order_${index}`}>
+                              <TableData data-label="Item">X</TableData>
                               <TableData data-label="ID">{order.id}</TableData>
+                              <TableData data-label="Price">
+                                {order.totalPrice}
+                              </TableData>
+                              <TableData data-label="Status">
+                                Unpaid placeholder
+                              </TableData>
                               <TableData data-label="Actions">
                                 <TableDataButton>Edit</TableDataButton>
                                 <TableDataButton>Delete</TableDataButton>
@@ -97,27 +94,27 @@ export default function ClientAreaIndex({ sidebarIsOpen, setSidebarIsOpen }) {
                         })}
                       </TableBody>
                     </Table>
-                  </LatestOrdersContent>
+                  </ContainerOrdersContent>
                 ) : (
-                  <LatestOrdersContent>
-                    <LatestOrdersMessage>
+                  <ContainerOrdersContent>
+                    <ContainerOrdersMessage>
                       No orders.{" "}
-                      <LatestOrdersLink to={AppRoutes.Home}>
+                      <ContainerOrdersLink to={AppRoutes.Home}>
                         Buy now
-                      </LatestOrdersLink>
-                    </LatestOrdersMessage>
-                  </LatestOrdersContent>
+                      </ContainerOrdersLink>
+                    </ContainerOrdersMessage>
+                  </ContainerOrdersContent>
                 )}
-              </LatestOrders>
+              </ContainerOrders>
             </Container>
           </MainContent>
         </Main>
       </Wrapper>
-    </StyledClientAreaIndex>
+    </StyledOrders>
   );
 }
 
-const StyledClientAreaIndex = styled.div``;
+const StyledOrders = styled.div``;
 const Wrapper = styled.div``;
 const Main = styled.main``;
 const MainContent = styled.div`
@@ -129,63 +126,39 @@ const MainContent = styled.div`
     padding: 30px;
   }
 `;
-const MainTitle = styled.h3`
-  color: rgba(255, 255, 255, 0.7);
-  font-weight: 300;
-  margin: 0;
-`;
-const MainUsername = styled.h2`
-  margin: 0;
-  color: white;
-`;
 const Container = styled.div`
   @media screen and (min-width: 1024px) {
     width: 50%;
   }
 `;
-const ProductCategories = styled.section`
-  margin: 30px 0;
-`;
 
-const LatestOrders = styled.section`
+const ContainerOrders = styled.section`
   margin: 30px 0 0 0;
 `;
-const LatestOrdersHeader = styled.div`
+const ContainerOrdersHeader = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
 `;
-const LatestOrdersHeaderTitle = styled.h3`
+const ContainerOrdersHeaderTitle = styled.h2`
   margin: 0;
   color: white;
 `;
-const LatestOrdersHeaderMore = styled(Link)`
-  margin: 0;
-  color: rgba(255, 255, 255, 0.7);
-  transition: 0.2s;
-  text-decoration: none;
-
-  &:hover {
-    transition: 0.2s;
-    color: ${Colors.primary};
-  }
-`;
-const LatestOrdersContent = styled.div`
+const ContainerOrdersContent = styled.div`
   background-color: ${Colors.primaryLowOp};
   padding: 20px;
   margin: 20px 0 0 0;
   border-radius: 10px;
 `;
-const LatestOrdersMessage = styled.p`
+const ContainerOrdersMessage = styled.p`
   color: white;
   margin: 0;
 `;
-const LatestOrdersLink = styled(Link)`
+const ContainerOrdersLink = styled(Link)`
   color: ${Colors.primary};
 `;
 
 const Table = styled.table`
-  border: 1px solid #ccc;
   border-collapse: collapse;
   margin: 0;
   padding: 0;
@@ -210,7 +183,6 @@ const TableHeader = styled.thead`
 `;
 const TableRow = styled.tr`
   background-color: transparent;
-  border: 1px solid ${Colors.primary};
   padding: 0.35em;
 
   @media screen and (max-width: 600px) {
@@ -233,7 +205,6 @@ const TableData = styled.td`
   color: white;
 
   @media screen and (max-width: 600px) {
-    border-bottom: 1px solid ${Colors.primary};
     display: block;
     font-size: 0.8em;
     text-align: right;
@@ -250,6 +221,7 @@ const TableData = styled.td`
     }
   }
 `;
+const TableDataBadge = styled.div``;
 const TableDataButton = styled.button`
   padding: 0.7rem;
   background-image: linear-gradient(

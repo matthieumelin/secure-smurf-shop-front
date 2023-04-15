@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Navigate, Link, useNavigate, useParams } from "react-router-dom";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
@@ -80,10 +80,6 @@ export default function Verification({ toast }) {
       <FormContainer>
         <Form onSubmit={handleSubmit(onSubmit)}>
           <FormTitle>Verification</FormTitle>
-          <FormText>
-            Didn't receive anything?{" "}
-            <FormLink to={AppRoutes.Resend}>Send request.</FormLink>
-          </FormText>
           <FormGroups>
             <FormGroup>
               <FormLabel htmlFor="token">Enter your token</FormLabel>
@@ -158,14 +154,6 @@ const Form = styled.form`
 const FormTitle = styled.h1`
   margin: 0;
   color: white;
-`;
-const FormText = styled.p`
-  color: rgba(255, 255, 255, 0.7);
-`;
-const FormLink = styled(Link)`
-  color: ${Colors.primary};
-  text-decoration: none;
-  font-weight: 600;
 `;
 const FormGroups = styled.div``;
 const FormGroup = styled.div`
