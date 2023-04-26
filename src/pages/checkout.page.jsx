@@ -1,21 +1,44 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
-import { Link, Navigate, useParams } from "react-router-dom";
+import { Link, Navigate, useSearchParams, useNavigate } from "react-router-dom";
 
 import styled from "styled-components";
 
 import Footer from "../components/footer.component";
 import Navbar from "../components/navbar.component";
-import Button from "../components/utils/button.component";
 
 import Colors from "../utils/colors.util";
 
 import AppRoutes from "../router/app.routes";
+import axios from "axios";
+import { API_ENDPOINTS } from "../api/api";
 
-export default function CheckoutComplete() {
-  const { type } = useParams();
+export default function Checkout() {
+  const [paymentStatus, setPaymentStatus] = useState("paid");
+  const [searchParams] = useSearchParams();
 
-  if (!type) {
+  const sessionId = searchParams.get("session_id");
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchSession = async () => {
+      await axios
+        .get(`${API_ENDPOINTS.STRIPE_CHECKOUT_SESSION}?sessionId=${sessionId}`)
+        .then((response) => {
+          const paymentStatus = response.data.payment_status;
+          setPaymentStatus(paymentStatus);
+        })
+        .catch(() => navigate(AppRoutes.Home));
+    };
+
+    if (sessionId) fetchSession();
+  }, [navigate, sessionId]);
+
+  const title =
+    paymentStatus === "paid" ? "Payment Successful" : "Payment Declined";
+
+  if (!sessionId) {
     return <Navigate to={AppRoutes.Home} />;
   }
 
@@ -28,17 +51,13 @@ export default function CheckoutComplete() {
       <Main>
         <MainIcon
           src={`${process.env.PUBLIC_URL}/assets/icons/${
-            type.includes("success") ? "checkmark.gif" : "error.svg"
+            paymentStatus === "paid" ? "checkmark.gif" : "error.svg"
           }`}
-          alt={`${
-            type.includes("success") ? "Payment Successful" : "Payment Declined"
-          }`}
+          alt={title}
         />
-        <MainTitle>
-          {type.includes("success") ? "Payment Successful" : "Payment Declined"}
-        </MainTitle>
+        <MainTitle>{title}</MainTitle>
         <MainDescription>
-          {type.includes("success")
+          {paymentStatus === "paid"
             ? "Your payment was successful! You can now continue to dashboard."
             : "The transaction was declined due to insufficient funds in your account. Please use a different card or contact your bank."}
         </MainDescription>

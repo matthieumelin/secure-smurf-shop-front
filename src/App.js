@@ -3,8 +3,6 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-import socketIO from "socket.io-client";
-
 import Loading from "./components/loading.component";
 
 import Index from "./pages/index.page";
@@ -17,6 +15,7 @@ import ClientAreaIndex from "./pages/client-area/index.page";
 import Profile from "./pages/client-area/profile.page";
 import Orders from "./pages/client-area/orders.page";
 import ChangePassword from "./pages/change-password.page";
+import Checkout from "./pages/checkout.page";
 
 import AdminIndex from "./pages/admin/index.page";
 import AdminUsers from "./pages/admin/user/users.page";
@@ -28,9 +27,6 @@ import AdminUserPermissions from "./pages/admin/user/user-permissions.page";
 import AuthVerify from "./user/auth-verify.user";
 
 import AppRoutes from "./router/app.routes";
-import CheckoutComplete from "./pages/checkout-complete.page";
-
-const socket = socketIO.connect("http://localhost:3030");
 
 export default function App() {
   const [appIsLoading, setAppIsLoading] = useState(true);
@@ -105,8 +101,8 @@ export default function App() {
           }
         />
         <Route
-          path={AppRoutes.CheckoutComplete}
-          element={<CheckoutComplete />}
+          path={AppRoutes.Checkout}
+          element={<Checkout />}
         />
         <Route path={AppRoutes.Contact} element={<Contact toast={toast} />} />
         <Route

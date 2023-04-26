@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { setCheckout } from "../redux/reducers/checkout.reducer";
@@ -40,6 +40,8 @@ export default function IndexDOM() {
 
   const [loading, setLoading] = useState(false);
 
+  const productServersRef = useRef(productServers);
+
   const token = useSelector((state) => state.user.token);
   const userData = useSelector((state) => state.user.data);
 
@@ -58,8 +60,6 @@ export default function IndexDOM() {
         .catch((err) => console.error(err));
     };
 
-    fetchData();
-
     axios
       .get("./data.json")
       .then((res) => {
@@ -67,10 +67,12 @@ export default function IndexDOM() {
         setExperience(res.data.experience);
         setGuarantee(res.data.guarantee);
         setFaq(res.data.faq);
-        setCurrentProductServer(productServers[0]);
+        setCurrentProductServer(productServersRef.current[0]);
         setCurrentExperience(res.data.experience[0]);
       })
       .catch((err) => console.error(err));
+
+    fetchData();
   }, []);
 
   const onSelectProductServer = (server) => {
@@ -89,7 +91,7 @@ export default function IndexDOM() {
     setLoading(true);
 
     await axios
-      .post(API_ENDPOINTS.STRIPE_CHECKOUT_SESSION, {
+      .post(API_ENDPOINTS.STRIPE_CREATE_CHECKOUT_SESSION, {
         userId: userData.id,
         productId: product.stripeId,
       })
@@ -120,70 +122,90 @@ export default function IndexDOM() {
             <SectionContent>
               {showProductServers ? (
                 <Servers>
-                  {productServers.map((productServer, index) => {
-                    return (
-                      <ServerCard
-                        key={`product_server_${index}`}
-                        data={productServer}
-                        onSelectProductServer={onSelectProductServer}
-                      />
-                    );
-                  })}
+                  {productServers
+                    .filter((productServer) => {
+                      const filteredProducts = products.filter(
+                        (product) =>
+                          product &&
+                          product.server.toUpperCase() ===
+                            productServer.shortName.toUpperCase()
+                      );
+                      return filteredProducts.length > 0;
+                    })
+                    .map((productServer, index) => {
+                      return (
+                        <ServerCard
+                          key={`product_server_${index}`}
+                          data={productServer}
+                          onSelectProductServer={onSelectProductServer}
+                        />
+                      );
+                    })}
                 </Servers>
               ) : (
-                <Products>
-                  <ProductsHeader>
-                    <ProductsHeaderRegion>
-                      <ProductsHeaderRegionHeader>
-                        <ProductsHeaderRegionHeaderTitle>
-                          {currentProductServer.name}
-                        </ProductsHeaderRegionHeaderTitle>
-                      </ProductsHeaderRegionHeader>
-                    </ProductsHeaderRegion>
-                  </ProductsHeader>
-                  <ProductsContent>
-                    <ProductsContentServers active={showProductServers}>
-                      {productServers
-                        .filter(
-                          (productServer) =>
-                            productServer !== currentProductServer
-                        )
-                        .map((productServer, index) => {
-                          return (
-                            <ProductsContentProductServers
-                              key={`product_server_${index}`}
-                            >
-                              <ProductsContentProductServer
-                                onClick={() =>
-                                  setCurrentProductServer(productServer)
-                                }
+                currentProductServer && (
+                  <Products>
+                    <ProductsHeader>
+                      <ProductsHeaderRegion>
+                        <ProductsHeaderRegionHeader>
+                          <ProductsHeaderRegionHeaderTitle>
+                            {currentProductServer.name}
+                          </ProductsHeaderRegionHeaderTitle>
+                        </ProductsHeaderRegionHeader>
+                      </ProductsHeaderRegion>
+                    </ProductsHeader>
+                    <ProductsContent>
+                      <ProductsContentServers active={currentProductServer}>
+                        {productServers
+                          .filter((productServer) => {
+                            const filteredProducts = products.filter(
+                              (product) =>
+                                product &&
+                                product.server.toUpperCase() ===
+                                  productServer.shortName.toUpperCase()
+                            );
+                            return (
+                              productServer !== currentProductServer &&
+                              filteredProducts.length > 0
+                            );
+                          })
+                          .map((productServer, index) => {
+                            return (
+                              <ProductsContentProductServers
+                                key={`product_server_${index}`}
                               >
-                                {productServer.name}
-                              </ProductsContentProductServer>
-                            </ProductsContentProductServers>
-                          );
-                        })}
-                    </ProductsContentServers>
-                    <ProductsContentProducts>
-                      {products
-                        .filter(
-                          (product) =>
-                            product.server.toUpperCase() ===
-                            currentProductServer.shortName.toUpperCase()
-                        )
-                        .map((product, index) => {
-                          return (
-                            <AccountCard
-                              key={`product_${index}`}
-                              data={product}
-                              loading={loading}
-                              onClick={() => onProcessToCheckout(product)}
-                            />
-                          );
-                        })}
-                    </ProductsContentProducts>
-                  </ProductsContent>
-                </Products>
+                                <ProductsContentProductServer
+                                  onClick={() =>
+                                    setCurrentProductServer(productServer)
+                                  }
+                                >
+                                  {productServer.name}
+                                </ProductsContentProductServer>
+                              </ProductsContentProductServers>
+                            );
+                          })}
+                      </ProductsContentServers>
+                      <ProductsContentProducts>
+                        {products
+                          .filter(
+                            (product) =>
+                              product.server.toUpperCase() ===
+                              currentProductServer.shortName.toUpperCase()
+                          )
+                          .map((product, index) => {
+                            return (
+                              <AccountCard
+                                key={`product_${index}`}
+                                data={product}
+                                loading={loading}
+                                onClick={() => onProcessToCheckout(product)}
+                              />
+                            );
+                          })}
+                      </ProductsContentProducts>
+                    </ProductsContent>
+                  </Products>
+                )
               )}
             </SectionContent>
           </Section>
@@ -370,17 +392,14 @@ const SectionContent = styled.div`
 `;
 
 const Servers = styled.div`
-  display: grid;
-  grid-gap: 30px;
-  row-gap: 20px;
   margin: 30px 0;
+  display: grid;
   justify-content: center;
+  grid-gap: 30px;
 
-  @media screen and (min-width: 768px) {
-    grid-template-columns: repeat(2, max-content);
-  }
   @media screen and (min-width: 1024px) {
-    grid-template-columns: repeat(3, max-content);
+    display: flex;
+    flex-wrap: wrap;
   }
 `;
 
@@ -541,13 +560,21 @@ const ProductsHeaderRegionHeaderTitle = styled.h2`
 `;
 const ProductsContent = styled.div``;
 const ProductsContentServers = styled.div`
-  display: ${(props) => (props.active ? "flex" : "none")};
+  display: none;
+  ${(props) => {
+    if (props.active) {
+      return `
+    display: flex;
+    justify-content: center;
+    margin: 0 0 20px 0;
+    `;
+    }
+  }}
 `;
 const ProductsContentProducts = styled.div`
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
-  margin: 20px 0 0 0;
 `;
 const ProductsContentProductServers = styled.div``;
 const ProductsContentProductServer = styled.button`

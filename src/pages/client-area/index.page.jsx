@@ -21,10 +21,12 @@ export default function ClientAreaIndex({ sidebarIsOpen, setSidebarIsOpen }) {
   const token = useSelector((state) => state.user.token);
   const userData = useSelector((state) => state.user.data);
 
+  const userId = userData && userData.id;
+
   useEffect(() => {
     const fetchOrders = async () => {
       await axios
-        .get(`${API_ENDPOINTS.USER_ORDERS}/${userData.id}`, {
+        .get(`${API_ENDPOINTS.USER_ORDERS}/${userId}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -34,7 +36,7 @@ export default function ClientAreaIndex({ sidebarIsOpen, setSidebarIsOpen }) {
     };
 
     fetchOrders();
-  }, [token, userData.id]);
+  }, [token, userId]);
 
   if (!token) {
     return <Navigate to={AppRoutes.Login} />;
@@ -74,7 +76,7 @@ export default function ClientAreaIndex({ sidebarIsOpen, setSidebarIsOpen }) {
                     See all
                   </LatestOrdersHeaderMore>
                 </LatestOrdersHeader>
-                {orders.length ? (
+                {orders && orders.length ? (
                   <LatestOrdersContent>
                     <Table>
                       <TableHeader>
@@ -262,7 +264,10 @@ const TableDataButton = styled.button`
   border-radius: 100px;
   box-shadow: 0px 4px 34px rgb(157 78 221 / 40%);
   margin: 0 0 0 10px;
-
+  color: white;
+  font-family: inherit;
+  cursor: pointer;
+  width: 80px;
   &:last-child {
     background-image: linear-gradient(
       147.16deg,

@@ -5,13 +5,13 @@ import styled from "styled-components";
 
 import IndexDOM from "../dom/index.dom";
 
-export default function Index() {
+export default function Index({ stripePromise }) {
   return (
     <StyledIndex>
       <Helmet>
         <title>Home</title>
       </Helmet>
-      <IndexDOM />
+      <IndexDOM stripePromise={stripePromise} />
     </StyledIndex>
   );
 }
