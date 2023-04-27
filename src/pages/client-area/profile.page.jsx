@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useSelector, useDispatch } from "react-redux";
 import { setData } from "../../redux/reducers/user.reducer";
-import { Link, Navigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { ErrorMessage } from "@hookform/error-message";
 import Gravatar from "react-gravatar";
@@ -24,6 +24,7 @@ import { PasswordRegEx, DiscordRegEx } from "../../utils/regex.util";
 
 import axios from "axios";
 import { API_ENDPOINTS } from "../../api/api";
+import Modal from "../../components/client-area/modal.component";
 
 export default function Profile({ toast, sidebarIsOpen, setSidebarIsOpen }) {
   const token = useSelector((state) => state.user.token);
@@ -31,8 +32,11 @@ export default function Profile({ toast, sidebarIsOpen, setSidebarIsOpen }) {
 
   const [countries, setCountries] = useState([]);
   const [editPersonalDetails, setEditPersonalDetails] = useState(false);
+  const [showDisableModal, setShowDisableModal] = useState(false);
 
   const dispatch = useDispatch();
+
+  const navigate = useNavigate();
 
   const {
     register,
@@ -96,6 +100,25 @@ export default function Profile({ toast, sidebarIsOpen, setSidebarIsOpen }) {
       .catch((err) => toast.error(err.response.data.message));
   };
 
+  const onConfirmDisable = async () => {
+    await axios
+      .post(API_ENDPOINTS.USER_DISABLE, {
+        id: userData.id,
+      })
+      .then((res) => {
+        if (res.status === 200) {
+          setShowDisableModal(false);
+
+          navigate(AppRoutes.Logout);
+        }
+      })
+      .catch((err) => console.log(err.response.data.message));
+  };
+
+  const onCancelDisable = () => {
+    setShowDisableModal(false);
+  };
+
   if (!token) {
     return <Navigate to={AppRoutes.Login} />;
   }
@@ -112,6 +135,11 @@ export default function Profile({ toast, sidebarIsOpen, setSidebarIsOpen }) {
         />
         <Main>
           <Navbar setSidebarIsOpen={setSidebarIsOpen} />
+          <Modal
+            active={showDisableModal}
+            onConfirm={onConfirmDisable}
+            onCancel={onCancelDisable}
+          />
           <MainContent>
             <MainTitle>Profile</MainTitle>
             <Menu>
@@ -120,11 +148,11 @@ export default function Profile({ toast, sidebarIsOpen, setSidebarIsOpen }) {
                   Profile
                 </MenuItemLink>
               </MenuItem>
-              <MenuItem>
+              {/* <MenuItem>
                 <MenuItemLink to={AppRoutes.ProfileBilling}>
                   Billing
                 </MenuItemLink>
-              </MenuItem>
+              </MenuItem> */}
             </Menu>
             <Container>
               <Infos>
@@ -185,9 +213,7 @@ export default function Profile({ toast, sidebarIsOpen, setSidebarIsOpen }) {
                           color: Colors.red,
                           backgroundColor: "rgba(214, 40, 40 ,0.1)",
                         }}
-                        onClick={() =>
-                          setEditPersonalDetails(!editPersonalDetails)
-                        }
+                        onClick={() => setShowDisableModal(true)}
                       >
                         Delete account
                       </CustomButton>

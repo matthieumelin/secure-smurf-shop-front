@@ -35,7 +35,7 @@ export default function ClientAreaIndex({ sidebarIsOpen, setSidebarIsOpen }) {
         .catch((err) => console.error(err.response.data.message));
     };
 
-    fetchOrders();
+    if (token) fetchOrders();
   }, [token, userId]);
 
   if (!token) {

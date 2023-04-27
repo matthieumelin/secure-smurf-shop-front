@@ -57,9 +57,13 @@ export default function Login({ toast }) {
 
   useEffect(() => {
     reset();
+    
     setCaptchaResponse(null);
-    recaptchaRef.current.reset();
-  }, [formType]);
+
+    const currentRecaptcha = recaptchaRef.current;
+    if (!currentRecaptcha) return;
+    currentRecaptcha.reset();
+  }, [formType, reset]);
 
   const onChange = (value) => {
     setCaptchaResponse(value);
