@@ -33,6 +33,7 @@ export default function App() {
 
   // Client area props
   const [sidebarIsOpen, setSidebarIsOpen] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   useEffect(() => {
     setTimeout(() => {
@@ -77,7 +78,9 @@ export default function App() {
             <Orders
               toast={toast}
               sidebarIsOpen={sidebarIsOpen}
+              showLogoutModal={showLogoutModal}
               setSidebarIsOpen={setSidebarIsOpen}
+              setShowLogoutModal={setShowLogoutModal}
             />
           }
         />
@@ -87,7 +90,9 @@ export default function App() {
             <Profile
               toast={toast}
               sidebarIsOpen={sidebarIsOpen}
+              showLogoutModal={showLogoutModal}
               setSidebarIsOpen={setSidebarIsOpen}
+              setShowLogoutModal={setShowLogoutModal}
             />
           }
         />
@@ -96,14 +101,13 @@ export default function App() {
           element={
             <ClientAreaIndex
               sidebarIsOpen={sidebarIsOpen}
+              showLogoutModal={showLogoutModal}
               setSidebarIsOpen={setSidebarIsOpen}
+              setShowLogoutModal={setShowLogoutModal}
             />
           }
         />
-        <Route
-          path={AppRoutes.Checkout}
-          element={<Checkout />}
-        />
+        <Route path={AppRoutes.Checkout} element={<Checkout />} />
         <Route path={AppRoutes.Contact} element={<Contact toast={toast} />} />
         <Route
           path={AppRoutes.Verification}

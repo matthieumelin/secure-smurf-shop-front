@@ -7,7 +7,9 @@ export default function ProductServerCard({ data, onSelectProductServer }) {
   return (
     <StyledProductServerCard onClick={() => onSelectProductServer(data)}>
       <ProductServerCardImage
-        src={`${process.env.PUBLIC_URL}/assets/images/servers/${data.shortName}.png`}
+        src={`${
+          process.env.PUBLIC_URL
+        }/assets/images/servers/${data.shortName.toLowerCase()}.png`}
       />
       <ProductServerCardInfos>
         <ProductServerCardInfosName>{data.name}</ProductServerCardInfosName>

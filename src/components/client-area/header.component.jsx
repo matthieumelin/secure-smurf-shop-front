@@ -7,9 +7,14 @@ import Colors from "../../utils/colors.util";
 
 import AppRoutes from "../../router/app.routes";
 
-export default function Header({ sidebarIsOpen, setSidebarIsOpen }) {
+export default function Header({ sidebarIsOpen, setSidebarIsOpen, setShowLogoutModal }) {
   const location = useLocation();
-  
+
+  const onToggleLogoutModal = () => {
+    document.body.style.overflow = "hidden";
+    setShowLogoutModal(true);
+  } 
+
   return (
     <StyledHeader>
       <Sidebar sidebarIsOpen={sidebarIsOpen}>
@@ -65,14 +70,12 @@ export default function Header({ sidebarIsOpen, setSidebarIsOpen }) {
             </SidebarMenuItem>
           </SidebarMenu>
         </SidebarMenuContainer>
-        <NavLink to={AppRoutes.Logout}>
-          <SidebarLogoutButton>
-            <SidebarLogoutButtonIcon
-              src={`${process.env.PUBLIC_URL}/assets/icons/logout.svg`}
-              alt="Logout"
-            />
-          </SidebarLogoutButton>
-        </NavLink>
+        <SidebarLogoutButton type="button" onClick={onToggleLogoutModal}>
+          <SidebarLogoutButtonIcon
+            src={`${process.env.PUBLIC_URL}/assets/icons/logout.svg`}
+            alt="Logout"
+          />
+        </SidebarLogoutButton>
       </Sidebar>
     </StyledHeader>
   );

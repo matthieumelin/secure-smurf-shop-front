@@ -60,17 +60,14 @@ export default function IndexDOM() {
         .catch((err) => console.error(err));
     };
 
-    axios
-      .get("./data.json")
-      .then((res) => {
-        setFeatures(res.data.features);
-        setExperience(res.data.experience);
-        setGuarantee(res.data.guarantee);
-        setFaq(res.data.faq);
-        setCurrentProductServer(productServersRef.current[0]);
-        setCurrentExperience(res.data.experience[0]);
-      })
-      .catch((err) => console.error(err));
+    axios.get("./data.json").then((res) => {
+      setFeatures(res.data.features);
+      setExperience(res.data.experience);
+      setGuarantee(res.data.guarantee);
+      setFaq(res.data.faq);
+      setCurrentProductServer(productServersRef.current[0]);
+      setCurrentExperience(res.data.experience[0]);
+    });
 
     fetchData();
   }, []);
@@ -104,8 +101,7 @@ export default function IndexDOM() {
           console.error(error);
         }
         setLoading(false);
-      })
-      .catch((err) => console.error(err));
+      });
   };
 
   return (
@@ -210,7 +206,7 @@ export default function IndexDOM() {
             </SectionContent>
           </Section>
         ) : null}
-        {features.length && (
+        {features && features.length && (
           <Section>
             <SectionHeader>
               <SectionHeaderTitle>Our Features</SectionHeaderTitle>
@@ -226,7 +222,7 @@ export default function IndexDOM() {
             </SectionContent>
           </Section>
         )}
-        {experience.length && (
+        {experience && experience.length && (
           <Section style={{ backgroundColor: Colors.gray }}>
             <SectionHeader>
               <SectionHeaderTitle style={{ paddingTop: 30 }}>
@@ -237,79 +233,85 @@ export default function IndexDOM() {
               </SectionHeaderDescription>
             </SectionHeader>
             <SectionContent>
-              <Experience>
-                <ExperienceStep>
-                  <ExperienceStepImage
-                    src={`${process.env.PUBLIC_URL}/assets/images/${currentExperience.image}`}
-                    alt={currentExperience.title}
-                  />
-                  <ExperienceStepInfos>
-                    <ExperienceStepInfosTitle>
-                      {currentExperience.title}
-                    </ExperienceStepInfosTitle>
-                    {currentExperience.description.map((description, index) => {
+              {currentExperience && (
+                <Experience>
+                  <ExperienceStep>
+                    <ExperienceStepImage
+                      src={`${process.env.PUBLIC_URL}/assets/images/${currentExperience.image}`}
+                      alt={currentExperience.title}
+                    />
+                    <ExperienceStepInfos>
+                      <ExperienceStepInfosTitle>
+                        {currentExperience.title}
+                      </ExperienceStepInfosTitle>
+                      {currentExperience.description.map(
+                        (description, index) => {
+                          return (
+                            <ExperienceStepInfosDescription
+                              key={`experience_step_description_${index}`}
+                            >
+                              {description}
+                            </ExperienceStepInfosDescription>
+                          );
+                        }
+                      )}
+                      <ExperienceStepInfosFeatures>
+                        {currentExperience.features.map((feature, index) => {
+                          return (
+                            <ExperienceStepInfosFeaturesItem
+                              key={`experience_step_feature_${index}`}
+                            >
+                              <ExperienceStepInfosFeaturesItemIcon
+                                src={`${process.env.PUBLIC_URL}/assets/icons/done.svg`}
+                                alt="Check"
+                              />{" "}
+                              {feature}
+                            </ExperienceStepInfosFeaturesItem>
+                          );
+                        })}
+                      </ExperienceStepInfosFeatures>
+                      <Button title={"Get started"} />
+                    </ExperienceStepInfos>
+                  </ExperienceStep>
+                  <ExperiencePagination>
+                    {experience.map((exp) => {
                       return (
-                        <ExperienceStepInfosDescription
-                          key={`experience_step_description_${index}`}
-                        >
-                          {description}
-                        </ExperienceStepInfosDescription>
-                      );
-                    })}
-                    <ExperienceStepInfosFeatures>
-                      {currentExperience.features.map((feature, index) => {
-                        return (
-                          <ExperienceStepInfosFeaturesItem
-                            key={`experience_step_feature_${index}`}
-                          >
-                            <ExperienceStepInfosFeaturesItemIcon
-                              src={`${process.env.PUBLIC_URL}/assets/icons/done.svg`}
-                              alt="Check"
-                            />{" "}
-                            {feature}
-                          </ExperienceStepInfosFeaturesItem>
-                        );
-                      })}
-                    </ExperienceStepInfosFeatures>
-                    <Button title={"Get started"} />
-                  </ExperienceStepInfos>
-                </ExperienceStep>
-                <ExperiencePagination>
-                  {experience.map((exp) => {
-                    return (
-                      <ExperiencePaginationItem
-                        key={`experience_pagination_${exp.id}`}
-                        active={currentExperience.id === exp.id ? true : false}
-                        onClick={() => setCurrentExperience(exp)}
-                      />
-                    );
-                  })}
-                </ExperiencePagination>
-                <ExperienceCards>
-                  {experience
-                    .map((exp) => exp.card)
-                    .map((card) => {
-                      const exp = experience.find(
-                        (item) => item.id === card.id
-                      );
-                      return (
-                        <ExperienceCard
-                          key={`experience_step_${card.id}`}
+                        <ExperiencePaginationItem
+                          key={`experience_pagination_${exp.id}`}
                           active={
-                            currentExperience.id === card.id ? true : false
+                            currentExperience.id === exp.id ? true : false
                           }
-                          data={card}
-                          dataExp={exp}
-                          setCurrentExperience={setCurrentExperience}
+                          onClick={() => setCurrentExperience(exp)}
                         />
                       );
                     })}
-                </ExperienceCards>
-              </Experience>
+                  </ExperiencePagination>
+                  <ExperienceCards>
+                    {experience
+                      .map((exp) => exp.card)
+                      .map((card) => {
+                        const exp = experience.find(
+                          (item) => item.id === card.id
+                        );
+                        return (
+                          <ExperienceCard
+                            key={`experience_step_${card.id}`}
+                            active={
+                              currentExperience.id === card.id ? true : false
+                            }
+                            data={card}
+                            dataExp={exp}
+                            setCurrentExperience={setCurrentExperience}
+                          />
+                        );
+                      })}
+                  </ExperienceCards>
+                </Experience>
+              )}
             </SectionContent>
           </Section>
         )}
-        {guarantee.length && (
+        {guarantee && guarantee.length && (
           <Section>
             <SectionHeader>
               <SectionHeaderTitle>
@@ -330,7 +332,7 @@ export default function IndexDOM() {
             </SectionContent>
           </Section>
         )}
-        {faq.length && (
+        {faq && faq.length && (
           <Section>
             <SectionHeader>
               <SectionHeaderTitle>
@@ -397,9 +399,12 @@ const Servers = styled.div`
   justify-content: center;
   grid-gap: 30px;
 
+  @media screen and (min-width: 768px) {
+    grid-template-columns: repeat(2, max-content);
+  }
+
   @media screen and (min-width: 1024px) {
-    display: flex;
-    flex-wrap: wrap;
+    grid-template-columns: repeat(3, max-content);
   }
 `;
 

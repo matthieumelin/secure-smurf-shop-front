@@ -115,7 +115,7 @@
   ],
   "experience": [
     {
-      "id": 0,
+      "id": 1,
       "image": "smurf1.png",
       "title": "Select your preferred account category",
       "description": [
@@ -127,14 +127,14 @@
         "Intuitive and straighforward purchase process."
       ],
       "card": {
-        "id": 0,
+        "id": 1,
         "icon": "1.svg",
         "title": "1 - Select Account",
         "description": "Select yourt preferred account category."
       }
     },
     {
-      "id": 1,
+      "id": 2,
       "image": "smurf2.png",
       "title": "Buy with ease",
       "description": [
@@ -147,14 +147,14 @@
         "Crypto payments are available."
       ],
       "card": {
-        "id": 1,
+        "id": 2,
         "icon": "2.svg",
         "title": "2 - Complete Payment",
         "description": "Choose your preferred payment method."
       }
     },
     {
-      "id": 2,
+      "id": 3,
       "image": "smurf3.png",
       "title": "Change the e-mail to your own",
       "description": [
@@ -162,7 +162,7 @@
       ],
       "features": ["Lifetime Guarantee.", "24/7 Premium live Help."],
       "card": {
-        "id": 2,
+        "id": 3,
         "icon": "3.svg",
         "title": "3 - Start Winning",
         "description": "Receive your account details in the client's area."

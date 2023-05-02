@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useSelector } from "react-redux";
-import { Link, Navigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 
 import styled from "styled-components";
 
-import ProductCategoryCard from "../../components/client-area/cards/product-category-card.component";
 import Header from "../../components/client-area/header.component";
 import Navbar from "../../components/client-area/navbar.component";
+import Modal from "../../components/client-area/modal.component";
 
 import Colors from "../../utils/colors.util";
 
@@ -15,11 +15,13 @@ import AppRoutes from "../../router/app.routes";
 import axios from "axios";
 import { API_ENDPOINTS } from "../../api/api";
 
-export default function Orders({ sidebarIsOpen, setSidebarIsOpen }) {
+export default function Orders({ sidebarIsOpen, showLogoutModal, setSidebarIsOpen, setShowLogoutModal }) {
   const [orders, setOrders] = useState([]);
 
   const token = useSelector((state) => state.user.token);
   const userData = useSelector((state) => state.user.data);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -33,8 +35,19 @@ export default function Orders({ sidebarIsOpen, setSidebarIsOpen }) {
         .catch((err) => console.error(err.response.data.message));
     };
 
-    fetchOrders();
+    if (token) fetchOrders();
   }, [token, userData.id]);
+
+  const onConfirmLogout = () => {
+    document.body.style.overflow = "initial";
+    navigate(AppRoutes.Logout);
+    setShowLogoutModal(false);
+  }
+
+  const onCancelLogout = () => {
+    document.body.style.overflow = "initial";
+    setShowLogoutModal(false);
+  }
 
   if (!token) {
     return <Navigate to={AppRoutes.Login} />;
@@ -48,11 +61,22 @@ export default function Orders({ sidebarIsOpen, setSidebarIsOpen }) {
       <Wrapper>
         <Header
           sidebarIsOpen={sidebarIsOpen}
+          showLogoutModal={showLogoutModal}
           setSidebarIsOpen={setSidebarIsOpen}
+          setShowLogoutModal={setShowLogoutModal}
         />
         <Main>
           <Navbar setSidebarIsOpen={setSidebarIsOpen} />
           <MainContent>
+            <Modal
+              title={"Logout"}
+              description={"Are you sure you want to logout?"}
+              active={showLogoutModal}
+              onConfirm={onConfirmLogout}
+              onCancel={onCancelLogout}
+              buttonCancelTitle={"Cancel"}
+              buttonConfirmTitle={"Logout"}
+            />
             <Container>
               <ContainerOrders>
                 <ContainerOrdersHeader>

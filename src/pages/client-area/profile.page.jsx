@@ -3,6 +3,7 @@ import { Helmet } from "react-helmet-async";
 import { useSelector, useDispatch } from "react-redux";
 import { setData } from "../../redux/reducers/user.reducer";
 import { Link, Navigate, useNavigate } from "react-router-dom";
+import AppRoutes from "../../router/app.routes";
 import { useForm } from "react-hook-form";
 import { ErrorMessage } from "@hookform/error-message";
 import Gravatar from "react-gravatar";
@@ -13,8 +14,7 @@ import styled from "styled-components";
 
 import Header from "../../components/client-area/header.component";
 import Navbar from "../../components/client-area/navbar.component";
-
-import AppRoutes from "../../router/app.routes";
+import Modal from "../../components/client-area/modal.component";
 
 import Colors from "../../utils/colors.util";
 import ErrorContainer from "../../utils/error-container.util";
@@ -24,9 +24,8 @@ import { PasswordRegEx, DiscordRegEx } from "../../utils/regex.util";
 
 import axios from "axios";
 import { API_ENDPOINTS } from "../../api/api";
-import Modal from "../../components/client-area/modal.component";
 
-export default function Profile({ toast, sidebarIsOpen, setSidebarIsOpen }) {
+export default function Profile({ toast, sidebarIsOpen, showLogoutModal, setSidebarIsOpen, setShowLogoutModal }) {
   const token = useSelector((state) => state.user.token);
   const userData = useSelector((state) => state.user.data);
 
@@ -45,14 +44,14 @@ export default function Profile({ toast, sidebarIsOpen, setSidebarIsOpen }) {
   } = useForm(
     userData
       ? {
-          defaultValues: {
-            username: userData.username,
-            firstName: userData.firstName,
-            lastName: userData.lastName,
-            discord: userData.discord,
-            country: userData.country,
-          },
-        }
+        defaultValues: {
+          username: userData.username,
+          firstName: userData.firstName,
+          lastName: userData.lastName,
+          discord: userData.discord,
+          country: userData.country,
+        },
+      }
       : null
   );
 
@@ -115,9 +114,28 @@ export default function Profile({ toast, sidebarIsOpen, setSidebarIsOpen }) {
       .catch((err) => console.log(err.response.data.message));
   };
 
+  const onDeleteAccount = () => {
+    setShowDisableModal(true);
+
+    document.body.style.overflow = "hidden";
+  }
+
   const onCancelDisable = () => {
     setShowDisableModal(false);
+
+    document.body.style.overflow = "initial";
   };
+
+  const onConfirmLogout = () => {
+    document.body.style.overflow = "initial";
+    navigate(AppRoutes.Logout);
+    setShowLogoutModal(false);
+  }
+
+  const onCancelLogout = () => {
+    document.body.style.overflow = "initial";
+    setShowLogoutModal(false);
+  }
 
   if (!token) {
     return <Navigate to={AppRoutes.Login} />;
@@ -132,15 +150,30 @@ export default function Profile({ toast, sidebarIsOpen, setSidebarIsOpen }) {
         <Header
           sidebarIsOpen={sidebarIsOpen}
           setSidebarIsOpen={setSidebarIsOpen}
+          showLogoutModal={showLogoutModal}
+          setShowLogoutModal={setShowLogoutModal}
         />
         <Main>
           <Navbar setSidebarIsOpen={setSidebarIsOpen} />
           <Modal
+            title={"Delete Account"}
+            description={"Are you sure you wait to delete your account? If you delete your account, you will permanently lose your data."}
             active={showDisableModal}
             onConfirm={onConfirmDisable}
             onCancel={onCancelDisable}
+            buttonCancelTitle={"Cancel"}
+            buttonConfirmTitle={"Delete"}
           />
           <MainContent>
+            <Modal
+              title={"Logout"}
+              description={"Are you sure you want to logout?"}
+              active={showLogoutModal}
+              onConfirm={onConfirmLogout}
+              onCancel={onCancelLogout}
+              buttonCancelTitle={"Cancel"}
+              buttonConfirmTitle={"Logout"}
+            />
             <MainTitle>Profile</MainTitle>
             <Menu>
               <MenuItem>
@@ -213,7 +246,7 @@ export default function Profile({ toast, sidebarIsOpen, setSidebarIsOpen }) {
                           color: Colors.red,
                           backgroundColor: "rgba(214, 40, 40 ,0.1)",
                         }}
-                        onClick={() => setShowDisableModal(true)}
+                        onClick={() => onDeleteAccount()}
                       >
                         Delete account
                       </CustomButton>

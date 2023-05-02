@@ -39,6 +39,15 @@ export default function AccountCard({ data, loading, onClick }) {
           </AccountCardBuyButton>
         ) : (
           <AccountCardBuyWrapper>
+            <AccountCardBuyQuantitySelect>
+              {[...Array(10)].map((value, index) => {
+                return (
+                  <AccountCardBuyQuantitySelectOption key={`quantity_${index}`} value={value}>
+                    {value}
+                  </AccountCardBuyQuantitySelectOption>
+                );
+              })}
+            </AccountCardBuyQuantitySelect>
             <AccountCardBuyButton
               type="submit"
               onClick={onClick}
@@ -148,6 +157,8 @@ const AccountCardBuyButton = styled.button`
     }
   }}
 `;
+const AccountCardBuyQuantitySelect = styled.select``;
+const AccountCardBuyQuantitySelectOption = styled.option``;
 const AccountCardBuyLimitedStock = styled.div`
   display: flex;
   justify-content: center;
