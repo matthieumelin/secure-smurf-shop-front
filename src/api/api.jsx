@@ -10,6 +10,7 @@ const API_ENDPOINTS = {
   USER_CHANGE_PASSWORD: `${API_BASE_URL}/users/changePassword`,
   USER_UPDATE: `${API_BASE_URL}/users/update`,
   USER_DISABLE: `${API_BASE_URL}/users/disable`,
+  USERS: `${API_BASE_URL}/users`,
   PRODUCT_SERVERS: `${API_BASE_URL}/products/servers`,
   PRODUCTS: `${API_BASE_URL}/products`,
   ORDER: `${API_BASE_URL}/orders`,

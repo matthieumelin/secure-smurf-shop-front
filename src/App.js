@@ -18,11 +18,7 @@ import ChangePassword from "./pages/change-password.page";
 import Checkout from "./pages/checkout.page";
 
 import AdminIndex from "./pages/admin/index.page";
-import AdminUsers from "./pages/admin/user/users.page";
-import AdminServers from "./pages/admin/servers.page";
-import AdminOrders from "./pages/admin/orders.page";
-import AdminProducts from "./pages/admin/products.page";
-import AdminUserPermissions from "./pages/admin/user/user-permissions.page";
+import AdminUsers from "./pages/admin/users.page";
 
 import AuthVerify from "./user/auth-verify.user";
 
@@ -63,15 +59,8 @@ export default function App() {
         theme="dark"
       />
       <Routes>
-        <Route path={AppRoutes.AdminDashboard} element={<AdminIndex />} />
         <Route path={AppRoutes.AdminUsers} element={<AdminUsers />} />
-        <Route
-          path={AppRoutes.AdminUserPermissions}
-          element={<AdminUserPermissions />}
-        />
-        <Route path={AppRoutes.AdminProducts} element={<AdminProducts />} />
-        <Route path={AppRoutes.AdminOrders} element={<AdminOrders />} />
-        <Route path={AppRoutes.AdminServers} element={<AdminServers />} />
+        <Route path={AppRoutes.AdminDashboard} element={<AdminIndex />} />
         <Route
           path={AppRoutes.Orders}
           element={

@@ -1,40 +1,59 @@
-import React from "react";
-import { useSelector } from "react-redux";
+import React from 'react'
+import Gravatar from 'react-gravatar';
 
-import styled from "styled-components";
+import styled from 'styled-components'
 
-import Gravatar from "react-gravatar";
-import Colors from "../../utils/colors.util";
-
-export default function AdminNavbar() {
-  const user = useSelector((state) => state.user.data);
-
+export default function Navbar({ title }) {
   return (
-    <StyledAdminNavbar>
-      <AdminNavbarProfile>
-        <AdminNavbarProfileAvatar email={user.username} size={40} />
-        <AdminNavbarProfileUsername>{user.username}</AdminNavbarProfileUsername>
-      </AdminNavbarProfile>
-    </StyledAdminNavbar>
-  );
+    <StyledNavbar>
+      <NavbarLeft>
+        <NavbarLeftTitle>{title}</NavbarLeftTitle>
+      </NavbarLeft>
+      <NavbarRight>
+        <NavbarRightProfile>
+          <NavbarRightProfileAvatar email='geeklegendofficiel@gmail.com' />
+          <NavbarRightProfileInfos>
+            <NavbarRightProfileInfosUsername>GeekLegend</NavbarRightProfileInfosUsername>
+            <NavbarRightProfileInfosRank>Admin</NavbarRightProfileInfosRank>
+          </NavbarRightProfileInfos>
+        </NavbarRightProfile>
+      </NavbarRight>
+    </StyledNavbar>
+  )
 }
 
-const StyledAdminNavbar = styled.nav`
-  background-color: ${Colors.primary};
-  padding: 10px 20px;
-  border-left: 1px solid rgba(255, 255, 255, 0.1);
+const StyledNavbar = styled.nav`
+padding: 20px;
 `;
-const AdminNavbarProfile = styled.div`
-  display: grid;
-  grid-template-columns: repeat(2, max-content);
-  align-items: center;
-  gap: 10px;
+const NavbarLeft = styled.div`
 `;
-const AdminNavbarProfileUsername = styled.p`
-  margin: 0;
-  color: white;
+const NavbarLeftTitle = styled.h2`
+color: white;
+margin: 0;
 `;
-const AdminNavbarProfileAvatar = styled(Gravatar)`
-  display: block;
-  border-radius: 100px;
+const NavbarRight = styled.div`
+`;
+const NavbarRightProfile = styled.div`
+display: flex;
+align-items: center;
+margin-top: 20px;
+`;
+const NavbarRightProfileAvatar = styled(Gravatar)`
+width: 36px;
+height: 36px;
+display: block;
+border-radius: 100px;
+`;
+const NavbarRightProfileInfos = styled.div`
+margin-left: 10px;
+`;
+const NavbarRightProfileInfosUsername = styled.p`
+color: white;
+margin:0;
+font-weight: 600;
+`;
+const NavbarRightProfileInfosRank = styled.p`
+color: rgba(255,255,255,.7);
+margin: 0;
+font-size: 0.85rem;
 `;
