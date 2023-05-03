@@ -2,20 +2,17 @@ import React from 'react'
 import Gravatar from 'react-gravatar';
 
 import styled from 'styled-components'
+import Colors from '../../utils/colors.util';
 
-export default function Navbar({ title }) {
+export default function Navbar() {
   return (
     <StyledNavbar>
-      <NavbarLeft>
-        <NavbarLeftTitle>{title}</NavbarLeftTitle>
-      </NavbarLeft>
       <NavbarRight>
         <NavbarRightProfile>
-          <NavbarRightProfileAvatar email='geeklegendofficiel@gmail.com' />
           <NavbarRightProfileInfos>
             <NavbarRightProfileInfosUsername>GeekLegend</NavbarRightProfileInfosUsername>
-            <NavbarRightProfileInfosRank>Admin</NavbarRightProfileInfosRank>
           </NavbarRightProfileInfos>
+          <NavbarRightProfileAvatar email='geeklegendofficiel@gmail.com' />
         </NavbarRightProfile>
       </NavbarRight>
     </StyledNavbar>
@@ -23,20 +20,25 @@ export default function Navbar({ title }) {
 }
 
 const StyledNavbar = styled.nav`
-padding: 20px;
-`;
-const NavbarLeft = styled.div`
-`;
-const NavbarLeftTitle = styled.h2`
-color: white;
-margin: 0;
+padding: 0 20px;
+
+@media screen and (min-width: 1024px) {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 10px 20px;
+  background-color: ${Colors.primary};
+}
 `;
 const NavbarRight = styled.div`
 `;
 const NavbarRightProfile = styled.div`
 display: flex;
 align-items: center;
-margin-top: 20px;
+
+@media screen and (min-width: 1024px) {
+  margin-top: 0;
+}
 `;
 const NavbarRightProfileAvatar = styled(Gravatar)`
 width: 36px;
@@ -45,15 +47,9 @@ display: block;
 border-radius: 100px;
 `;
 const NavbarRightProfileInfos = styled.div`
-margin-left: 10px;
+margin-right: 10px;
 `;
 const NavbarRightProfileInfosUsername = styled.p`
-color: white;
 margin:0;
-font-weight: 600;
-`;
-const NavbarRightProfileInfosRank = styled.p`
-color: rgba(255,255,255,.7);
-margin: 0;
-font-size: 0.85rem;
+color: white;
 `;

@@ -33,6 +33,8 @@ export default function Pagination({ pages, currentPage, setCurrentPage }) {
 }
 
 const StyledPagination = styled.nav`
+max-width: 425px;
+margin: 0 auto;
 `;
 const PaginationMenu = styled.ul`
 display: flex;
@@ -44,7 +46,7 @@ const PaginationMenuPage = styled.li`
 border-radius: 2px;
 border: 1px solid ${Colors.primary};
 color: ${Colors.primary};
-padding: 0 10px;
+padding: 5px 15px;
 transition: 0.2s;
 cursor: pointer;
 

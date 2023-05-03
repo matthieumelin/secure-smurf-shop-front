@@ -12,7 +12,7 @@ export default function Sidebar() {
 
   return (
     <StyledSidebar>
-      <SidebarBrand>Secure Smurf</SidebarBrand>
+      <SidebarBrand>{process.env.REACT_APP_NAME}</SidebarBrand>
       <SidebarMenu>
         <SidebarMenuItem>
           <SidebarMenuItemLink to={AppRoutes.AdminDashboard} active={location.pathname === AppRoutes.AdminDashboard ? "true" : "false"}>
@@ -41,17 +41,15 @@ const StyledSidebar = styled.aside`
 padding: 20px;
 
 @media screen and (min-width: 1024px) {
-  border-right: 1px solid rgba(255,255,255,.3);
+  border-right: 1px solid ${Colors.primaryHighOp};
   height: 100vh;
+  width: 15em;
+  box-shadow: 0px 0px 60px rgb(0 0 0 / 30%);
 }
 `;
 const SidebarBrand = styled.h1`
 margin: 0;
 color: ${Colors.primary};
-
-@media screen and (min-width: 1024px) {
-  text-align: center;
-}
 `;
 const SidebarMenu = styled.ul`
 list-style: none;
@@ -98,13 +96,25 @@ ${SidebarMenuItemLink}[active=true] & {
 }
 `;
 const SidebarLogout = styled(Link)`
-color: ${Colors.red};
+color: white;
 text-decoration: none;
 display: flex;
 align-items: center;
+justify-content: center;
+background-color: ${Colors.red};
+border-radius: 20px;
+padding: 10px;
+max-width: 320px;
+transition: 0.2s;
+
+&:hover {
+  transition: 0.2s;
+  -moz-box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.07);
+  -webkit-box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.07);
+  box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.07);
+}
 `;
 const SidebarLogoutIcon = styled.img`
 margin-right: 10px;
 display: block;
-filter: invert(39%) sepia(96%) saturate(5600%) hue-rotate(346deg) brightness(85%) contrast(96%);
 `;

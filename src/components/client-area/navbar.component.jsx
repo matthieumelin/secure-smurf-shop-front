@@ -7,17 +7,7 @@ import styled from "styled-components";
 import AppRoutes from "../../router/app.routes";
 
 export default function Navbar({ setSidebarIsOpen }) {
-  // const [inResearch, setInResearch] = useState(false);
-
   const user = useSelector((state) => state.user.data);
-
-  // const onNavigate = (event) => {
-  //   const recentResearches = JSON.parse(
-  //     localStorage.getItem("recentResearches")
-  //   );
-  //   const newRecentResearches = recentResearches.push({});
-  //   localStorage.setItem("recentResearches", newRecentResearches);
-  // };
 
   return (
     <StyledNavbar>

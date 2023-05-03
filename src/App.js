@@ -18,11 +18,12 @@ import ChangePassword from "./pages/change-password.page";
 import Checkout from "./pages/checkout.page";
 
 import AdminIndex from "./pages/admin/index.page";
-import AdminUsers from "./pages/admin/users.page";
+import AdminUsers from "./pages/admin/users/index.page";
 
 import AuthVerify from "./user/auth-verify.user";
 
 import AppRoutes from "./router/app.routes";
+import AdminUsersPermissions from "./pages/admin/users/permissions.page";
 
 export default function App() {
   const [appIsLoading, setAppIsLoading] = useState(true);
@@ -59,6 +60,10 @@ export default function App() {
         theme="dark"
       />
       <Routes>
+        <Route
+          path={AppRoutes.AdminUsersPermissions}
+          element={<AdminUsersPermissions />}
+        />
         <Route path={AppRoutes.AdminUsers} element={<AdminUsers />} />
         <Route path={AppRoutes.AdminDashboard} element={<AdminIndex />} />
         <Route
