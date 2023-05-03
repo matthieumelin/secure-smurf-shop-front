@@ -39,10 +39,19 @@ export default function Sidebar() {
 
 const StyledSidebar = styled.aside`
 padding: 20px;
+
+@media screen and (min-width: 1024px) {
+  border-right: 1px solid rgba(255,255,255,.3);
+  height: 100vh;
+}
 `;
 const SidebarBrand = styled.h1`
 margin: 0;
 color: ${Colors.primary};
+
+@media screen and (min-width: 1024px) {
+  text-align: center;
+}
 `;
 const SidebarMenu = styled.ul`
 list-style: none;

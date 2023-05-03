@@ -31,12 +31,25 @@ export default function AdminIndex() {
 }
 
 const StyledIndex = styled.div``;
-const Wrapper = styled.div``;
+const Wrapper = styled.div`
+@media screen and (min-width: 1024px) {
+  display: flex;
+}
+`;
 const WrapperLeft = styled.div``;
-const WrapperRight = styled.div``;
+const WrapperRight = styled.div`
+width: 100%;
+`;
 const CardStats = styled.div`
 display: grid;
 grid-gap: 20px;
-max-width: 90%;
-margin: 0 auto;
+padding: 20px;
+
+@media screen and (min-width: 768px) {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+@media screen and (min-width: 1024px) {
+  grid-template-columns: repeat(3, 1fr);
+}
 `;

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Helmet } from 'react-helmet-async';
-import { Navigate } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
 import moment from 'moment';
@@ -14,12 +14,14 @@ import styled from 'styled-components'
 import Navbar from '../../components/admin/navbar.component';
 import Sidebar from '../../components/admin/sidebar.component';
 import Pagination from "../../components/utils/pagination.component"
+import Colors from '../../utils/colors.util';
 
 export default function AdminUsers() {
     const token = useSelector((state) => state.user.token);
     const userData = useSelector((state) => state.user.data);
 
     const [users, setUsers] = useState([]);
+    const [searchedUser, setSearchedUser] = useState("");
 
     const [currentPage, setCurrentPage] = useState(1);
     const [recordsPerPage] = useState(10);
@@ -43,8 +45,30 @@ export default function AdminUsers() {
         if (isGranted) fetchUsers();
     }, [token, isGranted])
 
+    const onSearchUsers = (event) => {
+        setSearchedUser(event.target.value);
+    }
+
     if (!isGranted) {
         return <Navigate to={AppRoutes.Login} />
+    }
+
+    const renderUsersTable = (data) => {
+        return (
+            <UsersTableRow key={`user_${data.id}`}>
+                <UsersTableData data-label="ID">{data.id}</UsersTableData>
+                <UsersTableData data-label="Email">{data.email}</UsersTableData>
+                <UsersTableData data-label="Username">
+                    {data.username}
+                </UsersTableData>
+                <UsersTableData data-label="Rank">
+                    {data.permission}
+                </UsersTableData>
+                <UsersTableData data-label="Created Date">
+                    {moment(data.createdAt).format("L")}
+                </UsersTableData>
+            </UsersTableRow>
+        );
     }
 
     return (
@@ -59,6 +83,17 @@ export default function AdminUsers() {
                 <WrapperRight>
                     <Navbar title={"Users"} />
                     <Users>
+                        <UsersNavigation>
+                            <UsersNavigationMenu>
+                                <UsersNavigationMenuItem>
+                                    <UsersNavigationMenuItemLink to={AppRoutes.AdminUsersPermissions}>Manage Permissions</UsersNavigationMenuItemLink>
+                                </UsersNavigationMenuItem>
+                            </UsersNavigationMenu>
+                            <UsersNavigationSearch>
+                                <UsersNavigationSearchIcon src={`${process.env.PUBLIC_URL}/assets/icons/search.svg`} alt="Search users" />
+                                <UsersNavigationSearchInput type='text' placeholder="Search users.." onChange={onSearchUsers} />
+                            </UsersNavigationSearch>
+                        </UsersNavigation>
                         <UsersTable>
                             <UsersTableHeader>
                                 <UsersTableRow>
@@ -70,23 +105,16 @@ export default function AdminUsers() {
                                 </UsersTableRow>
                             </UsersTableHeader>
                             <UsersTableBody>
-                                {currentRecords && currentRecords.map((currentRecord) => {
-                                    return (
-                                        <UsersTableRow key={`user_${currentRecord.id}`}>
-                                            <UsersTableData data-label="ID">{currentRecord.id}</UsersTableData>
-                                            <UsersTableData data-label="Email">{currentRecord.email}</UsersTableData>
-                                            <UsersTableData data-label="Username">
-                                                {currentRecord.username}
-                                            </UsersTableData>
-                                            <UsersTableData data-label="Rank">
-                                                {currentRecord.permission}
-                                            </UsersTableData>
-                                            <UsersTableData data-label="Created Date">
-                                                {moment(currentRecord.createdAt).format("L")}
-                                            </UsersTableData>
-                                        </UsersTableRow>
-                                    );
-                                })}
+                                {searchedUser ? (
+                                    users && users.filter((user) => user.email.toLowerCase().includes(searchedUser.toLowerCase()) || user.username.toLowerCase().includes(searchedUser.toLowerCase())).length > 0 ? (
+                                        users.map((user) => renderUsersTable(user))
+                                    ) : (
+                                        <UsersTableData active>No record found.</UsersTableData>
+                                    )
+                                ) : (
+                                    currentRecords && currentRecords.map((currentRecord) => renderUsersTable(currentRecord))
+                                )}
+
                             </UsersTableBody>
                         </UsersTable>
                         <Pagination pages={pages} currentPage={currentPage} setCurrentPage={setCurrentPage} />
@@ -98,10 +126,59 @@ export default function AdminUsers() {
 }
 
 const StyledUsers = styled.div``;
-const Wrapper = styled.div``;
+const Wrapper = styled.div`
+@media screen and (min-width: 1024px) {
+    display: flex;
+  }
+`;
 const WrapperLeft = styled.div``;
-const WrapperRight = styled.div``;
+const WrapperRight = styled.div`
+width: 100%;
+`;
 const Users = styled.section``;
+const UsersNavigation = styled.nav`
+padding: 0 20px;
+`;
+const UsersNavigationMenu = styled.ul`
+list-style: none;
+padding: 0;
+`;
+const UsersNavigationMenuItem = styled.li``;
+const UsersNavigationMenuItemLink = styled(Link)`
+color: ${Colors.primary};
+border: 1px solid ${Colors.primary};
+padding: 0px 10px;
+text-decoration: none;
+transition: 0.2s;
+
+&:hover {
+    transition: 0.2s;
+    color: white;
+    background-color: ${Colors.primary};
+}
+`;
+const UsersNavigationSearch = styled.div`
+display: flex;
+align-items: center;
+border: 1px solid white;
+border-radius: 2px;
+padding: 5px 10px;
+margin: 20px 0;
+`;
+const UsersNavigationSearchIcon = styled.img`
+width: 18px;
+height: 18px;
+display: block;
+margin-right: 10px;
+`;
+const UsersNavigationSearchInput = styled.input`
+background-color: transparent;
+border: none;
+font-family: inherit;
+color: white;
+width: 100%;
+outline: none;
+`;
 const UsersTable = styled.table`
   border-collapse: collapse;
   margin: 0;
@@ -145,10 +222,25 @@ const UsersTableData = styled.td`
   padding: 0.625em;
   text-align: center;
   color: white;
+  width: 250px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
   @media screen and (max-width: 600px) {
     display: block;
     font-size: 0.8em;
     text-align: right;
+    width: 100%;
+
+    ${props => {
+        if (props.active) {
+            return `
+            text-align: center;
+            `;
+        }
+    }}
+
     &::before {
       content: attr(data-label);
       float: left;

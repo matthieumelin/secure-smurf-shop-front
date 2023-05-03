@@ -45,4 +45,12 @@ border-radius: 2px;
 border: 1px solid ${Colors.primary};
 color: ${Colors.primary};
 padding: 0 10px;
+transition: 0.2s;
+cursor: pointer;
+
+&:hover {
+    transition: 0.2s;
+    background-color: ${Colors.primary};
+    color: white;
+}
 `;
