@@ -20,7 +20,7 @@ export default function UserPermissionCard({ data, onDeletePermission }) {
                     <UserPermissionCardActionsEditIcon src={`${process.env.PUBLIC_URL}/assets/icons/edit.svg`} alt="Edit permission" />
                 </UserPermissionCardActionsEdit>
                 {!data.default &&
-                    <UserPermissionCardActionsDeleteButton onClick={(event) => onDeletePermission(event, data)} disabled={data.default}>
+                    <UserPermissionCardActionsDeleteButton onClick={() => onDeletePermission(data)} disabled={data.default}>
                         <UserPermissionCardActionsDeleteButtonIcon src={`${process.env.PUBLIC_URL}/assets/icons/close.svg`} alt="Delete permission" />
                     </UserPermissionCardActionsDeleteButton>}
             </UserPermissionCardActions>

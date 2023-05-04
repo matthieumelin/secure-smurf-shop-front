@@ -36,7 +36,7 @@ export default function AdminUsersPermissionsAdd({ toast }) {
             }
         })
             .then((res) => {
-                if (res.status === 200) {
+                if (res.status === 201) {
                     reset();
 
                     toast.success(res.data.message);

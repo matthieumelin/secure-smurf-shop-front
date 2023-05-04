@@ -22,6 +22,8 @@ import AdminUsers from "./pages/admin/users/index.page";
 import AdminUsersPermissions from "./pages/admin/users/permissions/index.page";
 import AdminUsersPermissionsAdd from "./pages/admin/users/permissions/add.page";
 import AdminUsersPermissionsEdit from "./pages/admin/users/permissions/edit.page";
+import AdminOrders from "./pages/admin/orders/index.page";
+import AdminProducts from "./pages/admin/products/index.page";
 
 import AuthVerify from "./user/auth-verify.user";
 
@@ -75,6 +77,8 @@ export default function App() {
           element={<AdminUsersPermissions toast={toast} />}
         />
         <Route path={AppRoutes.AdminUsers} element={<AdminUsers />} />
+        <Route path={AppRoutes.AdminOrders} element={<AdminOrders />} />
+        <Route path={AppRoutes.AdminProducts} element={<AdminProducts />} />
         <Route path={AppRoutes.AdminDashboard} element={<AdminIndex />} />
         <Route
           path={AppRoutes.Orders}

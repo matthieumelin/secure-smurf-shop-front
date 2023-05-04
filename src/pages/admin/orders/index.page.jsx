@@ -12,14 +12,15 @@ import styled from 'styled-components'
 import Navbar from '../../../components/admin/navbar.component';
 import Sidebar from '../../../components/admin/sidebar.component';
 import Pagination from "../../../components/utils/pagination.component"
-import Colors from '../../../utils/colors.util';
-import UserCard from '../../../components/admin/cards/user-card.component';
+import OrderCard from '../../../components/admin/cards/order-card.component';
 
-export default function AdminUsers() {
+import Colors from '../../../utils/colors.util';
+
+export default function AdminOrders() {
     const token = useSelector((state) => state.user.token);
     const userData = useSelector((state) => state.user.data);
 
-    const [users, setUsers] = useState([]);
+    const [orders, setOrders] = useState([]);
     const [search, setSearch] = useState("");
 
     const [currentPage, setCurrentPage] = useState(1);
@@ -27,28 +28,28 @@ export default function AdminUsers() {
 
     const indexOfLastRecord = currentPage * recordsPerPage;
     const indexOfFirstRecord = indexOfLastRecord - recordsPerPage;
-    const currentRecords = users.slice(indexOfFirstRecord, indexOfLastRecord);
-    const pages = Math.ceil(users.length / recordsPerPage);
+    const currentRecords = orders.slice(indexOfFirstRecord, indexOfLastRecord);
+    const pages = Math.ceil(orders.length / recordsPerPage);
 
     const isGranted = token && userData.permission.includes("admin");
 
-    const haveResult = users && users.filter((user) => user.email.toLowerCase().includes(search.toLowerCase()) || user.username.toLowerCase().includes(search.toLowerCase())).length > 0;
+    const haveResult = orders && orders.filter((order) => order.id === search.id).length > 0;
 
     useEffect(() => {
-        const fetchUsers = async () => {
-            await axios.get(API_ENDPOINTS.USERS, {
+        const fetchOrders = async () => {
+            await axios.get(API_ENDPOINTS.ORDERS, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
-            }).then((res) => { if (res.status === 200) setUsers(res.data) })
+            }).then((res) => { if (res.status === 200) setOrders(res.data) })
         }
 
-        if (isGranted) fetchUsers();
+        if (isGranted) fetchOrders();
     }, [token, isGranted])
 
-    const renderList = (user) => {
+    const renderList = (order) => {
         return (
-            <UserCard key={`user_${user.id}`} data={user} />
+            <OrderCard key={`order_${order.id}`} data={order} />
         )
     }
 
@@ -59,7 +60,7 @@ export default function AdminUsers() {
     return (
         <StyledUsers>
             <Helmet>
-                <title>Admin Users</title>
+                <title>Admin Orders</title>
             </Helmet>
             <Wrapper>
                 <WrapperLeft>
@@ -69,34 +70,33 @@ export default function AdminUsers() {
                     <Navbar />
                     <Container>
                         <ContainerHeader>
-                            <ContainerHeaderTitle>Manage Users</ContainerHeaderTitle>
+                            <ContainerHeaderTitle>Manage Orders</ContainerHeaderTitle>
                             <ContainerHeaderButtons>
-                                {/* <ContainerHeaderButtonsLink to={AppRoutes.Home}>Add User</ContainerHeaderButtonsLink> */}
-                                <ContainerHeaderButtonsLink to={AppRoutes.AdminUsersPermissions}>Manage Permissions</ContainerHeaderButtonsLink>
+                                {/* <ContainerHeaderButtonsLink to={AppRoutes.Home}>Add Order</ContainerHeaderButtonsLink> */}
                             </ContainerHeaderButtons>
                         </ContainerHeader>
                         <ContainerBody>
                             <List>
                                 <ListHeader>
-                                    <ListHeaderTitle>Users List ({users.length})</ListHeaderTitle>
+                                    <ListHeaderTitle>Orders List ({orders.length})</ListHeaderTitle>
                                     <ListHeaderSearch>
-                                        <ListHeaderSearchIcon src={`${process.env.PUBLIC_URL}/assets/icons/search.svg`} alt="Search User" />
-                                        <ListHeaderSearchInput type='text' placeholder="Search User" onChange={(event) => setSearch(event.target.value)} />
+                                        <ListHeaderSearchIcon src={`${process.env.PUBLIC_URL}/assets/icons/search.svg`} alt="Search Order" />
+                                        <ListHeaderSearchInput type='text' placeholder="Search Order" onChange={(event) => setSearch(event.target.value)} />
                                     </ListHeaderSearch>
                                 </ListHeader>
                                 <ListBody haveResult={haveResult}>
                                     {search ? (
                                         haveResult ? (
-                                            users.map((user) => renderList(user))
+                                            orders.map((order) => renderList(order))
                                         ) : (
-                                            <ListBodyNoMatch>No user found..</ListBodyNoMatch>
+                                            <ListBodyNoMatch>No order found..</ListBodyNoMatch>
                                         )
                                     ) : (
                                         currentRecords.length ? (
                                             currentRecords.map((currentRecord) => renderList(currentRecord))
                                         ) :
                                             (
-                                                <ListBodyNoMatch>No users</ListBodyNoMatch>
+                                                <ListBodyNoMatch>No orders</ListBodyNoMatch>
                                             )
                                     )}
                                 </ListBody>

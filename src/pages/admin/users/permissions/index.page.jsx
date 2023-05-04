@@ -13,7 +13,6 @@ import Navbar from '../../../../components/admin/navbar.component';
 import Sidebar from '../../../../components/admin/sidebar.component';
 import Pagination from "../../../../components/utils/pagination.component"
 import UserPermissionCard from '../../../../components/admin/cards/user-permission-card.component';
-import Modal from "../../../../components/utils/modal.component";
 
 import Colors from '../../../../utils/colors.util';
 
@@ -22,10 +21,7 @@ export default function AdminUsersPermissions({ toast }) {
     const userData = useSelector((state) => state.user.data);
 
     const [permissions, setPermissions] = useState([]);
-    const [searchedPermission, setSearchedPermission] = useState("");
-
-    const [showDeleteModal, setShowDeleteModal] = useState(false);
-    const [deletedPermission, setDeletedPermission] = useState({});
+    const [search, setSearch] = useState("");
 
     const [currentPage, setCurrentPage] = useState(1);
     const [recordsPerPage] = useState(10);
@@ -37,7 +33,7 @@ export default function AdminUsersPermissions({ toast }) {
 
     const isGranted = token && userData.permission.includes("admin");
 
-    const haveResult = permissions && permissions.filter((permission) => permission.name.toLowerCase().includes(searchedPermission.toLowerCase())).length > 0;
+    const haveResult = permissions && permissions.filter((permission) => permission.name.toLowerCase().includes(search.toLowerCase())).length > 0;
 
     useEffect(() => {
         const fetchUsersPermissions = async () => {
@@ -45,42 +41,21 @@ export default function AdminUsersPermissions({ toast }) {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
-            }).then((res) => {
-                if (res.status === 200) {
-                    setPermissions(res.data);
-                }
-            })
+            }).then((res) => { if (res.status === 200) setPermissions(res.data) })
         }
 
         if (isGranted) fetchUsersPermissions();
     }, [token, isGranted])
 
-    const onSearchPermissions = (event) => {
-        setSearchedPermission(event.target.value);
-    }
-
-    const onDeletePermission = (event, permission) => {
-        event.preventDefault();
-
-        document.body.style.overflow = "hidden";
-
-        setShowDeleteModal(true);
-        setDeletedPermission(permission);
-    }
-
-    const onConfirmDeletePermission = async () => {
-        await axios.delete(`${API_ENDPOINTS.USERS_PERMISSIONS_DELETE}/${deletedPermission.id}`, {
+    const onDeletePermission = async (selectedPermission) => {
+        await axios.delete(`${API_ENDPOINTS.USERS_PERMISSIONS_DELETE}/${selectedPermission.id}`, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
         }).then((res) => {
             if (res.status === 200) {
-                const updatedPermissions = permissions.filter((permission) => permission.name !== deletedPermission.name);
+                const updatedPermissions = permissions.filter((permission) => permission.id !== selectedPermission.id);
 
-                document.body.style.overflow = "hidden";
-
-                setShowDeleteModal(false);
-                setDeletedPermission(null);
                 setPermissions(updatedPermissions);
 
                 toast.success(res.data.message);
@@ -88,16 +63,9 @@ export default function AdminUsersPermissions({ toast }) {
         }).catch((err) => toast.error(err.response.data.message));
     }
 
-    const onCancelDeletePermission = () => {
-        document.body.style.overflow = "initial";
-
-        setShowDeleteModal(false);
-        setDeletedPermission(null);
-    }
-
-    const renderPermissionList = (permission, onDeletePermission) => {
+    const renderList = (permission) => {
         return (
-            <UserPermissionCard key={`user_permission_${permission.id}`} data={permission} onDeletePermission={onDeletePermission} />
+            <UserPermissionCard key={`user_permission_${permission.id}`} data={permission} onDeletePermission={() => onDeletePermission(permission)} />
         )
     }
 
@@ -124,24 +92,23 @@ export default function AdminUsersPermissions({ toast }) {
                             </ContainerHeaderButtons>
                         </ContainerHeader>
                         <ContainerBody>
-                            <Modal active={showDeleteModal} onCancel={onCancelDeletePermission} onConfirm={onConfirmDeletePermission} buttonCancelTitle={"Cancel"} buttonConfirmTitle={"Delete"} title={"Delete permission?"} description={"Are your sure to delete this permission?"} />
                             <List>
                                 <ListHeader>
-                                    <ListHeaderTitle>User Permissions ({permissions.length})</ListHeaderTitle>
+                                    <ListHeaderTitle>Users Permissions ({permissions.length})</ListHeaderTitle>
                                     <ListHeaderSearch>
                                         <ListHeaderSearchIcon src={`${process.env.PUBLIC_URL}/assets/icons/search.svg`} alt="Search Permission" />
-                                        <ListHeaderSearchInput type='text' placeholder="Search Permission" onChange={onSearchPermissions} />
+                                        <ListHeaderSearchInput type='text' placeholder="Search Permission" onChange={(event) => setSearch(event.target.value)} />
                                     </ListHeaderSearch>
                                 </ListHeader>
                                 <ListBody haveResult={haveResult}>
-                                    {searchedPermission ? (
+                                    {search ? (
                                         haveResult ? (
-                                            permissions.map((permission) => renderPermissionList(permission, onDeletePermission(permission)))
+                                            permissions.map((permission) => renderList(permission))
                                         ) : (
                                             <ListBodyNoMatch>No permission found..</ListBodyNoMatch>
                                         )
                                     ) : (
-                                        currentRecords && currentRecords.map((currentRecord) => renderPermissionList(currentRecord, onDeletePermission))
+                                        currentRecords && currentRecords.map((currentRecord) => renderList(currentRecord))
                                     )}
                                 </ListBody>
                             </List>

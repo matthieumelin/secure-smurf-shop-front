@@ -12,14 +12,15 @@ import styled from 'styled-components'
 import Navbar from '../../../components/admin/navbar.component';
 import Sidebar from '../../../components/admin/sidebar.component';
 import Pagination from "../../../components/utils/pagination.component"
-import Colors from '../../../utils/colors.util';
-import UserCard from '../../../components/admin/cards/user-card.component';
+import ProductCard from '../../../components/admin/cards/product-card.component';
 
-export default function AdminUsers() {
+import Colors from '../../../utils/colors.util';
+
+export default function AdminProducts() {
     const token = useSelector((state) => state.user.token);
     const userData = useSelector((state) => state.user.data);
 
-    const [users, setUsers] = useState([]);
+    const [products, setProducts] = useState([]);
     const [search, setSearch] = useState("");
 
     const [currentPage, setCurrentPage] = useState(1);
@@ -27,28 +28,24 @@ export default function AdminUsers() {
 
     const indexOfLastRecord = currentPage * recordsPerPage;
     const indexOfFirstRecord = indexOfLastRecord - recordsPerPage;
-    const currentRecords = users.slice(indexOfFirstRecord, indexOfLastRecord);
-    const pages = Math.ceil(users.length / recordsPerPage);
+    const currentRecords = products.slice(indexOfFirstRecord, indexOfLastRecord);
+    const pages = Math.ceil(products.length / recordsPerPage);
 
     const isGranted = token && userData.permission.includes("admin");
 
-    const haveResult = users && users.filter((user) => user.email.toLowerCase().includes(search.toLowerCase()) || user.username.toLowerCase().includes(search.toLowerCase())).length > 0;
+    const haveResult = products && products.filter((product) => product.id === search.id).length > 0;
 
     useEffect(() => {
-        const fetchUsers = async () => {
-            await axios.get(API_ENDPOINTS.USERS, {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            }).then((res) => { if (res.status === 200) setUsers(res.data) })
+        const fetchProducts = async () => {
+            await axios.get(API_ENDPOINTS.PRODUCTS).then((res) => { if (res.status === 200) setProducts(res.data) })
         }
 
-        if (isGranted) fetchUsers();
+        if (isGranted) fetchProducts();
     }, [token, isGranted])
 
-    const renderList = (user) => {
+    const renderList = (product) => {
         return (
-            <UserCard key={`user_${user.id}`} data={user} />
+            <ProductCard key={`product_${product.id}`} data={product} />
         )
     }
 
@@ -59,7 +56,7 @@ export default function AdminUsers() {
     return (
         <StyledUsers>
             <Helmet>
-                <title>Admin Users</title>
+                <title>Admin Products</title>
             </Helmet>
             <Wrapper>
                 <WrapperLeft>
@@ -69,34 +66,33 @@ export default function AdminUsers() {
                     <Navbar />
                     <Container>
                         <ContainerHeader>
-                            <ContainerHeaderTitle>Manage Users</ContainerHeaderTitle>
+                            <ContainerHeaderTitle>Manage Products</ContainerHeaderTitle>
                             <ContainerHeaderButtons>
-                                {/* <ContainerHeaderButtonsLink to={AppRoutes.Home}>Add User</ContainerHeaderButtonsLink> */}
-                                <ContainerHeaderButtonsLink to={AppRoutes.AdminUsersPermissions}>Manage Permissions</ContainerHeaderButtonsLink>
+                                <ContainerHeaderButtonsLink to={AppRoutes.Home}>Add Product</ContainerHeaderButtonsLink>
                             </ContainerHeaderButtons>
                         </ContainerHeader>
                         <ContainerBody>
                             <List>
                                 <ListHeader>
-                                    <ListHeaderTitle>Users List ({users.length})</ListHeaderTitle>
+                                    <ListHeaderTitle>Products List ({products.length})</ListHeaderTitle>
                                     <ListHeaderSearch>
-                                        <ListHeaderSearchIcon src={`${process.env.PUBLIC_URL}/assets/icons/search.svg`} alt="Search User" />
-                                        <ListHeaderSearchInput type='text' placeholder="Search User" onChange={(event) => setSearch(event.target.value)} />
+                                        <ListHeaderSearchIcon src={`${process.env.PUBLIC_URL}/assets/icons/search.svg`} alt="Search Product" />
+                                        <ListHeaderSearchInput type='text' placeholder="Search Product" onChange={(event) => setSearch(event.target.value)} />
                                     </ListHeaderSearch>
                                 </ListHeader>
                                 <ListBody haveResult={haveResult}>
                                     {search ? (
                                         haveResult ? (
-                                            users.map((user) => renderList(user))
+                                            products.map((product) => renderList(product))
                                         ) : (
-                                            <ListBodyNoMatch>No user found..</ListBodyNoMatch>
+                                            <ListBodyNoMatch>No product found..</ListBodyNoMatch>
                                         )
                                     ) : (
                                         currentRecords.length ? (
                                             currentRecords.map((currentRecord) => renderList(currentRecord))
                                         ) :
                                             (
-                                                <ListBodyNoMatch>No users</ListBodyNoMatch>
+                                                <ListBodyNoMatch>No products</ListBodyNoMatch>
                                             )
                                     )}
                                 </ListBody>
