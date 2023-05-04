@@ -3,8 +3,6 @@ import { Helmet } from 'react-helmet-async';
 import { Link, Navigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
-import moment from 'moment';
-
 import axios from 'axios';
 import { API_ENDPOINTS } from '../../../api/api';
 import AppRoutes from '../../../router/app.routes';
@@ -54,7 +52,7 @@ export default function AdminUsers() {
 
     const renderUserList = (user) => {
         return (
-            <UserCard data={user} />
+            <UserCard key={`user_${user.id}`} data={user} />
         )
     }
 
@@ -136,10 +134,9 @@ margin: 0;
 `;
 const ContainerHeaderButtons = styled.div`
 margin: 20px 0;
-display: grid;
-grid-gap: 20px;
+
 @media screen and (min-width: 1024px) {
-    grid-template-columns: repeat(2, 200px);
+    display: flex;
 }
 `;
 const ContainerHeaderButtonsLink = styled(Link)`
@@ -151,12 +148,17 @@ display:block;
 text-align: center;
 border-radius: 2px;
 transition: 0.2s;
+margin: 20px 0;
 
 &:hover {
     transition: 0.2s;
     -moz-box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.07);
     -webkit-box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.07);
     box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.07);
+  }
+
+  @media screen and (min-width: 1024px) {
+    margin: 0 0 0 20px;
   }
 `;
 const ContainerBody = styled.div``;

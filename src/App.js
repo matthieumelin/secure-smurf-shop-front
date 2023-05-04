@@ -19,11 +19,12 @@ import Checkout from "./pages/checkout.page";
 
 import AdminIndex from "./pages/admin/index.page";
 import AdminUsers from "./pages/admin/users/index.page";
+import AdminUsersPermissions from "./pages/admin/users/permissions/index.page";
+import AdminUsersPermissionsAdd from "./pages/admin/users/permissions/add.page";
 
 import AuthVerify from "./user/auth-verify.user";
 
 import AppRoutes from "./router/app.routes";
-import AdminUsersPermissions from "./pages/admin/users/permissions.page";
 
 export default function App() {
   const [appIsLoading, setAppIsLoading] = useState(true);
@@ -60,6 +61,10 @@ export default function App() {
         theme="dark"
       />
       <Routes>
+        <Route
+          path={AppRoutes.AdminUsersPermissionsAdd}
+          element={<AdminUsersPermissionsAdd />}
+        />
         <Route
           path={AppRoutes.AdminUsersPermissions}
           element={<AdminUsersPermissions />}

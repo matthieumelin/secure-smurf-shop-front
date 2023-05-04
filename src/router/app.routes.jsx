@@ -20,6 +20,8 @@ const AppRoutes = {
   AdminServers: "/admin/servers",
   AdminUsers: "/admin/users",
   AdminUsersPermissions: "/admin/users/permissions",
+  AdminUsersPermissionsAdd: "/admin/users/permissions/add",
+  AdminUsersPermissionsEdit: "/admin/users/permissions/edit"
 };
 
 export default AppRoutes;

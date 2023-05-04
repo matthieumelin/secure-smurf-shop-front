@@ -20,7 +20,7 @@ export default function Pagination({ pages, currentPage, setCurrentPage }) {
                     Previous
                 </PaginationMenuPage>
                 {pageNumbers && pageNumbers.map((pageNumber) => {
-                    return <PaginationMenuPage key={`page_${pageNumber}`} active={currentPage === pageNumber} onClick={setCurrentPage(pageNumber)}>
+                    return <PaginationMenuPage key={`page_${pageNumber}`} active={currentPage === pageNumber} onClick={() => setCurrentPage(pageNumber)}>
                         {pageNumber}
                     </PaginationMenuPage>
                 })}

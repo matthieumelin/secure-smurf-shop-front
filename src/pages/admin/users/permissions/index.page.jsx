@@ -3,21 +3,20 @@ import { Helmet } from 'react-helmet-async';
 import { Link, Navigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
-import moment from 'moment';
-
 import axios from 'axios';
-import { API_ENDPOINTS } from '../../../api/api';
-import AppRoutes from '../../../router/app.routes';
+import { API_ENDPOINTS } from '../../../../api/api';
+import AppRoutes from '../../../../router/app.routes';
 
 import styled from 'styled-components'
 
-import Navbar from '../../../components/admin/navbar.component';
-import Sidebar from '../../../components/admin/sidebar.component';
-import Pagination from "../../../components/utils/pagination.component"
-import Colors from '../../../utils/colors.util';
-import UserPermissionCard from '../../../components/admin/cards/user-permission-card.component';
+import Navbar from '../../../../components/admin/navbar.component';
+import Sidebar from '../../../../components/admin/sidebar.component';
+import Pagination from "../../../../components/utils/pagination.component"
+import UserPermissionCard from '../../../../components/admin/cards/user-permission-card.component';
 
-export default function AdminUsers() {
+import Colors from '../../../../utils/colors.util';
+
+export default function AdminUsersPermissions() {
     const token = useSelector((state) => state.user.token);
     const userData = useSelector((state) => state.user.data);
 
@@ -54,7 +53,7 @@ export default function AdminUsers() {
 
     const renderPermissionList = (permission) => {
         return (
-            <UserPermissionCard data={permission} />
+            <UserPermissionCard key={`user_permission_${permission.id}`} data={permission} />
         )
     }
 
@@ -77,7 +76,7 @@ export default function AdminUsers() {
                         <ContainerHeader>
                             <ContainerHeaderTitle>Manage Permissions</ContainerHeaderTitle>
                             <ContainerHeaderButtons>
-                                <ContainerHeaderButtonsLink to={AppRoutes.Home}>Add Permission</ContainerHeaderButtonsLink>
+                                <ContainerHeaderButtonsLink to={AppRoutes.AdminUsersPermissionsAdd}>Add Permission</ContainerHeaderButtonsLink>
                             </ContainerHeaderButtons>
                         </ContainerHeader>
                         <ContainerBody>
@@ -135,10 +134,9 @@ margin: 0;
 `;
 const ContainerHeaderButtons = styled.div`
 margin: 20px 0;
-display: grid;
-grid-gap: 20px;
+
 @media screen and (min-width: 1024px) {
-    grid-template-columns: repeat(2, 200px);
+    display: flex;
 }
 `;
 const ContainerHeaderButtonsLink = styled(Link)`
@@ -150,12 +148,17 @@ display:block;
 text-align: center;
 border-radius: 2px;
 transition: 0.2s;
+margin: 20px 0;
 
 &:hover {
     transition: 0.2s;
     -moz-box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.07);
     -webkit-box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.07);
     box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.07);
+  }
+
+  @media screen and (min-width: 1024px) {
+    margin: 0 0 0 20px;
   }
 `;
 const ContainerBody = styled.div``;
@@ -205,12 +208,18 @@ width: 100%;
 `;
 const ListBody = styled.div`
 margin: 30px 0;
+display: grid;
+grid-gap: 20px;
 
 ${props => {
         if (props.haveResult) {
             return `
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
+        @media screen and (min-width: 768px) {
+            grid-template-columns: repeat(2,1fr);
+        }
+        @media screen and (min-width: 1024px) {
+            grid-template-columns: repeat(4,1fr);
+        }
         `;
         }
     }}

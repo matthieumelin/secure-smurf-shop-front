@@ -8,7 +8,8 @@ const Colors = {
     yellow: "#ffba08",
     red: "#d62828",
     blue: "#3a86ff",
-    green: "#38b000"
+    green: "#38b000",
+    disable: "#ced4da"
 }
 
 export default Colors;
