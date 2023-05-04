@@ -57,7 +57,7 @@ export default function Login({ toast }) {
 
   useEffect(() => {
     reset();
-    
+
     setCaptchaResponse(null);
 
     const currentRecaptcha = recaptchaRef.current;
@@ -163,8 +163,8 @@ export default function Login({ toast }) {
           {formType === FormTypes.LOGIN
             ? "Login"
             : formType === FormTypes.REGISTER
-            ? "Register"
-            : "Forgot password"}
+              ? "Register"
+              : "Forgot password"}
         </title>
       </Helmet>
       <FormContainer>
@@ -191,92 +191,90 @@ export default function Login({ toast }) {
               </FormLink>
             </FormText>
             <FormGroups>
-              <FormGroups>
-                <FormGroup>
-                  <FormGroupLabel htmlFor="email">Email</FormGroupLabel>
-                  <FormGroupInput
-                    type="email"
-                    id="email"
+              <FormGroup>
+                <FormGroupLabel htmlFor="email">Email</FormGroupLabel>
+                <FormGroupInput
+                  type="email"
+                  id="email"
+                  name="email"
+                  error={errors.email}
+                  {...register("email", {
+                    required: {
+                      value: true,
+                      message: "You must enter your email.",
+                    },
+                    pattern: {
+                      value: EmailRegEx,
+                      message: "Invalid email format.",
+                    },
+                  })}
+                />
+                {errors.email && (
+                  <ErrorMessage
+                    errors={errors}
                     name="email"
-                    error={errors.email}
-                    {...register("email", {
-                      required: {
-                        value: true,
-                        message: "You must enter your email.",
-                      },
-                      pattern: {
-                        value: EmailRegEx,
-                        message: "Invalid email format.",
-                      },
-                    })}
+                    as={<ErrorContainer />}
                   />
-                  {errors.email && (
-                    <ErrorMessage
-                      errors={errors}
-                      name="email"
-                      as={<ErrorContainer />}
-                    />
-                  )}
-                </FormGroup>
-                <FormGroup>
-                  <FormGroupLabel htmlFor="password">Password</FormGroupLabel>
-                  <FormGroupInput
-                    type="password"
-                    id="password"
+                )}
+              </FormGroup>
+              <FormGroup>
+                <FormGroupLabel htmlFor="password">Password</FormGroupLabel>
+                <FormGroupInput
+                  type="password"
+                  id="password"
+                  name="password"
+                  error={errors.password}
+                  {...register("password", {
+                    required: {
+                      value: true,
+                      message: "You must enter your password.",
+                    },
+                    minLength: {
+                      value: 8,
+                      message: "Your password must be at least 8 characters.",
+                    },
+                    pattern: {
+                      value: PasswordRegEx,
+                      message: "Invalid password format.",
+                    },
+                  })}
+                />
+                {errors.password && (
+                  <ErrorMessage
+                    errors={errors}
                     name="password"
-                    error={errors.password}
-                    {...register("password", {
-                      required: {
-                        value: true,
-                        message: "You must enter your password.",
-                      },
-                      minLength: {
-                        value: 8,
-                        message: "Your password must be at least 8 characters.",
-                      },
-                      pattern: {
-                        value: PasswordRegEx,
-                        message: "Invalid password format.",
-                      },
-                    })}
+                    as={<ErrorContainer />}
                   />
-                  {errors.password && (
-                    <ErrorMessage
-                      errors={errors}
-                      name="password"
-                      as={<ErrorContainer />}
-                    />
-                  )}
-                </FormGroup>
-                <FormGroup>
-                  <FormLink
-                    onClick={(event) =>
-                      onChangeFormType(event, FormTypes.FORGOT)
-                    }
-                  >
-                    Forgot password?
-                  </FormLink>
-                </FormGroup>
-                <FormGroupRecaptcha>
-                  <ReCAPTCHA
-                    ref={recaptchaRef}
-                    sitekey={process.env.REACT_APP_CAPTCHA_KEY}
-                    onChange={onChange}
+                )}
+              </FormGroup>
+              <FormGroup>
+                <FormLink
+                  onClick={(event) =>
+                    onChangeFormType(event, FormTypes.FORGOT)
+                  }
+                >
+                  Forgot password?
+                </FormLink>
+              </FormGroup>
+              <FormGroupRecaptcha>
+                <ReCAPTCHA
+                  ref={recaptchaRef}
+                  sitekey={process.env.REACT_APP_CAPTCHA_KEY}
+                  onChange={onChange}
+                />
+                {errors.captcha && (
+                  <ErrorMessage
+                    errors={errors}
+                    name="captcha"
+                    as={<ErrorContainer />}
                   />
-                  {errors.captcha && (
-                    <ErrorMessage
-                      errors={errors}
-                      name="captcha"
-                      as={<ErrorContainer />}
-                    />
-                  )}
-                </FormGroupRecaptcha>
-                <FormGroup>
-                  <FormGroupButton type={"submit"} disabled={!captchaResponse}>
-                    Sign in
-                  </FormGroupButton>
-                </FormGroup>
-              </FormGroups>
+                )}
+              </FormGroupRecaptcha>
+              <FormGroup>
+                <FormGroupButton type={"submit"} disabled={!captchaResponse}>
+                  Sign in
+                </FormGroupButton>
+              </FormGroup>
             </FormGroups>
           </Form>
         ) : formType === FormTypes.REGISTER ? (
@@ -302,98 +300,96 @@ export default function Login({ toast }) {
               </FormLink>
             </FormText>
             <FormGroups>
-              <FormGroups>
-                <FormGroup>
-                  <FormGroupLabel htmlFor="username">Username</FormGroupLabel>
-                  <FormGroupInput
-                    type="text"
-                    id="username"
+              <FormGroup>
+                <FormGroupLabel htmlFor="username">Username</FormGroupLabel>
+                <FormGroupInput
+                  type="text"
+                  id="username"
+                  name="username"
+                  error={errors.username}
+                  {...register("username", {
+                    required: {
+                      value: true,
+                      message: "You must enter your username.",
+                    },
+                  })}
+                />
+                {errors.username && (
+                  <ErrorMessage
+                    errors={errors}
                     name="username"
-                    error={errors.username}
-                    {...register("username", {
-                      required: {
-                        value: true,
-                        message: "You must enter your username.",
-                      },
-                    })}
+                    as={<ErrorContainer />}
                   />
-                  {errors.username && (
-                    <ErrorMessage
-                      errors={errors}
-                      name="username"
-                      as={<ErrorContainer />}
-                    />
-                  )}
-                </FormGroup>
-                <FormGroup>
-                  <FormGroupLabel htmlFor="email">Email</FormGroupLabel>
-                  <FormGroupInput
-                    type="email"
-                    id="email"
+                )}
+              </FormGroup>
+              <FormGroup>
+                <FormGroupLabel htmlFor="email">Email</FormGroupLabel>
+                <FormGroupInput
+                  type="email"
+                  id="email"
+                  name="email"
+                  error={errors.email}
+                  {...register("email", {
+                    required: {
+                      value: true,
+                      message: "You must enter your email.",
+                    },
+                    pattern: {
+                      value: EmailRegEx,
+                      message: "Invalid email format.",
+                    },
+                  })}
+                />
+                {errors.email && (
+                  <ErrorMessage
+                    errors={errors}
                     name="email"
-                    error={errors.email}
-                    {...register("email", {
-                      required: {
-                        value: true,
-                        message: "You must enter your email.",
-                      },
-                      pattern: {
-                        value: EmailRegEx,
-                        message: "Invalid email format.",
-                      },
-                    })}
+                    as={<ErrorContainer />}
                   />
-                  {errors.email && (
-                    <ErrorMessage
-                      errors={errors}
-                      name="email"
-                      as={<ErrorContainer />}
-                    />
-                  )}
-                </FormGroup>
-                <FormGroup>
-                  <FormGroupLabel htmlFor="password">Password</FormGroupLabel>
-                  <FormGroupInput
-                    type="password"
-                    id="password"
+                )}
+              </FormGroup>
+              <FormGroup>
+                <FormGroupLabel htmlFor="password">Password</FormGroupLabel>
+                <FormGroupInput
+                  type="password"
+                  id="password"
+                  name="password"
+                  error={errors.password}
+                  {...register("password", {
+                    required: {
+                      value: true,
+                      message: "You must enter your password.",
+                    },
+                    minLength: {
+                      value: 8,
+                      message: "Your password must be at least 8 characters.",
+                    },
+                    pattern: {
+                      value: PasswordRegEx,
+                      message: "Invalid password format.",
+                    },
+                  })}
+                />
+                {errors.password && (
+                  <ErrorMessage
+                    errors={errors}
                     name="password"
-                    error={errors.password}
-                    {...register("password", {
-                      required: {
-                        value: true,
-                        message: "You must enter your password.",
-                      },
-                      minLength: {
-                        value: 8,
-                        message: "Your password must be at least 8 characters.",
-                      },
-                      pattern: {
-                        value: PasswordRegEx,
-                        message: "Invalid password format.",
-                      },
-                    })}
+                    as={<ErrorContainer />}
                   />
-                  {errors.password && (
-                    <ErrorMessage
-                      errors={errors}
-                      name="password"
-                      as={<ErrorContainer />}
-                    />
-                  )}
-                </FormGroup>
-                <FormGroupRecaptcha>
-                  <ReCAPTCHA
-                    ref={recaptchaRef}
-                    sitekey={process.env.REACT_APP_CAPTCHA_KEY}
-                    onChange={onChange}
-                  />
-                </FormGroupRecaptcha>
-                <FormGroup>
-                  <FormGroupButton type="submit" disabled={!captchaResponse}>
-                    Submit
-                  </FormGroupButton>
-                </FormGroup>
-              </FormGroups>
+                )}
+              </FormGroup>
+              <FormGroupRecaptcha>
+                <ReCAPTCHA
+                  ref={recaptchaRef}
+                  sitekey={process.env.REACT_APP_CAPTCHA_KEY}
+                  onChange={onChange}
+                />
+              </FormGroupRecaptcha>
+              <FormGroup>
+                <FormGroupButton type="submit" disabled={!captchaResponse}>
+                  Submit
+                </FormGroupButton>
+              </FormGroup>
             </FormGroups>
           </Form>
         ) : (
@@ -418,46 +414,44 @@ export default function Login({ toast }) {
               </FormLink>
             </FormText>
             <FormGroups>
-              <FormGroups>
-                <FormGroup>
-                  <FormGroupLabel htmlFor="email">Email</FormGroupLabel>
-                  <FormGroupInput
-                    type="email"
-                    id="email"
+              <FormGroup>
+                <FormGroupLabel htmlFor="email">Email</FormGroupLabel>
+                <FormGroupInput
+                  type="email"
+                  id="email"
+                  name="email"
+                  error={errors.email}
+                  {...register("email", {
+                    required: {
+                      value: true,
+                      message: "You must enter your email.",
+                    },
+                    pattern: {
+                      value: EmailRegEx,
+                      message: "Invalid email format.",
+                    },
+                  })}
+                />
+                {errors.email && (
+                  <ErrorMessage
+                    errors={errors}
                     name="email"
-                    error={errors.email}
-                    {...register("email", {
-                      required: {
-                        value: true,
-                        message: "You must enter your email.",
-                      },
-                      pattern: {
-                        value: EmailRegEx,
-                        message: "Invalid email format.",
-                      },
-                    })}
+                    as={<ErrorContainer />}
                   />
-                  {errors.email && (
-                    <ErrorMessage
-                      errors={errors}
-                      name="email"
-                      as={<ErrorContainer />}
-                    />
-                  )}
-                </FormGroup>
-                <FormGroupRecaptcha>
-                  <ReCAPTCHA
-                    ref={recaptchaRef}
-                    sitekey={process.env.REACT_APP_CAPTCHA_KEY}
-                    onChange={onChange}
-                  />
-                </FormGroupRecaptcha>
-                <FormGroup>
-                  <FormGroupButton type="submit" disabled={!captchaResponse}>
-                    Submit
-                  </FormGroupButton>
-                </FormGroup>
-              </FormGroups>
+                )}
+              </FormGroup>
+              <FormGroupRecaptcha>
+                <ReCAPTCHA
+                  ref={recaptchaRef}
+                  sitekey={process.env.REACT_APP_CAPTCHA_KEY}
+                  onChange={onChange}
+                />
+              </FormGroupRecaptcha>
+              <FormGroup>
+                <FormGroupButton type="submit" disabled={!captchaResponse}>
+                  Submit
+                </FormGroupButton>
+              </FormGroup>
             </FormGroups>
           </Form>
         )}

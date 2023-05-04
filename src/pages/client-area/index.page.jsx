@@ -8,7 +8,7 @@ import styled from "styled-components";
 import ProductCategoryCard from "../../components/client-area/cards/product-category-card.component";
 import Header from "../../components/client-area/header.component";
 import Navbar from "../../components/client-area/navbar.component";
-import Modal from "../../components/client-area/modal.component";
+import Modal from "../../components/utils/modal.component";
 
 import Colors from "../../utils/colors.util";
 

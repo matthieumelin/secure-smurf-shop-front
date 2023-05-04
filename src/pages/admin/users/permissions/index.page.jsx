@@ -13,15 +13,19 @@ import Navbar from '../../../../components/admin/navbar.component';
 import Sidebar from '../../../../components/admin/sidebar.component';
 import Pagination from "../../../../components/utils/pagination.component"
 import UserPermissionCard from '../../../../components/admin/cards/user-permission-card.component';
+import Modal from "../../../../components/utils/modal.component";
 
 import Colors from '../../../../utils/colors.util';
 
-export default function AdminUsersPermissions() {
+export default function AdminUsersPermissions({ toast }) {
     const token = useSelector((state) => state.user.token);
     const userData = useSelector((state) => state.user.data);
 
     const [permissions, setPermissions] = useState([]);
     const [searchedPermission, setSearchedPermission] = useState("");
+
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [deletedPermission, setDeletedPermission] = useState({});
 
     const [currentPage, setCurrentPage] = useState(1);
     const [recordsPerPage] = useState(10);
@@ -51,9 +55,45 @@ export default function AdminUsersPermissions() {
         setSearchedPermission(event.target.value);
     }
 
-    const renderPermissionList = (permission) => {
+    const onDeletePermission = (event, permission) => {
+        event.preventDefault();
+
+        document.body.style.overflow = "hidden";
+
+        setShowDeleteModal(true);
+        setDeletedPermission(permission);
+    }
+
+    const onConfirmDeletePermission = async () => {
+        await axios.delete(`${API_ENDPOINTS.USERS_PERMISSIONS_DELETE}/${deletedPermission.id}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        }).then((res) => {
+            if (res.status === 200) {
+                const updatedPermissions = permissions.filter((permission) => permission.name !== deletedPermission.name);
+
+                document.body.style.overflow = "hidden";
+
+                setShowDeleteModal(false);
+                setDeletedPermission(null);
+                setPermissions(updatedPermissions);
+
+                toast.success(res.data.message);
+            }
+        }).catch((err) => toast.error(err.response.data.message));
+    }
+
+    const onCancelDeletePermission = () => {
+        document.body.style.overflow = "initial";
+
+        setShowDeleteModal(false);
+        setDeletedPermission(null);
+    }
+
+    const renderPermissionList = (permission, onDeletePermission) => {
         return (
-            <UserPermissionCard key={`user_permission_${permission.id}`} data={permission} />
+            <UserPermissionCard key={`user_permission_${permission.id}`} data={permission} onDeletePermission={onDeletePermission} />
         )
     }
 
@@ -80,6 +120,7 @@ export default function AdminUsersPermissions() {
                             </ContainerHeaderButtons>
                         </ContainerHeader>
                         <ContainerBody>
+                            <Modal active={showDeleteModal} onCancel={onCancelDeletePermission} onConfirm={onConfirmDeletePermission} buttonCancelTitle={"Cancel"} buttonConfirmTitle={"Delete"} title={"Delete permission?"} description={"Are your sure to delete this permission?"} />
                             <List>
                                 <ListHeader>
                                     <ListHeaderTitle>User Permissions ({permissions.length})</ListHeaderTitle>
@@ -91,12 +132,12 @@ export default function AdminUsersPermissions() {
                                 <ListBody haveResult={haveResult}>
                                     {searchedPermission ? (
                                         haveResult ? (
-                                            permissions.map((permission) => renderPermissionList(permission))
+                                            permissions.map((permission) => renderPermissionList(permission, onDeletePermission(permission)))
                                         ) : (
                                             <ListBodyNoMatch>No permission found..</ListBodyNoMatch>
                                         )
                                     ) : (
-                                        currentRecords && currentRecords.map((currentRecord) => renderPermissionList(currentRecord))
+                                        currentRecords && currentRecords.map((currentRecord) => renderPermissionList(currentRecord, onDeletePermission))
                                     )}
                                 </ListBody>
                             </List>
@@ -218,7 +259,7 @@ ${props => {
             grid-template-columns: repeat(2,1fr);
         }
         @media screen and (min-width: 1024px) {
-            grid-template-columns: repeat(4,1fr);
+            grid-template-columns: repeat(3,1fr);
         }
         `;
         }

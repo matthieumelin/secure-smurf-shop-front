@@ -63,11 +63,11 @@ export default function App() {
       <Routes>
         <Route
           path={AppRoutes.AdminUsersPermissionsAdd}
-          element={<AdminUsersPermissionsAdd />}
+          element={<AdminUsersPermissionsAdd toast={toast} />}
         />
         <Route
           path={AppRoutes.AdminUsersPermissions}
-          element={<AdminUsersPermissions />}
+          element={<AdminUsersPermissions toast={toast} />}
         />
         <Route path={AppRoutes.AdminUsers} element={<AdminUsers />} />
         <Route path={AppRoutes.AdminDashboard} element={<AdminIndex />} />

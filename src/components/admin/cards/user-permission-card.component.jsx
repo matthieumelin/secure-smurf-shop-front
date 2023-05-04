@@ -8,7 +8,7 @@ import { capitalizeFirstLetter } from "../../../utils/string.util";
 
 import AppRoutes from '../../../router/app.routes';
 
-export default function UserPermissionCard({ data }) {
+export default function UserPermissionCard({ data, onDeletePermission }) {
     return (
         <StyledUserPermissionCard>
             <UserPermissionCardLeft>
@@ -19,9 +19,10 @@ export default function UserPermissionCard({ data }) {
                 <UserPermissionCardActionsEdit to={`${AppRoutes.AdminUsersPermissionsEdit}/${data.id}`}>
                     <UserPermissionCardActionsEditIcon src={`${process.env.PUBLIC_URL}/assets/icons/edit.svg`} alt="Edit permission" />
                 </UserPermissionCardActionsEdit>
-                <UserPermissionCardActionsDeleteButton>
-                    <UserPermissionCardActionsEditIcon src={`${process.env.PUBLIC_URL}/assets/icons/close.svg`} alt="Delete permission" />
-                </UserPermissionCardActionsDeleteButton>
+                {!data.default &&
+                    <UserPermissionCardActionsDeleteButton onClick={(event) => onDeletePermission(event, data)} disabled={data.default}>
+                        <UserPermissionCardActionsDeleteButtonIcon src={`${process.env.PUBLIC_URL}/assets/icons/close.svg`} alt="Delete permission" />
+                    </UserPermissionCardActionsDeleteButton>}
             </UserPermissionCardActions>
         </StyledUserPermissionCard>
     )
@@ -84,10 +85,35 @@ transition: 0.2s;
 cursor: pointer;
 margin-left: 10px;
 
-&:hover {
-    transition: 0.2s;
-    -moz-box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.07);
-    -webkit-box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.07);
-    box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.07);
-  }
+${props => {
+        if (props.disabled) {
+            return `
+            background-color: transparent;
+            border: 1px solid ${Colors.red};
+
+        &:hover {
+            transition: none;
+            -moz-box-shadow: none;
+            -webkit-box-shadow: none;
+            box-shadow: none;
+          }
+        `;
+        }
+    }}
+
+    &:hover {
+        transition: 0.2s;
+        -moz-box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.07);
+        -webkit-box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.07);
+        box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.07);
+      }
+`;
+const UserPermissionCardActionsDeleteButtonIcon = styled.img`
+display: block;
+width: 16px;
+height: 16px;
+
+${UserPermissionCardActionsDeleteButton}:disabled & {
+filter: invert(28%) sepia(92%) saturate(5595%) hue-rotate(350deg) brightness(89%) contrast(88%);
+}
 `;

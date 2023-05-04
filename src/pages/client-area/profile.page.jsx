@@ -14,7 +14,7 @@ import styled from "styled-components";
 
 import Header from "../../components/client-area/header.component";
 import Navbar from "../../components/client-area/navbar.component";
-import Modal from "../../components/client-area/modal.component";
+import Modal from "../../components/utils/modal.component";
 
 import Colors from "../../utils/colors.util";
 import ErrorContainer from "../../utils/error-container.util";
