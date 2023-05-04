@@ -21,7 +21,7 @@ const AppRoutes = {
   AdminUsers: "/admin/users",
   AdminUsersPermissions: "/admin/users/permissions",
   AdminUsersPermissionsAdd: "/admin/users/permissions/add",
-  AdminUsersPermissionsEdit: "/admin/users/permissions/edit"
+  AdminUsersPermissionsEdit: "/admin/users/permissions/edit/:id"
 };
 
 export default AppRoutes;

@@ -1,6 +1,6 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Helmet } from 'react-helmet-async';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
@@ -16,19 +16,38 @@ import Sidebar from '../../../../components/admin/sidebar.component';
 
 import ErrorContainer from "../../../../utils/error-container.util";
 import Colors from '../../../../utils/colors.util';
+import { capitalizeFirstLetter } from '../../../../utils/string.util';
 
-export default function AdminUsersPermissionsAdd({ toast }) {
+export default function AdminUsersPermissionsEdit({ toast }) {
+    const { id } = useParams();
+
     const token = useSelector((state) => state.user.token);
     const userData = useSelector((state) => state.user.data);
 
-    const { reset, register, handleSubmit, formState: { errors } } = useForm();
+    const { reset, register, handleSubmit, setValue, formState: { errors } } = useForm();
 
     const navigate = useNavigate();
 
-    const isGranted = token && userData.permission.includes("admin");
+    const isGranted = id && token && userData.permission.includes("admin");
+
+    useEffect(() => {
+        const fetchUserPermission = async () => {
+            await axios.get(`${API_ENDPOINTS.USERS_PERMISSIONS}/${id}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            }).then((res) => {
+                if (res.status === 200) {
+                    setValue("name", capitalizeFirstLetter(res.data.name));
+                }
+            }).catch(() => navigate(AppRoutes.AdminUsersPermissions));
+        }
+
+        if (isGranted) fetchUserPermission();
+    }, [token, isGranted])
 
     const onSubmit = async (data) => {
-        await axios.post(API_ENDPOINTS.USERS_PERMISSIONS_ADD, {
+        await axios.put(API_ENDPOINTS.USERS_PERMISSIONS_UPDATE, {
             name: data.name,
         }, {
             headers: {
@@ -53,7 +72,7 @@ export default function AdminUsersPermissionsAdd({ toast }) {
     return (
         <StyledUsers>
             <Helmet>
-                <title>Admin Add Permission</title>
+                <title>Admin Edit Permission</title>
             </Helmet>
             <Wrapper>
                 <WrapperLeft>
@@ -63,7 +82,7 @@ export default function AdminUsersPermissionsAdd({ toast }) {
                     <Navbar />
                     <Container>
                         <ContainerHeader>
-                            <ContainerHeaderTitle>Add Permission</ContainerHeaderTitle>
+                            <ContainerHeaderTitle>Edit Permission</ContainerHeaderTitle>
                         </ContainerHeader>
                         <ContainerBody>
                             <Form onSubmit={handleSubmit(onSubmit)}>

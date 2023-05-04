@@ -25,11 +25,12 @@ export default function Checkout() {
     const fetchSession = async () => {
       await axios
         .get(`${API_ENDPOINTS.STRIPE_CHECKOUT_SESSION}?sessionId=${sessionId}`)
-        .then((response) => {
-          const paymentStatus = response.data.payment_status;
+        .then((res) => {
+          const paymentStatus = res.data.payment_status;
+
           setPaymentStatus(paymentStatus);
         })
-        .catch(() => navigate(AppRoutes.Home));
+        .catch(() => navigate(AppRoutes.Home));
     };
 
     if (sessionId) fetchSession();
@@ -50,9 +51,8 @@ export default function Checkout() {
       <Navbar />
       <Main>
         <MainIcon
-          src={`${process.env.PUBLIC_URL}/assets/icons/${
-            paymentStatus === "paid" ? "checkmark.gif" : "error.svg"
-          }`}
+          src={`${process.env.PUBLIC_URL}/assets/icons/${paymentStatus === "paid" ? "checkmark.gif" : "error.svg"
+            }`}
           alt={title}
         />
         <MainTitle>{title}</MainTitle>

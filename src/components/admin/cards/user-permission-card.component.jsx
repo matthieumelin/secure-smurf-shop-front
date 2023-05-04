@@ -16,7 +16,7 @@ export default function UserPermissionCard({ data, onDeletePermission }) {
                 {data.default && <UserPermissionCardLeftBadge type="default">Default</UserPermissionCardLeftBadge>}
             </UserPermissionCardLeft>
             <UserPermissionCardActions>
-                <UserPermissionCardActionsEdit to={`${AppRoutes.AdminUsersPermissionsEdit}/${data.id}`}>
+                <UserPermissionCardActionsEdit to={`${AppRoutes.AdminUsersPermissionsEdit.replace(":id", data.id)}`}>
                     <UserPermissionCardActionsEditIcon src={`${process.env.PUBLIC_URL}/assets/icons/edit.svg`} alt="Edit permission" />
                 </UserPermissionCardActionsEdit>
                 {!data.default &&

@@ -45,7 +45,11 @@ export default function AdminUsersPermissions({ toast }) {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
-            }).then((res) => setPermissions(res.data))
+            }).then((res) => {
+                if (res.status === 200) {
+                    setPermissions(res.data);
+                }
+            })
         }
 
         if (isGranted) fetchUsersPermissions();

@@ -21,6 +21,7 @@ import AdminIndex from "./pages/admin/index.page";
 import AdminUsers from "./pages/admin/users/index.page";
 import AdminUsersPermissions from "./pages/admin/users/permissions/index.page";
 import AdminUsersPermissionsAdd from "./pages/admin/users/permissions/add.page";
+import AdminUsersPermissionsEdit from "./pages/admin/users/permissions/edit.page";
 
 import AuthVerify from "./user/auth-verify.user";
 
@@ -61,6 +62,10 @@ export default function App() {
         theme="dark"
       />
       <Routes>
+        <Route
+          path={AppRoutes.AdminUsersPermissionsEdit}
+          element={<AdminUsersPermissionsEdit toast={toast} />}
+        />
         <Route
           path={AppRoutes.AdminUsersPermissionsAdd}
           element={<AdminUsersPermissionsAdd toast={toast} />}

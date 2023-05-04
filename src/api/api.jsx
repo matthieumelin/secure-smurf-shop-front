@@ -11,6 +11,7 @@ const API_ENDPOINTS = {
   USER_DISABLE: `${API_BASE_URL}/users/disable`,
   USERS_PERMISSIONS: `${API_BASE_URL}/users-permissions`,
   USERS_PERMISSIONS_ADD: `${API_BASE_URL}/users-permissions/create`,
+  USERS_PERMISSIONS_UPDATE: `${API_BASE_URL}/users-permissions/update`,
   USERS_PERMISSIONS_DELETE: `${API_BASE_URL}/users-permissions/delete`,
   USER_ORDERS: `${API_BASE_URL}/orders/users`,
   USERS: `${API_BASE_URL}/users`,
