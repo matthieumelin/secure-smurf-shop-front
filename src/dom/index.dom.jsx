@@ -13,7 +13,7 @@ import FeatureCard from "../components/cards/feature-card.component";
 import FaqCard from "../components/cards/faq-card.component";
 import GuaranteeCard from "../components/cards/guarantee-card.component";
 import Button from "../components/utils/button.component";
-import ServerCard from "../components/cards/product-server-card.component";
+import ProductRegionCard from "../components/cards/product-region-card.component";
 import ExperienceCard from "../components/cards/experience-step.component";
 
 import Colors from "../utils/colors.util";
@@ -30,9 +30,9 @@ export default function IndexDOM() {
   const [guarantee, setGuarantee] = useState([]);
   const [faq, setFaq] = useState([]);
 
-  const [productServers, setProductServers] = useState([]);
-  const [showProductServers, setShowProductServers] = useState(true);
-  const [currentProductServer, setCurrentProductServer] = useState({});
+  const [productRegions, setProductRegions] = useState([]);
+  const [showProductRegions, setShowProductRegions] = useState(true);
+  const [currentProductRegion, setCurrentProductRegion] = useState({});
 
   const [products, setProducts] = useState([]);
 
@@ -40,7 +40,7 @@ export default function IndexDOM() {
 
   const [loading, setLoading] = useState(false);
 
-  const productServersRef = useRef(productServers);
+  const productRegionsRef = useRef(productRegions);
 
   const token = useSelector((state) => state.user.token);
   const userData = useSelector((state) => state.user.data);
@@ -51,8 +51,8 @@ export default function IndexDOM() {
   useEffect(() => {
     const fetchData = async () => {
       await axios
-        .get(API_ENDPOINTS.PRODUCT_SERVERS)
-        .then((res) => setProductServers(res.data))
+        .get(API_ENDPOINTS.PRODUCT_REGIONS)
+        .then((res) => setProductRegions(res.data))
         .catch((err) => console.error(err));
       await axios
         .get(API_ENDPOINTS.PRODUCTS)
@@ -65,16 +65,16 @@ export default function IndexDOM() {
       setExperience(res.data.experience);
       setGuarantee(res.data.guarantee);
       setFaq(res.data.faq);
-      setCurrentProductServer(productServersRef.current[0]);
+      setCurrentProductRegion(productRegionsRef.current[0]);
       setCurrentExperience(res.data.experience[0]);
     });
 
     fetchData();
   }, []);
 
-  const onSelectProductServer = (server) => {
-    setCurrentProductServer(server);
-    setShowProductServers(false);
+  const onSelectProductRegion = (region) => {
+    setCurrentProductRegion(region);
+    setShowProductRegions(false);
   };
 
   const onProcessToCheckout = async (product) => {
@@ -84,7 +84,9 @@ export default function IndexDOM() {
     }
 
     sessionStorage.setItem("checkout", JSON.stringify(product));
+
     dispatch(setCheckout(product));
+
     setLoading(true);
 
     await axios
@@ -108,85 +110,85 @@ export default function IndexDOM() {
     <StyledIndex>
       <Header />
       <Main>
-        {productServers.length && products.length ? (
+        {productRegions.length && products.length ? (
           <Section>
-            {!currentProductServer && (
+            {!currentProductRegion && (
               <SectionHeader>
-                <SectionHeaderTitle>Choose Your Server</SectionHeaderTitle>
+                <SectionHeaderTitle>Choose Your Region</SectionHeaderTitle>
               </SectionHeader>
             )}
             <SectionContent>
-              {showProductServers ? (
-                <Servers>
-                  {productServers
-                    .filter((productServer) => {
+              {showProductRegions ? (
+                <Regions>
+                  {productRegions
+                    .filter((productRegion) => {
                       const filteredProducts = products.filter(
                         (product) =>
                           product &&
-                          product.server.toUpperCase() ===
-                            productServer.shortName.toUpperCase()
+                          product.region.toUpperCase() ===
+                          productRegion.shortName.toUpperCase()
                       );
                       return filteredProducts.length > 0;
                     })
-                    .map((productServer, index) => {
+                    .map((productRegion, index) => {
                       return (
-                        <ServerCard
-                          key={`product_server_${index}`}
-                          data={productServer}
-                          onSelectProductServer={onSelectProductServer}
+                        <ProductRegionCard
+                          key={`product_region_${index}`}
+                          data={productRegion}
+                          onSelectProductRegion={onSelectProductRegion}
                         />
                       );
                     })}
-                </Servers>
+                </Regions>
               ) : (
-                currentProductServer && (
+                currentProductRegion && (
                   <Products>
                     <ProductsHeader>
                       <ProductsHeaderRegion>
                         <ProductsHeaderRegionHeader>
                           <ProductsHeaderRegionHeaderTitle>
-                            {currentProductServer.name}
+                            {currentProductRegion.name}
                           </ProductsHeaderRegionHeaderTitle>
                         </ProductsHeaderRegionHeader>
                       </ProductsHeaderRegion>
                     </ProductsHeader>
                     <ProductsContent>
-                      <ProductsContentServers active={currentProductServer}>
-                        {productServers
-                          .filter((productServer) => {
+                      <ProductsContentRegions active={currentProductRegion}>
+                        {productRegions
+                          .filter((productRegion) => {
                             const filteredProducts = products.filter(
                               (product) =>
                                 product &&
-                                product.server.toUpperCase() ===
-                                  productServer.shortName.toUpperCase()
+                                product.region.toUpperCase() ===
+                                productRegion.shortName.toUpperCase()
                             );
                             return (
-                              productServer !== currentProductServer &&
+                              productRegion !== currentProductRegion &&
                               filteredProducts.length > 0
                             );
                           })
-                          .map((productServer, index) => {
+                          .map((productRegion, index) => {
                             return (
-                              <ProductsContentProductServers
-                                key={`product_server_${index}`}
+                              <ProductsContentProductRegions
+                                key={`product_region_${index}`}
                               >
-                                <ProductsContentProductServer
+                                <ProductsContentProductRegion
                                   onClick={() =>
-                                    setCurrentProductServer(productServer)
+                                    setCurrentProductRegion(productRegion)
                                   }
                                 >
-                                  {productServer.name}
-                                </ProductsContentProductServer>
-                              </ProductsContentProductServers>
+                                  {productRegion.name}
+                                </ProductsContentProductRegion>
+                              </ProductsContentProductRegions>
                             );
                           })}
-                      </ProductsContentServers>
+                      </ProductsContentRegions>
                       <ProductsContentProducts>
                         {products
                           .filter(
                             (product) =>
-                              product.server.toUpperCase() ===
-                              currentProductServer.shortName.toUpperCase()
+                              product.region.toUpperCase() ===
+                              currentProductRegion.shortName.toUpperCase()
                           )
                           .map((product, index) => {
                             return (
@@ -393,7 +395,7 @@ const SectionContent = styled.div`
   }
 `;
 
-const Servers = styled.div`
+const Regions = styled.div`
   margin: 30px 0;
   display: grid;
   justify-content: center;
@@ -564,7 +566,7 @@ const ProductsHeaderRegionHeaderTitle = styled.h2`
   margin: 0;
 `;
 const ProductsContent = styled.div``;
-const ProductsContentServers = styled.div`
+const ProductsContentRegions = styled.div`
   display: none;
   ${(props) => {
     if (props.active) {
@@ -581,8 +583,8 @@ const ProductsContentProducts = styled.div`
   justify-content: center;
   flex-wrap: wrap;
 `;
-const ProductsContentProductServers = styled.div``;
-const ProductsContentProductServer = styled.button`
+const ProductsContentProductRegions = styled.div``;
+const ProductsContentProductRegion = styled.button`
   background-color: ${Colors.primary};
   border-radius: 10px;
   color: white;

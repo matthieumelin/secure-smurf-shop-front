@@ -4,23 +4,23 @@ import { Link, Navigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
 import axios from 'axios';
-import { API_ENDPOINTS } from '../../../api/api';
-import AppRoutes from '../../../router/app.routes';
+import { API_ENDPOINTS } from '../../../../api/api';
+import AppRoutes from '../../../../router/app.routes';
 
 import styled from 'styled-components'
 
-import Navbar from '../../../components/admin/navbar.component';
-import Sidebar from '../../../components/admin/sidebar.component';
-import Pagination from "../../../components/utils/pagination.component"
-import ProductCard from '../../../components/admin/cards/product-card.component';
+import Navbar from '../../../../components/admin/navbar.component';
+import Sidebar from '../../../../components/admin/sidebar.component';
+import ProductRegionCard from "../../../../components/admin/cards/product-region-card.component"
+import Pagination from '../../../../components/utils/pagination.component';
 
-import Colors from '../../../utils/colors.util';
+import Colors from '../../../../utils/colors.util';
 
-export default function AdminProducts() {
+export default function AdminProductsRegions() {
     const token = useSelector((state) => state.user.token);
     const userData = useSelector((state) => state.user.data);
 
-    const [products, setProducts] = useState([]);
+    const [productRegions, setProductRegions] = useState([]);
     const [search, setSearch] = useState("");
 
     const [currentPage, setCurrentPage] = useState(1);
@@ -28,24 +28,24 @@ export default function AdminProducts() {
 
     const indexOfLastRecord = currentPage * recordsPerPage;
     const indexOfFirstRecord = indexOfLastRecord - recordsPerPage;
-    const currentRecords = products.slice(indexOfFirstRecord, indexOfLastRecord);
-    const pages = Math.ceil(products.length / recordsPerPage);
+    const currentRecords = productRegions.slice(indexOfFirstRecord, indexOfLastRecord);
+    const pages = Math.ceil(productRegions.length / recordsPerPage);
 
     const isGranted = token && userData.permission.includes("admin");
 
-    const haveResult = products && products.filter((product) => product.id === search.id).length > 0;
+    const haveResult = productRegions && productRegions.filter((product) => product.id === search.id).length > 0;
 
     useEffect(() => {
-        const fetchProducts = async () => {
-            await axios.get(API_ENDPOINTS.PRODUCTS).then((res) => { if (res.status === 200) setProducts(res.data) })
+        const fetchProductRegions = async () => {
+            await axios.get(API_ENDPOINTS.PRODUCT_REGIONS).then((res) => { if (res.status === 200) setProductRegions(res.data) })
         }
 
-        if (isGranted) fetchProducts();
+        if (isGranted) fetchProductRegions();
     }, [token, isGranted])
 
-    const renderList = (product) => {
+    const renderList = (productRegion) => {
         return (
-            <ProductCard key={`product_${product.id}`} data={product} />
+            <ProductRegionCard key={`product_region_${productRegion.id}`} data={productRegion} />
         )
     }
 
@@ -56,7 +56,7 @@ export default function AdminProducts() {
     return (
         <StyledUsers>
             <Helmet>
-                <title>Admin Products</title>
+                <title>Admin Products Regions</title>
             </Helmet>
             <Wrapper>
                 <WrapperLeft>
@@ -66,34 +66,33 @@ export default function AdminProducts() {
                     <Navbar />
                     <Container>
                         <ContainerHeader>
-                            <ContainerHeaderTitle>Manage Products</ContainerHeaderTitle>
+                            <ContainerHeaderTitle>Manage Products Regions</ContainerHeaderTitle>
                             <ContainerHeaderButtons>
-                                <ContainerHeaderButtonsLink to={AppRoutes.Home}>Add Product</ContainerHeaderButtonsLink>
-                                <ContainerHeaderButtonsLink to={AppRoutes.AdminProductsRegions}>View Regions</ContainerHeaderButtonsLink>
+                                {/* <ContainerHeaderButtonsLink to={AppRoutes.AdminProductsRegionsAdd}>Add Region</ContainerHeaderButtonsLink> */}
                             </ContainerHeaderButtons>
                         </ContainerHeader>
                         <ContainerBody>
                             <List>
                                 <ListHeader>
-                                    <ListHeaderTitle>Products List ({products.length})</ListHeaderTitle>
+                                    <ListHeaderTitle>Products Regions List ({productRegions.length})</ListHeaderTitle>
                                     <ListHeaderSearch>
-                                        <ListHeaderSearchIcon src={`${process.env.PUBLIC_URL}/assets/icons/search.svg`} alt="Search Product" />
-                                        <ListHeaderSearchInput type='text' placeholder="Search Product" onChange={(event) => setSearch(event.target.value)} />
+                                        <ListHeaderSearchIcon src={`${process.env.PUBLIC_URL}/assets/icons/search.svg`} alt="Search Product Region" />
+                                        <ListHeaderSearchInput type='text' placeholder="Search Product Region" onChange={(event) => setSearch(event.target.value)} />
                                     </ListHeaderSearch>
                                 </ListHeader>
                                 <ListBody haveResult={haveResult}>
                                     {search ? (
                                         haveResult ? (
-                                            products.map((product) => renderList(product))
+                                            productRegions.map((productRegion) => renderList(productRegion))
                                         ) : (
-                                            <ListBodyNoMatch>No product found..</ListBodyNoMatch>
+                                            <ListBodyNoMatch>No product region found..</ListBodyNoMatch>
                                         )
                                     ) : (
                                         currentRecords.length ? (
                                             currentRecords.map((currentRecord) => renderList(currentRecord))
                                         ) :
                                             (
-                                                <ListBodyNoMatch>No products</ListBodyNoMatch>
+                                                <ListBodyNoMatch>No products regions</ListBodyNoMatch>
                                             )
                                     )}
                                 </ListBody>

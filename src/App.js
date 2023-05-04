@@ -24,6 +24,8 @@ import AdminUsersPermissionsAdd from "./pages/admin/users/permissions/add.page";
 import AdminUsersPermissionsEdit from "./pages/admin/users/permissions/edit.page";
 import AdminOrders from "./pages/admin/orders/index.page";
 import AdminProducts from "./pages/admin/products/index.page";
+import AdminProductsRegionsAdd from "./pages/admin/products/regions/add.page";
+import AdminProductsRegions from "./pages/admin/products/regions/index.page";
 
 import AuthVerify from "./user/auth-verify.user";
 
@@ -78,6 +80,14 @@ export default function App() {
         />
         <Route path={AppRoutes.AdminUsers} element={<AdminUsers />} />
         <Route path={AppRoutes.AdminOrders} element={<AdminOrders />} />
+        <Route
+          path={AppRoutes.AdminProductsRegionsAdd}
+          element={<AdminProductsRegionsAdd />}
+        />
+        <Route
+          path={AppRoutes.AdminProductsRegions}
+          element={<AdminProductsRegions />}
+        />
         <Route path={AppRoutes.AdminProducts} element={<AdminProducts />} />
         <Route path={AppRoutes.AdminDashboard} element={<AdminIndex />} />
         <Route

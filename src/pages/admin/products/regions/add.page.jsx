@@ -17,7 +17,7 @@ import Sidebar from '../../../../components/admin/sidebar.component';
 import ErrorContainer from "../../../../utils/error-container.util";
 import Colors from '../../../../utils/colors.util';
 
-export default function AdminUsersPermissionsAdd({ toast }) {
+export default function AdminProductsRegionsAdd({ toast }) {
     const token = useSelector((state) => state.user.token);
     const userData = useSelector((state) => state.user.data);
 
@@ -28,8 +28,9 @@ export default function AdminUsersPermissionsAdd({ toast }) {
     const isGranted = token && userData.permission.includes("admin");
 
     const onSubmit = async (data) => {
-        await axios.post(API_ENDPOINTS.USERS_PERMISSIONS_CREATE, {
+        await axios.post(API_ENDPOINTS.PRODUCT_REGIONS_CREATE, {
             name: data.name,
+            shortName: data.shortName,
         }, {
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -41,7 +42,7 @@ export default function AdminUsersPermissionsAdd({ toast }) {
 
                     toast.success(res.data.message);
 
-                    navigate(AppRoutes.AdminUsersPermissions);
+                    navigate(AppRoutes.AdminProductsRegions);
                 }
             }).catch((err) => toast.error(err.response.data.message));
     }
@@ -53,7 +54,7 @@ export default function AdminUsersPermissionsAdd({ toast }) {
     return (
         <StyledUsers>
             <Helmet>
-                <title>Admin Add Permission</title>
+                <title>Admin Add Region</title>
             </Helmet>
             <Wrapper>
                 <WrapperLeft>
@@ -63,7 +64,7 @@ export default function AdminUsersPermissionsAdd({ toast }) {
                     <Navbar />
                     <Container>
                         <ContainerHeader>
-                            <ContainerHeaderTitle>Add Permission</ContainerHeaderTitle>
+                            <ContainerHeaderTitle>Add Region</ContainerHeaderTitle>
                         </ContainerHeader>
                         <ContainerBody>
                             <Form onSubmit={handleSubmit(onSubmit)}>
@@ -86,6 +87,28 @@ export default function AdminUsersPermissionsAdd({ toast }) {
                                             <ErrorMessage
                                                 errors={errors}
                                                 name="name"
+                                                as={<ErrorContainer />}
+                                            />
+                                        )}
+                                    </FormGroup>
+                                    <FormGroup>
+                                        <FormGroupLabel htmlFor="shortName">Short Name</FormGroupLabel>
+                                        <FormGroupInput
+                                            type="text"
+                                            id="shortName"
+                                            name="shortName"
+                                            error={errors.shortName}
+                                            {...register("shortName", {
+                                                required: {
+                                                    value: true,
+                                                    message: "You must enter a short name.",
+                                                },
+                                            })}
+                                        />
+                                        {errors.shortName && (
+                                            <ErrorMessage
+                                                errors={errors}
+                                                name="shortName"
                                                 as={<ErrorContainer />}
                                             />
                                         )}
@@ -135,6 +158,7 @@ const FormGroups = styled.div``;
 const FormGroup = styled.div`
 display: flex;
 flex-direction: column;
+margin-top: 20px;
 `;
 const FormGroupLabel = styled.label`
 color: rgba(255,255,255,.7);
