@@ -74,6 +74,10 @@ export default function Profile({ toast, sidebarIsOpen, showLogoutModal, setSide
         notifications: data.notifications,
         currentPassword: data.currentPassword,
         newPassword: data.newPassword,
+      }, {
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
       })
       .then((res) => {
         if (res.status === 200) {

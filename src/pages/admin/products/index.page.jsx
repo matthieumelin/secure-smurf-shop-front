@@ -33,7 +33,9 @@ export default function AdminProducts() {
 
     const isGranted = token && userData.permission.includes("admin");
 
-    const haveResult = products && products.filter((product) => product.id === search.id).length > 0;
+    const haveSearchResult = products.filter((product) => product.name.toLowerCase().includes(search.toLowerCase())
+        || product.region.toLowerCase().includes(search.toLowerCase())
+        || product.type.toLowerCase().includes(search.toLowerCase())).length > 0;
 
     useEffect(() => {
         const fetchProducts = async () => {
@@ -81,16 +83,22 @@ export default function AdminProducts() {
                                         <ListHeaderSearchInput type='text' placeholder="Search Product" onChange={(event) => setSearch(event.target.value)} />
                                     </ListHeaderSearch>
                                 </ListHeader>
-                                <ListBody haveResult={haveResult}>
+                                <ListBody haveResult={haveSearchResult}>
                                     {search ? (
-                                        haveResult ? (
-                                            products.map((product) => renderList(product))
+                                        haveSearchResult ? (
+                                            products.filter((product) => product.name.toLowerCase().includes(search.toLowerCase())
+                                                || product.region.toLowerCase().includes(search.toLowerCase())
+                                                || product.type.toLowerCase().includes(search.toLowerCase())).map((product) => {
+                                                    return renderList(product);
+                                                })
                                         ) : (
                                             <ListBodyNoMatch>No product found..</ListBodyNoMatch>
                                         )
                                     ) : (
                                         currentRecords.length ? (
-                                            currentRecords.map((currentRecord) => renderList(currentRecord))
+                                            currentRecords.map((currentRecord) => {
+                                                return renderList(currentRecord);
+                                            })
                                         ) :
                                             (
                                                 <ListBodyNoMatch>No products</ListBodyNoMatch>

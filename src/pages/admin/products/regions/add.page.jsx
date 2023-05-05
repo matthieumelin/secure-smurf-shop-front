@@ -16,6 +16,7 @@ import Sidebar from '../../../../components/admin/sidebar.component';
 
 import ErrorContainer from "../../../../utils/error-container.util";
 import Colors from '../../../../utils/colors.util';
+import { capitalizeFirstLetter } from '../../../../utils/string.util';
 
 export default function AdminProductsRegionsAdd({ toast }) {
     const token = useSelector((state) => state.user.token);
@@ -29,8 +30,8 @@ export default function AdminProductsRegionsAdd({ toast }) {
 
     const onSubmit = async (data) => {
         await axios.post(API_ENDPOINTS.PRODUCT_REGIONS_CREATE, {
-            name: data.name,
-            shortName: data.shortName,
+            name: capitalizeFirstLetter(data.name),
+            shortName: data.shortName.toUpperCase(),
         }, {
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -103,6 +104,14 @@ export default function AdminProductsRegionsAdd({ toast }) {
                                                     value: true,
                                                     message: "You must enter a short name.",
                                                 },
+                                                pattern: {
+                                                    value: /^[a-zA-Z]{2,4}$/,
+                                                    message: "Invalid short name format.",
+                                                },
+                                                max: {
+                                                    value: 4,
+                                                    message: "You can't put more than four characters."
+                                                }
                                             })}
                                         />
                                         {errors.shortName && (

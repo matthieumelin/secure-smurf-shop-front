@@ -19,6 +19,7 @@ const AppRoutes = {
   AdminProducts: "/admin/products",
   AdminProductsRegions: "/admin/products/regions",
   AdminProductsRegionsAdd: "/admin/products/regions/add",
+  AdminProductsRegionsEdit: "/admin/products/regions/edit/:id",
   AdminUsers: "/admin/users",
   AdminUsersPermissions: "/admin/users/permissions",
   AdminUsersPermissionsAdd: "/admin/users/permissions/add",

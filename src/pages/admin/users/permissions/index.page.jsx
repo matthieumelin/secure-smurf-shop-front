@@ -33,7 +33,7 @@ export default function AdminUsersPermissions({ toast }) {
 
     const isGranted = token && userData.permission.includes("admin");
 
-    const haveResult = permissions && permissions.filter((permission) => permission.name.toLowerCase().includes(search.toLowerCase())).length > 0;
+    const haveSearchResult = permissions.filter((permission) => permission.name.toLowerCase().includes(search.toLowerCase())).length > 0;
 
     useEffect(() => {
         const fetchUsersPermissions = async () => {
@@ -100,15 +100,19 @@ export default function AdminUsersPermissions({ toast }) {
                                         <ListHeaderSearchInput type='text' placeholder="Search Permission" onChange={(event) => setSearch(event.target.value)} />
                                     </ListHeaderSearch>
                                 </ListHeader>
-                                <ListBody haveResult={haveResult}>
+                                <ListBody haveSearchResult={haveSearchResult}>
                                     {search ? (
-                                        haveResult ? (
-                                            permissions.map((permission) => renderList(permission))
+                                        haveSearchResult ? (
+                                            permissions.filter((permission) => permission.name.toLowerCase().includes(search.toLowerCase())).map((permission) => {
+                                                return renderList(permission);
+                                            })
                                         ) : (
                                             <ListBodyNoMatch>No permission found..</ListBodyNoMatch>
                                         )
                                     ) : (
-                                        currentRecords && currentRecords.map((currentRecord) => renderList(currentRecord))
+                                        currentRecords && currentRecords.map((currentRecord) => {
+                                            return renderList(currentRecord);
+                                        })
                                     )}
                                 </ListBody>
                             </List>
@@ -224,7 +228,7 @@ display: grid;
 grid-gap: 20px;
 
 ${props => {
-        if (props.haveResult) {
+        if (props.haveSearchResult) {
             return `
         @media screen and (min-width: 768px) {
             grid-template-columns: repeat(2,1fr);

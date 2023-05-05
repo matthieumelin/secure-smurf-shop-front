@@ -16,7 +16,7 @@ import Pagination from '../../../../components/utils/pagination.component';
 
 import Colors from '../../../../utils/colors.util';
 
-export default function AdminProductsRegions() {
+export default function AdminProductsRegions({ toast }) {
     const token = useSelector((state) => state.user.token);
     const userData = useSelector((state) => state.user.data);
 
@@ -33,7 +33,8 @@ export default function AdminProductsRegions() {
 
     const isGranted = token && userData.permission.includes("admin");
 
-    const haveResult = productRegions && productRegions.filter((product) => product.id === search.id).length > 0;
+    const haveSearchResult = productRegions.filter((productRegion) => productRegion.name.toLowerCase().includes(search.toLowerCase()) ||
+        productRegion.shortName.toLowerCase().includes(search.toLowerCase())).length > 0;
 
     useEffect(() => {
         const fetchProductRegions = async () => {
@@ -43,9 +44,25 @@ export default function AdminProductsRegions() {
         if (isGranted) fetchProductRegions();
     }, [token, isGranted])
 
+    const onDeleteProductRegion = async (selectedProductRegion) => {
+        await axios.delete(`${API_ENDPOINTS.PRODUCT_REGIONS_DELETE}/${selectedProductRegion.id}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        }).then((res) => {
+            if (res.status === 200) {
+                const updatedProductRegions = productRegions.filter((productRegion) => productRegion.id !== selectedProductRegion.id);
+
+                setProductRegions(updatedProductRegions);
+
+                toast.success(res.data.message);
+            }
+        }).catch((err) => toast.error(err.response.data.message));
+    }
+
     const renderList = (productRegion) => {
         return (
-            <ProductRegionCard key={`product_region_${productRegion.id}`} data={productRegion} />
+            <ProductRegionCard key={`product_region_${productRegion.id}`} data={productRegion} onDeleteProductRegion={() => onDeleteProductRegion(productRegion)} />
         )
     }
 
@@ -56,7 +73,7 @@ export default function AdminProductsRegions() {
     return (
         <StyledUsers>
             <Helmet>
-                <title>Admin Products Regions</title>
+                <title>Admin Regions</title>
             </Helmet>
             <Wrapper>
                 <WrapperLeft>
@@ -66,9 +83,9 @@ export default function AdminProductsRegions() {
                     <Navbar />
                     <Container>
                         <ContainerHeader>
-                            <ContainerHeaderTitle>Manage Products Regions</ContainerHeaderTitle>
+                            <ContainerHeaderTitle>Manage Regions</ContainerHeaderTitle>
                             <ContainerHeaderButtons>
-                                {/* <ContainerHeaderButtonsLink to={AppRoutes.AdminProductsRegionsAdd}>Add Region</ContainerHeaderButtonsLink> */}
+                                <ContainerHeaderButtonsLink to={AppRoutes.AdminProductsRegionsAdd}>Add Region</ContainerHeaderButtonsLink>
                             </ContainerHeaderButtons>
                         </ContainerHeader>
                         <ContainerBody>
@@ -80,16 +97,21 @@ export default function AdminProductsRegions() {
                                         <ListHeaderSearchInput type='text' placeholder="Search Product Region" onChange={(event) => setSearch(event.target.value)} />
                                     </ListHeaderSearch>
                                 </ListHeader>
-                                <ListBody haveResult={haveResult}>
+                                <ListBody haveSearchResult={haveSearchResult}>
                                     {search ? (
-                                        haveResult ? (
-                                            productRegions.map((productRegion) => renderList(productRegion))
+                                        haveSearchResult ? (
+                                            productRegions.filter((productRegion) => productRegion.name.toLowerCase().includes(search.toLowerCase())
+                                                || productRegion.shortName.toLowerCase().includes(search.toLowerCase)).map((productRegion) => {
+                                                    return renderList(productRegion);
+                                                })
                                         ) : (
                                             <ListBodyNoMatch>No product region found..</ListBodyNoMatch>
                                         )
                                     ) : (
                                         currentRecords.length ? (
-                                            currentRecords.map((currentRecord) => renderList(currentRecord))
+                                            currentRecords.map((currentRecord) => {
+                                                return renderList(currentRecord);
+                                            })
                                         ) :
                                             (
                                                 <ListBodyNoMatch>No products regions</ListBodyNoMatch>
@@ -205,9 +227,14 @@ width: 100%;
 `;
 const ListBody = styled.div`
 margin: 30px 0;
+max-width: 425px;
+
+@media screen and (min-width: 1024px) {
+    max-width: 100%;
+} 
 
 ${props => {
-        if (props.haveResult) {
+        if (props.haveSearchResult) {
             return `
         display: grid;
         grid-template-columns: repeat(3, 1fr);

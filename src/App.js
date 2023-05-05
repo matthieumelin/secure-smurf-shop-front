@@ -82,11 +82,11 @@ export default function App() {
         <Route path={AppRoutes.AdminOrders} element={<AdminOrders />} />
         <Route
           path={AppRoutes.AdminProductsRegionsAdd}
-          element={<AdminProductsRegionsAdd />}
+          element={<AdminProductsRegionsAdd toast={toast} />}
         />
         <Route
           path={AppRoutes.AdminProductsRegions}
-          element={<AdminProductsRegions />}
+          element={<AdminProductsRegions toast={toast} />}
         />
         <Route path={AppRoutes.AdminProducts} element={<AdminProducts />} />
         <Route path={AppRoutes.AdminDashboard} element={<AdminIndex />} />

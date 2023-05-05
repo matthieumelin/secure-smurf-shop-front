@@ -32,7 +32,7 @@ export default function AdminUsers() {
 
     const isGranted = token && userData.permission.includes("admin");
 
-    const haveResult = users && users.filter((user) => user.email.toLowerCase().includes(search.toLowerCase()) || user.username.toLowerCase().includes(search.toLowerCase())).length > 0;
+    const haveSearchResult = users.filter((user) => user.email.toLowerCase().includes(search.toLowerCase()) || user.username.toLowerCase().includes(search.toLowerCase())).length > 0;
 
     useEffect(() => {
         const fetchUsers = async () => {
@@ -84,16 +84,20 @@ export default function AdminUsers() {
                                         <ListHeaderSearchInput type='text' placeholder="Search User" onChange={(event) => setSearch(event.target.value)} />
                                     </ListHeaderSearch>
                                 </ListHeader>
-                                <ListBody haveResult={haveResult}>
+                                <ListBody haveSearchResult={haveSearchResult}>
                                     {search ? (
-                                        haveResult ? (
-                                            users.map((user) => renderList(user))
+                                        haveSearchResult ? (
+                                            users.filter((user) => user.email.toLowerCase().includes(search.toLowerCase()) || user.username.toLowerCase().includes(search.toLowerCase())).map((user) => {
+                                                return renderList(user);
+                                            })
                                         ) : (
                                             <ListBodyNoMatch>No user found..</ListBodyNoMatch>
                                         )
                                     ) : (
                                         currentRecords.length ? (
-                                            currentRecords.map((currentRecord) => renderList(currentRecord))
+                                            currentRecords.map((currentRecord) => {
+                                                return renderList(currentRecord);
+                                            })
                                         ) :
                                             (
                                                 <ListBodyNoMatch>No users</ListBodyNoMatch>
@@ -211,7 +215,7 @@ const ListBody = styled.div`
 margin: 30px 0;
 
 ${props => {
-        if (props.haveResult) {
+        if (props.haveSearchResult) {
             return `
         display: grid;
         grid-template-columns: repeat(3, 1fr);

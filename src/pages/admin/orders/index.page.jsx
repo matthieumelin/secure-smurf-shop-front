@@ -33,7 +33,7 @@ export default function AdminOrders() {
 
     const isGranted = token && userData.permission.includes("admin");
 
-    const haveResult = orders && orders.filter((order) => order.id === search.id).length > 0;
+    const haveSearchResult = orders.filter((order) => order.userId === parseInt(search)).length > 0;
 
     useEffect(() => {
         const fetchOrders = async () => {
@@ -84,16 +84,20 @@ export default function AdminOrders() {
                                         <ListHeaderSearchInput type='text' placeholder="Search Order" onChange={(event) => setSearch(event.target.value)} />
                                     </ListHeaderSearch>
                                 </ListHeader>
-                                <ListBody haveResult={haveResult}>
+                                <ListBody haveSearchResult={haveSearchResult}>
                                     {search ? (
-                                        haveResult ? (
-                                            orders.map((order) => renderList(order))
+                                        haveSearchResult ? (
+                                            orders.filter((order) => order.userId === parseInt(search)).map((order) => {
+                                                return renderList(order);
+                                            })
                                         ) : (
                                             <ListBodyNoMatch>No order found..</ListBodyNoMatch>
                                         )
                                     ) : (
                                         currentRecords.length ? (
-                                            currentRecords.map((currentRecord) => renderList(currentRecord))
+                                            currentRecords.map((currentRecord) => {
+                                                return renderList(currentRecord);
+                                            })
                                         ) :
                                             (
                                                 <ListBodyNoMatch>No orders</ListBodyNoMatch>
