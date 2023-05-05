@@ -16,14 +16,18 @@ const AppRoutes = {
   ToS: "/tos",
   AdminDashboard: "/admin",
   AdminOrders: "/admin/orders",
+  AdminOrderAdd: "/admin/orders/add",
+  AdminOrderEdit: "/admin/orders/edit/:id",
   AdminProducts: "/admin/products",
-  AdminProductsRegions: "/admin/products/regions",
-  AdminProductsRegionsAdd: "/admin/products/regions/add",
-  AdminProductsRegionsEdit: "/admin/products/regions/edit/:id",
+  AdminProductAdd: "/admin/products/add",
+  AdminProductEdit: "/admin/products/edit/:id",
+  AdminProductRegions: "/admin/products/regions",
+  AdminProductRegionAdd: "/admin/products/regions/add",
+  AdminProductRegionEdit: "/admin/products/regions/edit/:id",
   AdminUsers: "/admin/users",
-  AdminUsersPermissions: "/admin/users/permissions",
-  AdminUsersPermissionsAdd: "/admin/users/permissions/add",
-  AdminUsersPermissionsEdit: "/admin/users/permissions/edit/:id"
+  AdminUserPermissions: "/admin/users/permissions",
+  AdminUserPermissionAdd: "/admin/users/permissions/add",
+  AdminUserPermissionEdit: "/admin/users/permissions/edit/:id"
 };
 
 export default AppRoutes;

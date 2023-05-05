@@ -6,18 +6,19 @@ import { useForm } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
 
 import axios from 'axios';
-import AppRoutes from '../../../../router/app.routes';
-import { API_ENDPOINTS } from "../../../../api/api"
+import AppRoutes from '../../../router/app.routes';
+import { API_ENDPOINTS } from "../../../api/api"
 
 import styled from 'styled-components'
 
-import Navbar from '../../../../components/admin/navbar.component';
-import Sidebar from '../../../../components/admin/sidebar.component';
+import Navbar from '../../../components/admin/navbar.component';
+import Sidebar from '../../../components/admin/sidebar.component';
 
-import ErrorContainer from "../../../../utils/error-container.util";
-import Colors from '../../../../utils/colors.util';
+import ErrorContainer from "../../../utils/error-container.util";
+import Colors from '../../../utils/colors.util';
+import { capitalizeFirstLetter } from '../../../utils/string.util';
 
-export default function AdminUserPermissionAdd({ toast }) {
+export default function AdminProductAdd({ toast }) {
     const token = useSelector((state) => state.user.token);
     const userData = useSelector((state) => state.user.data);
 
@@ -28,8 +29,9 @@ export default function AdminUserPermissionAdd({ toast }) {
     const isGranted = token && userData.permission.includes("admin");
 
     const onSubmit = async (data) => {
-        await axios.post(API_ENDPOINTS.USERS_PERMISSIONS_CREATE, {
-            name: data.name,
+        await axios.post(API_ENDPOINTS.PRODUCT_CREATE, {
+            name: capitalizeFirstLetter(data.name),
+            shortName: data.shortName.toUpperCase(),
         }, {
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -41,7 +43,7 @@ export default function AdminUserPermissionAdd({ toast }) {
 
                     toast.success(res.data.message);
 
-                    navigate(AppRoutes.AdminUsersPermissions);
+                    navigate(AppRoutes.AdminProducts);
                 }
             }).catch((err) => toast.error(err.response.data.message));
     }
@@ -53,7 +55,7 @@ export default function AdminUserPermissionAdd({ toast }) {
     return (
         <StyledUsers>
             <Helmet>
-                <title>Admin Add Permission</title>
+                <title>Admin Add Product</title>
             </Helmet>
             <Wrapper>
                 <WrapperLeft>
@@ -64,10 +66,10 @@ export default function AdminUserPermissionAdd({ toast }) {
                     <Container>
                         <ContainerHeader>
                             <ContainerHeaderLeft>
-                                <ContainerHeaderLeftBack to={AppRoutes.AdminUserPermissions}>
+                                <ContainerHeaderLeftBack to={AppRoutes.AdminProducts}>
                                     <ContainerHeaderLeftBackIcon src={`${process.env.PUBLIC_URL}/assets/icons/chevron-left.png`} alt='Back' />
                                 </ContainerHeaderLeftBack>
-                                <ContainerHeaderLeftTitle>Add Permission</ContainerHeaderLeftTitle>
+                                <ContainerHeaderLeftTitle>Add Product</ContainerHeaderLeftTitle>
                             </ContainerHeaderLeft>
                         </ContainerHeader>
                         <ContainerBody>
@@ -91,6 +93,36 @@ export default function AdminUserPermissionAdd({ toast }) {
                                             <ErrorMessage
                                                 errors={errors}
                                                 name="name"
+                                                as={<ErrorContainer />}
+                                            />
+                                        )}
+                                    </FormGroup>
+                                    <FormGroup>
+                                        <FormGroupLabel htmlFor="shortName">Short Name</FormGroupLabel>
+                                        <FormGroupInput
+                                            type="text"
+                                            id="shortName"
+                                            name="shortName"
+                                            error={errors.shortName}
+                                            {...register("shortName", {
+                                                required: {
+                                                    value: true,
+                                                    message: "You must enter a short name.",
+                                                },
+                                                pattern: {
+                                                    value: /^[a-zA-Z]{2,4}$/,
+                                                    message: "Invalid short name format.",
+                                                },
+                                                max: {
+                                                    value: 4,
+                                                    message: "You can't put more than four characters."
+                                                }
+                                            })}
+                                        />
+                                        {errors.shortName && (
+                                            <ErrorMessage
+                                                errors={errors}
+                                                name="shortName"
                                                 as={<ErrorContainer />}
                                             />
                                         )}
@@ -165,6 +197,7 @@ const FormGroups = styled.div``;
 const FormGroup = styled.div`
 display: flex;
 flex-direction: column;
+margin-top: 20px;
 `;
 const FormGroupLabel = styled.label`
 color: rgba(255,255,255,.7);

@@ -18,7 +18,7 @@ import ErrorContainer from "../../../../utils/error-container.util";
 import Colors from '../../../../utils/colors.util';
 import { capitalizeFirstLetter } from '../../../../utils/string.util';
 
-export default function AdminUsersPermissionsEdit({ toast }) {
+export default function AdminUserPermissionEdit({ toast }) {
     const { id } = useParams();
 
     const token = useSelector((state) => state.user.token);

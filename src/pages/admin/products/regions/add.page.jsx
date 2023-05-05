@@ -1,6 +1,6 @@
 import React from 'react'
 import { Helmet } from 'react-helmet-async';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
@@ -18,7 +18,7 @@ import ErrorContainer from "../../../../utils/error-container.util";
 import Colors from '../../../../utils/colors.util';
 import { capitalizeFirstLetter } from '../../../../utils/string.util';
 
-export default function AdminProductsRegionsAdd({ toast }) {
+export default function AdminProductRegionAdd({ toast }) {
     const token = useSelector((state) => state.user.token);
     const userData = useSelector((state) => state.user.data);
 
@@ -64,9 +64,12 @@ export default function AdminProductsRegionsAdd({ toast }) {
                 <WrapperRight>
                     <Navbar />
                     <Container>
-                        <ContainerHeader>
-                            <ContainerHeaderTitle>Add Region</ContainerHeaderTitle>
-                        </ContainerHeader>
+                        <ContainerHeaderLeft>
+                            <ContainerHeaderLeftBack to={AppRoutes.AdminProductRegions}>
+                                <ContainerHeaderLeftBackIcon src={`${process.env.PUBLIC_URL}/assets/icons/chevron-left.png`} alt='Back' />
+                            </ContainerHeaderLeftBack>
+                            <ContainerHeaderLeftTitle>Add Region</ContainerHeaderLeftTitle>
+                        </ContainerHeaderLeft>
                         <ContainerBody>
                             <Form onSubmit={handleSubmit(onSubmit)}>
                                 <FormGroups>
@@ -154,7 +157,32 @@ const ContainerHeader = styled.div`
     justify-content: space-between;
 }
 `;
-const ContainerHeaderTitle = styled.h1`
+const ContainerHeaderLeft = styled.div`
+@media screen and (min-width: 768px) {
+    display: flex;
+align-items: center;
+}
+`;
+const ContainerHeaderLeftBack = styled(Link)`
+background-color: ${Colors.primary};
+display: block;
+padding: 10px;
+border-radius: 100px;
+width: max-content;
+margin-bottom: 10px;
+
+@media screen and (min-width: 768px) {
+    margin-bottom: 0px;
+    margin-right: 20px;
+}
+`;
+const ContainerHeaderLeftBackIcon = styled.img`
+display: block;
+width: 18px;
+height: 18px;
+filter: invert(100%) sepia(0%) saturate(7500%) hue-rotate(152deg) brightness(116%) contrast(101%);
+`;
+const ContainerHeaderLeftTitle = styled.h1`
 color: white;
 margin: 0;
 `;
@@ -201,6 +229,7 @@ border-radius: 2px;
 transition: 0.2s;
 font-family: inherit;
 font-weight: 600;
+cursor: pointer;
 
 &:hover {
     transition: 0.2s;

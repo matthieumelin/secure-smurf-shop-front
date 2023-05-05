@@ -16,7 +16,7 @@ import UserPermissionCard from '../../../../components/admin/cards/user-permissi
 
 import Colors from '../../../../utils/colors.util';
 
-export default function AdminUsersPermissions({ toast }) {
+export default function AdminUserPermissions({ toast }) {
     const token = useSelector((state) => state.user.token);
     const userData = useSelector((state) => state.user.data);
 
@@ -86,9 +86,14 @@ export default function AdminUsersPermissions({ toast }) {
                     <Navbar />
                     <Container>
                         <ContainerHeader>
-                            <ContainerHeaderTitle>Manage Permissions</ContainerHeaderTitle>
+                            <ContainerHeaderLeft>
+                                <ContainerHeaderLeftBack to={AppRoutes.AdminUsers}>
+                                    <ContainerHeaderLeftBackIcon src={`${process.env.PUBLIC_URL}/assets/icons/chevron-left.png`} alt='Back' />
+                                </ContainerHeaderLeftBack>
+                                <ContainerHeaderLeftTitle>Manage Permissions</ContainerHeaderLeftTitle>
+                            </ContainerHeaderLeft>
                             <ContainerHeaderButtons>
-                                <ContainerHeaderButtonsLink to={AppRoutes.AdminUsersPermissionsAdd}>Add Permission</ContainerHeaderButtonsLink>
+                                <ContainerHeaderButtonsLink to={AppRoutes.AdminUserPermissionAdd}>Add Permission</ContainerHeaderButtonsLink>
                             </ContainerHeaderButtons>
                         </ContainerHeader>
                         <ContainerBody>
@@ -144,7 +149,32 @@ const ContainerHeader = styled.div`
     justify-content: space-between;
 }
 `;
-const ContainerHeaderTitle = styled.h1`
+const ContainerHeaderLeft = styled.div`
+@media screen and (min-width: 768px) {
+    display: flex;
+align-items: center;
+}
+`;
+const ContainerHeaderLeftBack = styled(Link)`
+background-color: ${Colors.primary};
+display: block;
+padding: 10px;
+border-radius: 100px;
+width: max-content;
+margin-bottom: 10px;
+
+@media screen and (min-width: 768px) {
+    margin-bottom: 0px;
+    margin-right: 20px;
+}
+`;
+const ContainerHeaderLeftBackIcon = styled.img`
+display: block;
+width: 18px;
+height: 18px;
+filter: invert(100%) sepia(0%) saturate(7500%) hue-rotate(152deg) brightness(116%) contrast(101%);
+`;
+const ContainerHeaderLeftTitle = styled.h1`
 color: white;
 margin: 0;
 `;

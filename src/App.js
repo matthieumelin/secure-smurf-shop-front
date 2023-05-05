@@ -19,13 +19,14 @@ import Checkout from "./pages/checkout.page";
 
 import AdminIndex from "./pages/admin/index.page";
 import AdminUsers from "./pages/admin/users/index.page";
-import AdminUsersPermissions from "./pages/admin/users/permissions/index.page";
-import AdminUsersPermissionsAdd from "./pages/admin/users/permissions/add.page";
-import AdminUsersPermissionsEdit from "./pages/admin/users/permissions/edit.page";
+import AdminUserPermissions from "./pages/admin/users/permissions/index.page";
+import AdminUserPermissionAdd from "./pages/admin/users/permissions/add.page";
+import AdminUserPermissionEdit from "./pages/admin/users/permissions/edit.page";
 import AdminOrders from "./pages/admin/orders/index.page";
 import AdminProducts from "./pages/admin/products/index.page";
-import AdminProductsRegionsAdd from "./pages/admin/products/regions/add.page";
-import AdminProductsRegions from "./pages/admin/products/regions/index.page";
+import AdminProductAdd from "./pages/admin/products/add.page";
+import AdminProductRegionAdd from "./pages/admin/products/regions/add.page";
+import AdminProductRegions from "./pages/admin/products/regions/index.page";
 
 import AuthVerify from "./user/auth-verify.user";
 
@@ -67,27 +68,28 @@ export default function App() {
       />
       <Routes>
         <Route
-          path={AppRoutes.AdminUsersPermissionsEdit}
-          element={<AdminUsersPermissionsEdit toast={toast} />}
+          path={AppRoutes.AdminUserPermissionEdit}
+          element={<AdminUserPermissionEdit toast={toast} />}
         />
         <Route
-          path={AppRoutes.AdminUsersPermissionsAdd}
-          element={<AdminUsersPermissionsAdd toast={toast} />}
+          path={AppRoutes.AdminUserPermissionAdd}
+          element={<AdminUserPermissionAdd toast={toast} />}
         />
         <Route
-          path={AppRoutes.AdminUsersPermissions}
-          element={<AdminUsersPermissions toast={toast} />}
+          path={AppRoutes.AdminUserPermissions}
+          element={<AdminUserPermissions toast={toast} />}
         />
         <Route path={AppRoutes.AdminUsers} element={<AdminUsers />} />
         <Route path={AppRoutes.AdminOrders} element={<AdminOrders />} />
         <Route
-          path={AppRoutes.AdminProductsRegionsAdd}
-          element={<AdminProductsRegionsAdd toast={toast} />}
+          path={AppRoutes.AdminProductRegionAdd}
+          element={<AdminProductRegionAdd toast={toast} />}
         />
         <Route
-          path={AppRoutes.AdminProductsRegions}
-          element={<AdminProductsRegions toast={toast} />}
+          path={AppRoutes.AdminProductRegions}
+          element={<AdminProductRegions toast={toast} />}
         />
+        <Route path={AppRoutes.AdminProductAdd} element={<AdminProductAdd />} />
         <Route path={AppRoutes.AdminProducts} element={<AdminProducts />} />
         <Route path={AppRoutes.AdminDashboard} element={<AdminIndex />} />
         <Route

@@ -16,7 +16,7 @@ import Pagination from '../../../../components/utils/pagination.component';
 
 import Colors from '../../../../utils/colors.util';
 
-export default function AdminProductsRegions({ toast }) {
+export default function AdminProductRegions({ toast }) {
     const token = useSelector((state) => state.user.token);
     const userData = useSelector((state) => state.user.data);
 
@@ -83,10 +83,15 @@ export default function AdminProductsRegions({ toast }) {
                     <Navbar />
                     <Container>
                         <ContainerHeader>
-                            <ContainerHeaderTitle>Manage Regions</ContainerHeaderTitle>
-                            <ContainerHeaderButtons>
-                                <ContainerHeaderButtonsLink to={AppRoutes.AdminProductsRegionsAdd}>Add Region</ContainerHeaderButtonsLink>
-                            </ContainerHeaderButtons>
+                            <ContainerHeaderLeft>
+                                <ContainerHeaderLeftBack to={AppRoutes.AdminProducts}>
+                                    <ContainerHeaderLeftBackIcon src={`${process.env.PUBLIC_URL}/assets/icons/chevron-left.png`} alt='Back' />
+                                </ContainerHeaderLeftBack>
+                                <ContainerHeaderLeftTitle>Manage Regions</ContainerHeaderLeftTitle>
+                            </ContainerHeaderLeft>
+                            <ContainerHeaderLeftButtons>
+                                <ContainerHeaderLeftButtonsLink to={AppRoutes.AdminProductRegionAdd}>Add Region</ContainerHeaderLeftButtonsLink>
+                            </ContainerHeaderLeftButtons>
                         </ContainerHeader>
                         <ContainerBody>
                             <List>
@@ -147,18 +152,43 @@ const ContainerHeader = styled.div`
     justify-content: space-between;
 }
 `;
-const ContainerHeaderTitle = styled.h1`
+const ContainerHeaderLeft = styled.div`
+@media screen and (min-width: 768px) {
+    display: flex;
+align-items: center;
+}
+`;
+const ContainerHeaderLeftBack = styled(Link)`
+background-color: ${Colors.primary};
+display: block;
+padding: 10px;
+border-radius: 100px;
+width: max-content;
+margin-bottom: 10px;
+
+@media screen and (min-width: 768px) {
+    margin-bottom: 0px;
+    margin-right: 20px;
+}
+`;
+const ContainerHeaderLeftBackIcon = styled.img`
+display: block;
+width: 18px;
+height: 18px;
+filter: invert(100%) sepia(0%) saturate(7500%) hue-rotate(152deg) brightness(116%) contrast(101%);
+`;
+const ContainerHeaderLeftTitle = styled.h1`
 color: white;
 margin: 0;
 `;
-const ContainerHeaderButtons = styled.div`
+const ContainerHeaderLeftButtons = styled.div`
 margin: 20px 0;
 
 @media screen and (min-width: 1024px) {
     display: flex;
 }
 `;
-const ContainerHeaderButtonsLink = styled(Link)`
+const ContainerHeaderLeftButtonsLink = styled(Link)`
 background-color: ${Colors.primary};
 color: white;
 text-decoration: none;
@@ -238,6 +268,7 @@ ${props => {
             return `
         display: grid;
         grid-template-columns: repeat(3, 1fr);
+        grid-gap: 20px;
         `;
         }
     }}

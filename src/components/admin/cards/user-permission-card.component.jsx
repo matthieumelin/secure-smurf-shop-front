@@ -15,15 +15,16 @@ export default function UserPermissionCard({ data, onDeletePermission }) {
                 <UserPermissionCardLeftName>{capitalizeFirstLetter(data.name)}</UserPermissionCardLeftName>
                 {data.default && <UserPermissionCardLeftBadge type="default">Default</UserPermissionCardLeftBadge>}
             </UserPermissionCardLeft>
-            <UserPermissionCardActions>
-                <UserPermissionCardActionsEdit to={`${AppRoutes.AdminUsersPermissionsEdit.replace(":id", data.id)}`}>
-                    <UserPermissionCardActionsEditIcon src={`${process.env.PUBLIC_URL}/assets/icons/edit.svg`} alt="Edit permission" />
-                </UserPermissionCardActionsEdit>
-                {!data.default &&
+            {!data.default &&
+                <UserPermissionCardActions>
+                    <UserPermissionCardActionsEdit to={`${AppRoutes.AdminUsersPermissionsEdit.replace(":id", data.id)}`}>
+                        <UserPermissionCardActionsEditIcon src={`${process.env.PUBLIC_URL}/assets/icons/edit.svg`} alt="Edit permission" />
+                    </UserPermissionCardActionsEdit>
                     <UserPermissionCardActionsDeleteButton onClick={() => onDeletePermission(data)} disabled={data.default}>
                         <UserPermissionCardActionsDeleteButtonIcon src={`${process.env.PUBLIC_URL}/assets/icons/close.svg`} alt="Delete permission" />
-                    </UserPermissionCardActionsDeleteButton>}
-            </UserPermissionCardActions>
+                    </UserPermissionCardActionsDeleteButton>
+                </UserPermissionCardActions>
+            }
         </StyledUserPermissionCard>
     )
 }

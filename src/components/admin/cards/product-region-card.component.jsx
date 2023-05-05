@@ -80,6 +80,7 @@ transition: 0.2s;
 font-family: inherit;
 font-size: inherit;
 margin-left: 10px;
+cursor: pointer;
 
 &:hover {
     transition: 0.2s;

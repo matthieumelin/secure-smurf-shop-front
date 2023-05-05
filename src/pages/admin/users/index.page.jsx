@@ -11,9 +11,10 @@ import styled from 'styled-components'
 
 import Navbar from '../../../components/admin/navbar.component';
 import Sidebar from '../../../components/admin/sidebar.component';
+import UserCard from "../../../components/admin/cards/user-card.component";
 import Pagination from "../../../components/utils/pagination.component"
+
 import Colors from '../../../utils/colors.util';
-import UserCard from '../../../components/admin/cards/user-card.component';
 
 export default function AdminUsers() {
     const token = useSelector((state) => state.user.token);
@@ -72,7 +73,7 @@ export default function AdminUsers() {
                             <ContainerHeaderTitle>Manage Users</ContainerHeaderTitle>
                             <ContainerHeaderButtons>
                                 {/* <ContainerHeaderButtonsLink to={AppRoutes.Home}>Add User</ContainerHeaderButtonsLink> */}
-                                <ContainerHeaderButtonsLink to={AppRoutes.AdminUsersPermissions}>Manage Permissions</ContainerHeaderButtonsLink>
+                                <ContainerHeaderButtonsLink to={AppRoutes.AdminUserPermissions}>Manage Permissions</ContainerHeaderButtonsLink>
                             </ContainerHeaderButtons>
                         </ContainerHeader>
                         <ContainerBody>

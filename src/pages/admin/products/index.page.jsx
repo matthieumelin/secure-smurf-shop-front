@@ -70,8 +70,8 @@ export default function AdminProducts() {
                         <ContainerHeader>
                             <ContainerHeaderTitle>Manage Products</ContainerHeaderTitle>
                             <ContainerHeaderButtons>
-                                <ContainerHeaderButtonsLink to={AppRoutes.Home}>Add Product</ContainerHeaderButtonsLink>
-                                <ContainerHeaderButtonsLink to={AppRoutes.AdminProductsRegions}>View Regions</ContainerHeaderButtonsLink>
+                                <ContainerHeaderButtonsLink to={AppRoutes.AdminProductAdd}>Add Product</ContainerHeaderButtonsLink>
+                                <ContainerHeaderButtonsLink to={AppRoutes.AdminProductRegions}>View Regions</ContainerHeaderButtonsLink>
                             </ContainerHeaderButtons>
                         </ContainerHeader>
                         <ContainerBody>
