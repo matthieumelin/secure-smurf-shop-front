@@ -13,16 +13,23 @@ import Navbar from '../../../../components/admin/navbar.component';
 import Sidebar from '../../../../components/admin/sidebar.component';
 import ProductRegionCard from "../../../../components/admin/cards/product-region-card.component"
 import Pagination from '../../../../components/utils/pagination.component';
+import Modal from "../../../../components/utils/modal.component"
 
 import Colors from '../../../../utils/colors.util';
 
 export default function AdminProductRegions({ toast }) {
+    // Redux
     const token = useSelector((state) => state.user.token);
     const userData = useSelector((state) => state.user.data);
 
+    // States
     const [productRegions, setProductRegions] = useState([]);
     const [search, setSearch] = useState("");
 
+    const [selectedProductRegion, setSelectedProductRegion] = useState({});
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+    // Pagination
     const [currentPage, setCurrentPage] = useState(1);
     const [recordsPerPage] = useState(10);
 
@@ -31,8 +38,10 @@ export default function AdminProductRegions({ toast }) {
     const currentRecords = productRegions.slice(indexOfFirstRecord, indexOfLastRecord);
     const pages = Math.ceil(productRegions.length / recordsPerPage);
 
+    // Page access
     const isGranted = token && userData.permission.includes("admin");
 
+    // Search
     const haveSearchResult = productRegions.filter((productRegion) => productRegion.name.toLowerCase().includes(search.toLowerCase()) ||
         productRegion.shortName.toLowerCase().includes(search.toLowerCase())).length > 0;
 
@@ -44,7 +53,14 @@ export default function AdminProductRegions({ toast }) {
         if (isGranted) fetchProductRegions();
     }, [token, isGranted])
 
-    const onDeleteProductRegion = async (selectedProductRegion) => {
+    const onOpenDeleteModal = (productRegion) => {
+        document.body.style.overflow = "hidden";
+
+        setShowDeleteModal(true);
+        setSelectedProductRegion(productRegion);
+    }
+
+    const onConfirmDelete = async () => {
         await axios.delete(`${API_ENDPOINTS.PRODUCT_REGIONS_DELETE}/${selectedProductRegion.id}`, {
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -54,15 +70,22 @@ export default function AdminProductRegions({ toast }) {
                 const updatedProductRegions = productRegions.filter((productRegion) => productRegion.id !== selectedProductRegion.id);
 
                 setProductRegions(updatedProductRegions);
+                setShowDeleteModal(false);
 
                 toast.success(res.data.message);
             }
         }).catch((err) => toast.error(err.response.data.message));
     }
 
+    const onCancelDelete = () => {
+        document.body.style.overflow = "initial";
+
+        setShowDeleteModal(false);
+    }
+
     const renderList = (productRegion) => {
         return (
-            <ProductRegionCard key={`product_region_${productRegion.id}`} data={productRegion} onDeleteProductRegion={() => onDeleteProductRegion(productRegion)} />
+            <ProductRegionCard key={`product_region_${productRegion.id}`} data={productRegion} onDeleteProductRegion={() => onOpenDeleteModal(productRegion)} />
         )
     }
 
@@ -94,9 +117,16 @@ export default function AdminProductRegions({ toast }) {
                             </ContainerHeaderLeftButtons>
                         </ContainerHeader>
                         <ContainerBody>
+                            <Modal active={showDeleteModal}
+                                title={"Delete region"}
+                                description={"Are your sure to delete this region?"}
+                                onCancel={onCancelDelete}
+                                onConfirm={onConfirmDelete}
+                                buttonCancelTitle={"Cancel"}
+                                buttonConfirmTitle={"Delete"} />
                             <List>
                                 <ListHeader>
-                                    <ListHeaderTitle>Products Regions List ({productRegions.length})</ListHeaderTitle>
+                                    <ListHeaderTitle>Regions List ({productRegions.length})</ListHeaderTitle>
                                     <ListHeaderSearch>
                                         <ListHeaderSearchIcon src={`${process.env.PUBLIC_URL}/assets/icons/search.svg`} alt="Search Product Region" />
                                         <ListHeaderSearchInput type='text' placeholder="Search Product Region" onChange={(event) => setSearch(event.target.value)} />

@@ -16,7 +16,7 @@ export default function ProductRegionCard({ data, onDeleteProductRegion }) {
                     </ProductRegionCardRightInfosName>
                 </ProductRegionCardRightInfos>
                 <ProductRegionCardRightActions>
-                    <ProductRegionCardRightActionsLink to={AppRoutes.AdminProductsRegionsEdit.replace(":id", data.id)}>Edit</ProductRegionCardRightActionsLink>
+                    <ProductRegionCardRightActionsLink to={AppRoutes.AdminProductRegionEdit.replace(":id", data.id)}>Edit</ProductRegionCardRightActionsLink>
                     <ProductRegionCardRightActionsButton onClick={() => onDeleteProductRegion(data)}>
                         Delete
                     </ProductRegionCardRightActionsButton>

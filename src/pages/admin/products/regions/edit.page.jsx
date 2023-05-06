@@ -1,6 +1,6 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Helmet } from 'react-helmet-async';
-import { Link, Navigate, useNavigate } from 'react-router-dom';
+import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
@@ -18,18 +18,38 @@ import ErrorContainer from "../../../../utils/error-container.util";
 import Colors from '../../../../utils/colors.util';
 import { capitalizeFirstLetter } from '../../../../utils/string.util';
 
-export default function AdminProductRegionAdd({ toast }) {
+export default function AdminProductRegionEdit({ toast }) {
+    const { id } = useParams();
+
     const token = useSelector((state) => state.user.token);
     const userData = useSelector((state) => state.user.data);
 
-    const { reset, register, handleSubmit, formState: { errors } } = useForm();
+    const { reset, register, handleSubmit, setValue, formState: { errors } } = useForm();
 
     const navigate = useNavigate();
 
-    const isGranted = token && userData.permission.includes("admin");
+    const isGranted = id && token && userData.permission.includes("admin");
+
+    useEffect(() => {
+        const fetchProductRegion = async () => {
+            await axios.get(`${API_ENDPOINTS.PRODUCT_REGIONS}/${id}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            }).then((res) => {
+                if (res.status === 200) {
+                    setValue("name", capitalizeFirstLetter(res.data.name));
+                    setValue("shortName", res.data.shortName.toUpperCase())
+                }
+            }).catch(() => navigate(AppRoutes.AdminUserPermissions));
+        }
+
+        if (isGranted) fetchProductRegion();
+    }, [token, isGranted])
 
     const onSubmit = async (data) => {
-        await axios.post(API_ENDPOINTS.PRODUCT_REGIONS_CREATE, {
+        await axios.put(API_ENDPOINTS.PRODUCT_REGIONS_UPDATE, {
+            id: id,
             name: capitalizeFirstLetter(data.name),
             shortName: data.shortName.toUpperCase(),
         }, {
@@ -38,7 +58,7 @@ export default function AdminProductRegionAdd({ toast }) {
             }
         })
             .then((res) => {
-                if (res.status === 201) {
+                if (res.status === 200) {
                     reset();
 
                     toast.success(res.data.message);
@@ -55,7 +75,7 @@ export default function AdminProductRegionAdd({ toast }) {
     return (
         <StyledUsers>
             <Helmet>
-                <title>Admin Add Region</title>
+                <title>Admin Edit Region</title>
             </Helmet>
             <Wrapper>
                 <WrapperLeft>
@@ -68,7 +88,7 @@ export default function AdminProductRegionAdd({ toast }) {
                             <ContainerHeaderLeftBack to={AppRoutes.AdminProductRegions}>
                                 <ContainerHeaderLeftBackIcon src={`${process.env.PUBLIC_URL}/assets/icons/chevron-left.png`} alt='Back' />
                             </ContainerHeaderLeftBack>
-                            <ContainerHeaderLeftTitle>Add Region</ContainerHeaderLeftTitle>
+                            <ContainerHeaderLeftTitle>Edit Region</ContainerHeaderLeftTitle>
                         </ContainerHeaderLeft>
                         <ContainerBody>
                             <Form onSubmit={handleSubmit(onSubmit)}>
