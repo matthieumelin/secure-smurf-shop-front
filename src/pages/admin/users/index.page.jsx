@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Helmet } from 'react-helmet-async';
-import { Link, Navigate } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
 import axios from 'axios';
@@ -15,8 +15,6 @@ import UserCard from "../../../components/admin/cards/user-card.component";
 import Pagination from "../../../components/utils/pagination.component"
 import Modal from '../../../components/utils/modal.component';
 
-import Colors from '../../../utils/colors.util';
-
 export default function AdminUsers({ toast }) {
     // Redux
     const token = useSelector((state) => state.user.token);
@@ -25,7 +23,6 @@ export default function AdminUsers({ toast }) {
     // States
     const [users, setUsers] = useState([]);
     const [search, setSearch] = useState("");
-
     const [selectedUser, setSelectedUser] = useState({});
     const [showDisableModal, setShowDisableModal] = useState(false);
 

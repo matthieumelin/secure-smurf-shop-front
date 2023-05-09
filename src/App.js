@@ -28,6 +28,8 @@ import AdminProductAdd from "./pages/admin/products/add.page";
 import AdminProductRegionAdd from "./pages/admin/products/regions/add.page";
 import AdminProductRegionEdit from "./pages/admin/products/regions/edit.page";
 import AdminProductRegions from "./pages/admin/products/regions/index.page";
+import AdminProductCategoryAdd from "./pages/admin/products/categories/add.page";
+import AdminProductCategories from "./pages/admin/products/categories/index.page";
 
 import AuthVerify from "./user/auth-verify.user";
 
@@ -68,6 +70,14 @@ export default function App() {
         theme="dark"
       />
       <Routes>
+        <Route
+          path={AppRoutes.AdminProductCategoryAdd}
+          element={<AdminProductCategoryAdd toast={toast} />}
+        />
+        <Route
+          path={AppRoutes.AdminProductCategories}
+          element={<AdminProductCategories toast={toast} />}
+        />
         <Route
           path={AppRoutes.AdminUserPermissionEdit}
           element={<AdminUserPermissionEdit toast={toast} />}

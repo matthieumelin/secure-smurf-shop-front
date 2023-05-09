@@ -24,6 +24,9 @@ const API_ENDPOINTS = {
   PRODUCT_DELETE: `${API_BASE_URL}/products/delete`,
   PRODUCTS: `${API_BASE_URL}/products`,
   PRODUCT_TYPES: `${API_BASE_URL}/products/types`,
+  PRODUCT_TYPES_CREATE: `${API_BASE_URL}/products/types/create`,
+  PRODUCT_TYPES_UPDATE: `${API_BASE_URL}/products/types/update`,
+  PRODUCT_TYPES_DELETE: `${API_BASE_URL}/products/types/delete`,
   ORDERS: `${API_BASE_URL}/orders`,
   CONTACT: `${API_BASE_URL}/contact`,
 };

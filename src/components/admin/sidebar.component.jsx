@@ -69,6 +69,13 @@ export default function Sidebar() {
                 <SidebarMenuListItemLinkIcon src={`${process.env.PUBLIC_URL}/assets/icons/flag.svg`} alt="Regions" /> Regions
               </SidebarMenuListItemLink>
             </SidebarMenuListItem>
+            <SidebarMenuListItem>
+              <SidebarMenuListItemLink to={AppRoutes.AdminProductCategories} className={({ isActive, isPending }) =>
+                isPending ? "pending" : isActive ? "active" : ""
+              } end>
+                <SidebarMenuListItemLinkIcon src={`${process.env.PUBLIC_URL}/assets/icons/category.svg`} alt="Categories" /> Categories
+              </SidebarMenuListItemLink>
+            </SidebarMenuListItem>
           </SidebarMenuList>
         </SidebarMenu>
       </SidebarMenus>
