@@ -25,7 +25,9 @@ export default function Sidebar() {
           <SidebarMenuTitle>Analytics</SidebarMenuTitle>
           <SidebarMenuList>
             <SidebarMenuListItem>
-              <SidebarMenuListItemLink to={AppRoutes.AdminDashboard}>
+              <SidebarMenuListItemLink to={AppRoutes.AdminDashboard} className={({ isActive, isPending }) =>
+                isPending ? "pending" : isActive ? "active" : ""
+              } end>
                 <SidebarMenuListItemLinkIcon src={`${process.env.PUBLIC_URL}/assets/icons/home.svg`} alt="Dashboard" /> Dashboard
               </SidebarMenuListItemLink>
             </SidebarMenuListItem>
@@ -35,12 +37,16 @@ export default function Sidebar() {
           <SidebarMenuTitle>Users</SidebarMenuTitle>
           <SidebarMenuList>
             <SidebarMenuListItem>
-              <SidebarMenuListItemLink to={AppRoutes.AdminUsers}>
+              <SidebarMenuListItemLink to={AppRoutes.AdminUsers} className={({ isActive, isPending }) =>
+                isPending ? "pending" : isActive ? "active" : ""
+              } end>
                 <SidebarMenuListItemLinkIcon src={`${process.env.PUBLIC_URL}/assets/icons/profile.svg`} alt="Users" /> Users
               </SidebarMenuListItemLink>
             </SidebarMenuListItem>
             <SidebarMenuListItem>
-              <SidebarMenuListItemLink to={AppRoutes.AdminUserPermissions}>
+              <SidebarMenuListItemLink to={AppRoutes.AdminUserPermissions} className={({ isActive, isPending }) =>
+                isPending ? "pending" : isActive ? "active" : ""
+              } end>
                 <SidebarMenuListItemLinkIcon src={`${process.env.PUBLIC_URL}/assets/icons/profile.svg`} alt="Permissions" /> Permissions
               </SidebarMenuListItemLink>
             </SidebarMenuListItem>
@@ -50,12 +56,16 @@ export default function Sidebar() {
           <SidebarMenuTitle>Products</SidebarMenuTitle>
           <SidebarMenuList>
             <SidebarMenuListItem>
-              <SidebarMenuListItemLink to={AppRoutes.AdminProducts}>
+              <SidebarMenuListItemLink to={AppRoutes.AdminProducts} className={({ isActive, isPending }) =>
+                isPending ? "pending" : isActive ? "active" : ""
+              } end>
                 <SidebarMenuListItemLinkIcon src={`${process.env.PUBLIC_URL}/assets/icons/product.svg`} alt="Products" /> Products
               </SidebarMenuListItemLink>
             </SidebarMenuListItem>
             <SidebarMenuListItem>
-              <SidebarMenuListItemLink to={AppRoutes.AdminProductRegions}>
+              <SidebarMenuListItemLink to={AppRoutes.AdminProductRegions} className={({ isActive, isPending }) =>
+                isPending ? "pending" : isActive ? "active" : ""
+              } end>
                 <SidebarMenuListItemLinkIcon src={`${process.env.PUBLIC_URL}/assets/icons/flag.svg`} alt="Regions" /> Regions
               </SidebarMenuListItemLink>
             </SidebarMenuListItem>
@@ -192,7 +202,7 @@ transition: 0.2s;
 padding: 8px 20px;
 white-space: nowrap;
 
-&:hover {
+&:hover, &.active {
   background-color: rgba(255,255,255,.1);
   padding: 8px 20px;
   transition: 0.2s;
@@ -208,7 +218,7 @@ margin-right: 10px;
 opacity: 0.5;
 transition: 0.2s;
 
-${SidebarMenuListItemLink}:hover & {
+${SidebarMenuListItemLink}:hover, ${SidebarMenuListItemLink}.active & {
   opacity: 1;
   transition: 0.2s;
 }
