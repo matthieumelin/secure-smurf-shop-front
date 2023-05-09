@@ -1,38 +1,67 @@
-import React from 'react'
-import { Link, NavLink, useLocation } from 'react-router-dom';
+import React, { useState } from 'react'
+import { NavLink } from 'react-router-dom';
 
 import styled from 'styled-components'
-
-import Colors from "../../utils/colors.util"
-
-import AppRoutes from "../../router/app.routes"
+import AppRoutes from '../../router/app.routes'
 
 export default function Sidebar() {
-  const location = useLocation();
+  // States
+  const [isOpen, setIsOpen] = useState(false);
+
+  const onToggle = () => {
+    setIsOpen(!isOpen)
+  }
 
   return (
     <StyledSidebar>
-      <SidebarBrand>{process.env.REACT_APP_NAME}</SidebarBrand>
-      <SidebarMenu>
-        <SidebarMenuItem>
-          <SidebarMenuItemLink to={AppRoutes.AdminDashboard} active={location.pathname === AppRoutes.AdminDashboard ? "true" : "false"}>
-            <SidebarMenuItemLinkIcon src={`${process.env.PUBLIC_URL}/assets/icons/home.svg`} alt="Dashboard" /> Dashboard</SidebarMenuItemLink>
-        </SidebarMenuItem>
-        <SidebarMenuItem>
-          <SidebarMenuItemLink to={AppRoutes.AdminUsers} active={location.pathname.includes(AppRoutes.AdminUsers) ? "true" : "false"}>
-            <SidebarMenuItemLinkIcon src={`${process.env.PUBLIC_URL}/assets/icons/profile.svg`} alt="Users" /> Users</SidebarMenuItemLink>
-        </SidebarMenuItem>
-        <SidebarMenuItem>
-          <SidebarMenuItemLink to={AppRoutes.AdminOrders} active={location.pathname.includes(AppRoutes.AdminOrders) ? "true" : "false"}>
-            <SidebarMenuItemLinkIcon src={`${process.env.PUBLIC_URL}/assets/icons/order.svg`} alt="Orders" /> Orders</SidebarMenuItemLink>
-        </SidebarMenuItem>
-        <SidebarMenuItem>
-          <SidebarMenuItemLink to={AppRoutes.AdminProducts} active={location.pathname.includes(AppRoutes.AdminProducts) ? "true" : "false"}>
-            <SidebarMenuItemLinkIcon src={`${process.env.PUBLIC_URL}/assets/icons/product.svg`} alt="Products" /> Products</SidebarMenuItemLink>
-        </SidebarMenuItem>
-      </SidebarMenu>
-      <SidebarLogout to={AppRoutes.Logout}>
-        <SidebarLogoutIcon src={`${process.env.PUBLIC_URL}/assets/icons/logout.svg`} alt="Logout" /> Logout</SidebarLogout>
+      <SidebarWrapper>
+        <SidebarWrapperLink to={AppRoutes.Home}>
+          <SidebarWrapperBrand src={`${process.env.PUBLIC_URL}/assets/images/logo.png`} alt={process.env.REACT_APP_NAME} />
+        </SidebarWrapperLink>
+        <SidebarWrapperToggle isOpen={isOpen} type='button' onClick={() => onToggle()} />
+      </SidebarWrapper>
+      <SidebarMenus isOpen={isOpen}>
+        <SidebarMenu>
+          <SidebarMenuTitle>Analytics</SidebarMenuTitle>
+          <SidebarMenuList>
+            <SidebarMenuListItem>
+              <SidebarMenuListItemLink to={AppRoutes.AdminDashboard}>
+                <SidebarMenuListItemLinkIcon src={`${process.env.PUBLIC_URL}/assets/icons/home.svg`} alt="Dashboard" /> Dashboard
+              </SidebarMenuListItemLink>
+            </SidebarMenuListItem>
+          </SidebarMenuList>
+        </SidebarMenu>
+        <SidebarMenu>
+          <SidebarMenuTitle>Users</SidebarMenuTitle>
+          <SidebarMenuList>
+            <SidebarMenuListItem>
+              <SidebarMenuListItemLink to={AppRoutes.AdminUsers}>
+                <SidebarMenuListItemLinkIcon src={`${process.env.PUBLIC_URL}/assets/icons/profile.svg`} alt="Users" /> Users
+              </SidebarMenuListItemLink>
+            </SidebarMenuListItem>
+            <SidebarMenuListItem>
+              <SidebarMenuListItemLink to={AppRoutes.AdminUserPermissions}>
+                <SidebarMenuListItemLinkIcon src={`${process.env.PUBLIC_URL}/assets/icons/profile.svg`} alt="Permissions" /> Permissions
+              </SidebarMenuListItemLink>
+            </SidebarMenuListItem>
+          </SidebarMenuList>
+        </SidebarMenu>
+        <SidebarMenu>
+          <SidebarMenuTitle>Products</SidebarMenuTitle>
+          <SidebarMenuList>
+            <SidebarMenuListItem>
+              <SidebarMenuListItemLink to={AppRoutes.AdminProducts}>
+                <SidebarMenuListItemLinkIcon src={`${process.env.PUBLIC_URL}/assets/icons/product.svg`} alt="Products" /> Products
+              </SidebarMenuListItemLink>
+            </SidebarMenuListItem>
+            <SidebarMenuListItem>
+              <SidebarMenuListItemLink to={AppRoutes.AdminProductRegions}>
+                <SidebarMenuListItemLinkIcon src={`${process.env.PUBLIC_URL}/assets/icons/flag.svg`} alt="Regions" /> Regions
+              </SidebarMenuListItemLink>
+            </SidebarMenuListItem>
+          </SidebarMenuList>
+        </SidebarMenu>
+      </SidebarMenus>
     </StyledSidebar>
   )
 }
@@ -41,84 +70,146 @@ const StyledSidebar = styled.aside`
 padding: 20px;
 
 @media screen and (min-width: 1024px) {
-  border-right: 1px solid ${Colors.primaryHighOp};
   height: 100vh;
-  width: 15em;
-  box-shadow: 0px 0px 60px rgb(0 0 0 / 30%);
+  border-right: 1px solid rgba(255,255,255,.1);
 }
 `;
-const SidebarBrand = styled.h1`
-margin: 0;
-color: ${Colors.primary};
-
-@media screen and (min-width: 1024px) {
-  text-align: center;
-}
-`;
-const SidebarMenu = styled.ul`
-list-style: none;
-padding: 0;
-`;
-const SidebarMenuItem = styled.li``;
-const SidebarMenuItemLink = styled(NavLink)`
+const SidebarWrapper = styled.div`
 display: flex;
 align-items: center;
-text-decoration: none;
-color: rgba(255,255,255,.7);
-padding: 5px 0;
-transition: 0.2s;
+justify-content: space-between;
+padding: 0 20px;
+`;
+const SidebarWrapperLink = styled(NavLink)``;
+const SidebarWrapperToggle = styled.div`
+background-color: white;
+border-radius: 2px;
+border: none;
+width: 22px;
+height: 1px;
+position: relative;
 
-&:hover {
-  transition: 0.2s;
-  color: white;
+&::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: -7px;
+  background-color: white;
+  width: 22px;
+  height: 1px;
+  border-radius: 2px;
+  transition: 0.5s all ease;
+}
+
+&::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 7px;
+  background-color: white;
+  width: 22px;
+  height: 1px;
+  border-radius: 2px;
+  transition: 0.5s all ease;
 }
 
 ${props => {
-    if (props.active === "true") {
+    if (props.isOpen) {
       return `
-    font-weight: 600;
-    color: white;
+      &::before {
+        content: "";
+        transition: 0.5s all ease;
+        transform: rotate(45deg);
+        left: 0;
+        top: 0;
+      }
+      &::after {
+        content: "";
+        transition: 0.5s all ease;
+        transform: rotate(-45deg);
+        left: 0;
+        top: 0;
+      }
+      background-color: transparent;
+  `;
+    }
+  }}
+
+@media screen and (min-width: 1024px) {
+  display: none;
+}
+`;
+const SidebarWrapperBrand = styled.img`
+display: block;
+width: 42px;
+height: 42px;
+background-color: white;
+border-radius: 10px;
+padding: 5px;
+`;
+const SidebarMenus = styled.div`
+margin-top: 20px;
+max-height: 0;
+-webkit-transition: max-height 0.5s ease;
+-moz-transition: max-height 0.5s ease;
+-ms-transition: max-height 0.5s ease;
+-o-transition: max-height 0.5s ease;
+transition: max-height 0.5ss, margin-left 0s 0.5s ease;
+overflow: hidden;
+
+${props => {
+    if (props.isOpen) {
+      return `
+    max-height: 100vh;
+    transition: max-height 0.5s, margin-left 0s 0s ease;
     `;
     }
   }}
-`;
-const SidebarMenuItemLinkIcon = styled.img`
-margin-right: 20px;
-width: 18px;
-height: 18px;
-opacity: 0.7;
-display: block;
-transition: 0.2s;
 
-${SidebarMenuItemLink}:hover & {
-  opacity: 1;
-  transition: 0.2s;
-}
-
-${SidebarMenuItemLink}[active=true] & {
-  opacity: 1;
-}
+  @media screen and (min-width: 1024px) {
+    max-height: initial;
+  }
 `;
-const SidebarLogout = styled(Link)`
-color: white;
+const SidebarMenu = styled.div`
+`;
+const SidebarMenuTitle = styled.p`
+color: rgba(255,255,255,.3);
+font-size: .85rem;
+text-transform: uppercase;
+margin-left: 20px;
+`;
+const SidebarMenuList = styled.ul`
+list-style: none;
+padding: 0;
+`;
+const SidebarMenuListItem = styled.li``;
+const SidebarMenuListItemLink = styled(NavLink)`
 text-decoration: none;
 display: flex;
 align-items: center;
-justify-content: center;
-background-color: ${Colors.red};
-border-radius: 20px;
-padding: 10px;
-max-width: 320px;
+color: rgba(255,255,255,.5);
 transition: 0.2s;
+padding: 8px 20px;
+white-space: nowrap;
 
 &:hover {
+  background-color: rgba(255,255,255,.1);
+  padding: 8px 20px;
   transition: 0.2s;
-  -moz-box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.07);
-  -webkit-box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.07);
-  box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.07);
+  color: white;
+  border-radius: 10px;
 }
 `;
-const SidebarLogoutIcon = styled.img`
-margin-right: 10px;
+const SidebarMenuListItemLinkIcon = styled.img`
 display: block;
+width: 18px;
+height: 18px;
+margin-right: 10px;
+opacity: 0.5;
+transition: 0.2s;
+
+${SidebarMenuListItemLink}:hover & {
+  opacity: 1;
+  transition: 0.2s;
+}
 `;

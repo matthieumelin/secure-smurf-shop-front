@@ -25,7 +25,6 @@ export default function AdminProductRegions({ toast }) {
     // States
     const [productRegions, setProductRegions] = useState([]);
     const [search, setSearch] = useState("");
-
     const [selectedProductRegion, setSelectedProductRegion] = useState({});
     const [showDeleteModal, setShowDeleteModal] = useState(false);
 
@@ -74,7 +73,7 @@ export default function AdminProductRegions({ toast }) {
 
                 toast.success(res.data.message);
             }
-        }).catch((err) => toast.error(err.response.data.message));
+        }).catch((err) => { if (err) toast.error(err.response.data.message) });
     }
 
     const onCancelDelete = () => {

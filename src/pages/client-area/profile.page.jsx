@@ -59,7 +59,7 @@ export default function Profile({ toast, sidebarIsOpen, showLogoutModal, setSide
     axios
       .get("./countries.json")
       .then((res) => setCountries(res.data))
-      .catch((err) => console.error(err));
+      .catch((err) => { if (err) console.error(err) });
   }, []);
 
   const onSaveProfile = async (data) => {
@@ -100,13 +100,17 @@ export default function Profile({ toast, sidebarIsOpen, showLogoutModal, setSide
           toast.success(res.data.message);
         }
       })
-      .catch((err) => toast.error(err.response.data.message));
+      .catch((err) => { if (err) toast.error(err.response.data.message) });
   };
 
   const onConfirmDisable = async () => {
     await axios
-      .post(API_ENDPOINTS.USER_DISABLE, {
+      .put(API_ENDPOINTS.USER_DISABLE, {
         id: userData.id,
+      }, {
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
       })
       .then((res) => {
         if (res.status === 200) {
@@ -115,7 +119,7 @@ export default function Profile({ toast, sidebarIsOpen, showLogoutModal, setSide
           navigate(AppRoutes.Logout);
         }
       })
-      .catch((err) => console.log(err.response.data.message));
+      .catch((err) => { if (err) toast.error(err.response.data.message) });
   };
 
   const onDeleteAccount = () => {

@@ -13,16 +13,22 @@ import Navbar from '../../../components/admin/navbar.component';
 import Sidebar from '../../../components/admin/sidebar.component';
 import Pagination from "../../../components/utils/pagination.component"
 import ProductCard from '../../../components/admin/cards/product-card.component';
+import Modal from '../../../components/utils/modal.component';
 
 import Colors from '../../../utils/colors.util';
 
-export default function AdminProducts() {
+export default function AdminProducts({ toast }) {
+    // Redux
     const token = useSelector((state) => state.user.token);
     const userData = useSelector((state) => state.user.data);
 
+    // States
     const [products, setProducts] = useState([]);
     const [search, setSearch] = useState("");
+    const [selectedProduct, setSelectedProduct] = useState({});
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
 
+    // Pagination
     const [currentPage, setCurrentPage] = useState(1);
     const [recordsPerPage] = useState(10);
 
@@ -31,8 +37,10 @@ export default function AdminProducts() {
     const currentRecords = products.slice(indexOfFirstRecord, indexOfLastRecord);
     const pages = Math.ceil(products.length / recordsPerPage);
 
+    // Page access
     const isGranted = token && userData.permission.includes("admin");
 
+    // Search
     const haveSearchResult = products.filter((product) => product.name.toLowerCase().includes(search.toLowerCase())
         || product.region.toLowerCase().includes(search.toLowerCase())
         || product.type.toLowerCase().includes(search.toLowerCase())).length > 0;
@@ -43,11 +51,41 @@ export default function AdminProducts() {
         }
 
         if (isGranted) fetchProducts();
-    }, [token, isGranted])
+    }, [isGranted])
+
+    const onOpenDeleteModal = (product) => {
+        document.body.style.overflow = "hidden";
+
+        setShowDeleteModal(true);
+        setSelectedProduct(product);
+    }
+
+    const onConfirmDelete = async () => {
+        await axios.delete(`${API_ENDPOINTS.PRODUCT_DELETE}/${selectedProduct.id}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        }).then((res) => {
+            if (res.status === 200) {
+                const updatedProducts = products.filter((product) => product.id !== selectedProduct.id);
+
+                setProducts(updatedProducts);
+                setShowDeleteModal(false);
+
+                toast.success(res.data.message);
+            }
+        }).catch((err) => { if (err) toast.error(err.response.data.message) });
+    }
+
+    const onCancelDelete = () => {
+        document.body.style.overflow = "initial";
+
+        setShowDeleteModal(false);
+    }
 
     const renderList = (product) => {
         return (
-            <ProductCard key={`product_${product.id}`} data={product} />
+            <ProductCard key={`product_${product.id}`} data={product} onDeleteProduct={() => onOpenDeleteModal(product)} />
         )
     }
 
@@ -75,6 +113,13 @@ export default function AdminProducts() {
                             </ContainerHeaderButtons>
                         </ContainerHeader>
                         <ContainerBody>
+                            <Modal active={showDeleteModal}
+                                title={"Delete product"}
+                                description={"Are your sure to delete this product?"}
+                                onCancel={onCancelDelete}
+                                onConfirm={onConfirmDelete}
+                                buttonCancelTitle={"Cancel"}
+                                buttonConfirmTitle={"Delete"} />
                             <List>
                                 <ListHeader>
                                     <ListHeaderTitle>Products List ({products.length})</ListHeaderTitle>

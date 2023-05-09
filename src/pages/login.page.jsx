@@ -107,9 +107,7 @@ export default function Login({ toast }) {
               toast.success(res.data.message);
             }
           })
-          .catch((err) => {
-            toast.error(err.response.data.message);
-          });
+          .catch((err) => { if (err) toast.error(err.response.data.message) });
         break;
       case FormTypes.REGISTER:
         await axios
@@ -127,9 +125,7 @@ export default function Login({ toast }) {
               toast.success(res.data.message);
             }
           })
-          .catch((err) => {
-            toast.error(err.response.data.message);
-          });
+          .catch((err) => { if (err) toast.error(err.response.data.message) });
         break;
       case FormTypes.FORGOT:
         await axios
@@ -145,7 +141,7 @@ export default function Login({ toast }) {
               toast.success(res.data.message);
             }
           })
-          .catch((err) => toast.error(err.response.data.message));
+          .catch((err) => { if (err) toast.error(err.response.data.message) });
         break;
       default:
         break;

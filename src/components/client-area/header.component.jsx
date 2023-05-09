@@ -12,8 +12,9 @@ export default function Header({ sidebarIsOpen, setSidebarIsOpen, setShowLogoutM
 
   const onToggleLogoutModal = () => {
     document.body.style.overflow = "hidden";
+
     setShowLogoutModal(true);
-  } 
+  }
 
   return (
     <StyledHeader>
@@ -104,11 +105,11 @@ const Sidebar = styled.aside`
     overflow: hidden;
     white-space: nowrap;
     max-width: 120px;
-    -webkit-transition: max-width 0.5s ease;
-    -moz-transition: max-width 0.5s ease;
-    -ms-transition: max-width 0.5s ease;
-    -o-transition: max-width 0.5s ease;
-    transition: max-width 0.5s ease;
+    -webkit-transition: none;
+    -moz-transition: none;
+    -ms-transition: none;
+    -o-transition: none;
+    transition: none;
   }
 
   ${(props) => {

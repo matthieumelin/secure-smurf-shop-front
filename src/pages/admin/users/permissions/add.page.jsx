@@ -43,8 +43,8 @@ export default function AdminUserPermissionAdd({ toast }) {
 
                     navigate(AppRoutes.AdminUsersPermissions);
                 }
-            }).catch((err) => toast.error(err.response.data.message));
-    }
+            }).catch((err) => { if (err) toast.error(err.response.data.message) });
+        }
 
     if (!isGranted) {
         return <Navigate to={AppRoutes.Login} />

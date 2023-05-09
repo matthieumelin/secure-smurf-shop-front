@@ -23,6 +23,7 @@ const API_ENDPOINTS = {
   PRODUCT_UPDATE: `${API_BASE_URL}/products/update`,
   PRODUCT_DELETE: `${API_BASE_URL}/products/delete`,
   PRODUCTS: `${API_BASE_URL}/products`,
+  PRODUCT_TYPES: `${API_BASE_URL}/products/types`,
   ORDERS: `${API_BASE_URL}/orders`,
   CONTACT: `${API_BASE_URL}/contact`,
 };

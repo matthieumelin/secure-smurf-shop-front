@@ -23,11 +23,16 @@ export default function Verification({ toast }) {
         .then((res) => {
           if (res.status === 200) {
             navigate(AppRoutes.Login);
+            
             toast.success(res.data.message);
           }
         })
         .catch((err) => {
-          toast.error(err.response.data.message);
+          if (err) {
+            navigate(AppRoutes.Home);
+
+            toast.error(err.response.data.message)
+          }
         });
     };
     if (token) validateUser();

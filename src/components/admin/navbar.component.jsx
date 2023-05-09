@@ -1,18 +1,28 @@
 import React from 'react'
+import { useSelector } from 'react-redux';
 import Gravatar from 'react-gravatar';
 
 import styled from 'styled-components'
+
 import Colors from '../../utils/colors.util';
+import AppRoutes from '../../router/app.routes';
+import { NavLink } from 'react-router-dom';
 
 export default function Navbar() {
+  // Redux
+  const userData = useSelector((state) => state.user.data);
+
   return (
     <StyledNavbar>
+      <NavbarBack to={AppRoutes.Home}>
+        <NavbarBackIcon src={`${process.env.PUBLIC_URL}/assets/icons/back.svg`} alt="Back" /> Back to website
+      </NavbarBack>
       <NavbarRight>
         <NavbarRightProfile>
           <NavbarRightProfileInfos>
-            <NavbarRightProfileInfosUsername>GeekLegend</NavbarRightProfileInfosUsername>
+            <NavbarRightProfileInfosUsername>{userData.username}</NavbarRightProfileInfosUsername>
           </NavbarRightProfileInfos>
-          <NavbarRightProfileAvatar email='geeklegendofficiel@gmail.com' />
+          <NavbarRightProfileAvatar email={userData.email} />
         </NavbarRightProfile>
       </NavbarRight>
     </StyledNavbar>
@@ -25,10 +35,26 @@ padding: 0 20px;
 @media screen and (min-width: 1024px) {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: space-between;
   padding: 10px 20px;
   background-color: ${Colors.primary};
 }
+`;
+const NavbarBack = styled(NavLink)`
+display: flex;
+align-items: center;
+color: white;
+text-decoration: none;
+margin-bottom: 20px;
+`;
+const NavbarBackIcon = styled.img`
+display: block;dd
+width: 28px;
+height: 28px;
+border: 1px solid white;
+border-radius: 20px;
+padding: 3px;
+margin-right: 10px;
 `;
 const NavbarRight = styled.div`
 `;

@@ -26,9 +26,12 @@ export default function Checkout() {
       await axios
         .get(`${API_ENDPOINTS.STRIPE_CHECKOUT_SESSION}?sessionId=${sessionId}`)
         .then((res) => {
-          const paymentStatus = res.data.payment_status;
+          if (res.status === 200) {
 
-          setPaymentStatus(paymentStatus);
+            const paymentStatus = res.data.payment_status;
+
+            setPaymentStatus(paymentStatus);
+          }
         })
         .catch(() => navigate(AppRoutes.Home));
     };

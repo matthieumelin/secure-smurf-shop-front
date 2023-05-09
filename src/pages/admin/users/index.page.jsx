@@ -13,16 +13,23 @@ import Navbar from '../../../components/admin/navbar.component';
 import Sidebar from '../../../components/admin/sidebar.component';
 import UserCard from "../../../components/admin/cards/user-card.component";
 import Pagination from "../../../components/utils/pagination.component"
+import Modal from '../../../components/utils/modal.component';
 
 import Colors from '../../../utils/colors.util';
 
-export default function AdminUsers() {
+export default function AdminUsers({ toast }) {
+    // Redux
     const token = useSelector((state) => state.user.token);
     const userData = useSelector((state) => state.user.data);
 
+    // States
     const [users, setUsers] = useState([]);
     const [search, setSearch] = useState("");
 
+    const [selectedUser, setSelectedUser] = useState({});
+    const [showDisableModal, setShowDisableModal] = useState(false);
+
+    // Pagination
     const [currentPage, setCurrentPage] = useState(1);
     const [recordsPerPage] = useState(10);
 
@@ -31,8 +38,10 @@ export default function AdminUsers() {
     const currentRecords = users.slice(indexOfFirstRecord, indexOfLastRecord);
     const pages = Math.ceil(users.length / recordsPerPage);
 
+    // Pages access
     const isGranted = token && userData.permission.includes("admin");
 
+    // Search
     const haveSearchResult = users.filter((user) => user.email.toLowerCase().includes(search.toLowerCase()) || user.username.toLowerCase().includes(search.toLowerCase())).length > 0;
 
     useEffect(() => {
@@ -41,15 +50,52 @@ export default function AdminUsers() {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
-            }).then((res) => { if (res.status === 200) setUsers(res.data) })
+            }).then((res) => {
+                if (res.status === 200) {
+                    setUsers(res.data);
+                    setShowDisableModal(false);
+                }
+            })
         }
 
         if (isGranted) fetchUsers();
     }, [token, isGranted])
 
+    const onDisable = (user) => {
+        document.body.style.overflow = "hidden";
+
+        setShowDisableModal(true);
+        setSelectedUser(user);
+    }
+
+    const onConfirmDisable = async () => {
+        await axios.put(API_ENDPOINTS.USER_DISABLE, {
+            id: selectedUser.id
+        }, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        }).then((res) => {
+            if (res.status === 200) {
+                const updatedUsers = users.filter((user) => user.id !== selectedUser.id);
+
+                setUsers(updatedUsers);
+                setShowDisableModal(false);
+
+                toast.success(res.data.message);
+            }
+        }).catch((err) => { if (err) toast.error(err.response.data.message) });
+    }
+
+    const onCancelDisable = () => {
+        document.body.style.overflow = "initial";
+
+        setShowDisableModal(false);
+    }
+
     const renderList = (user) => {
         return (
-            <UserCard key={`user_${user.id}`} data={user} />
+            <UserCard key={`user_${user.id}`} data={user} onDisable={() => onDisable(user)} />
         )
     }
 
@@ -77,6 +123,13 @@ export default function AdminUsers() {
                             </ContainerHeaderButtons>
                         </ContainerHeader>
                         <ContainerBody>
+                            <Modal active={showDisableModal}
+                                title={"Disable user"}
+                                description={"Are your sure to disable this user?"}
+                                onCancel={onCancelDisable}
+                                onConfirm={onConfirmDisable}
+                                buttonCancelTitle={"Cancel"}
+                                buttonConfirmTitle={"Disable"} />
                             <List>
                                 <ListHeader>
                                     <ListHeaderTitle>Users List ({users.length})</ListHeaderTitle>

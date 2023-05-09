@@ -8,7 +8,7 @@ import { capitalizeFirstLetter } from "../../../utils/string.util";
 
 import AppRoutes from '../../../router/app.routes';
 
-export default function UserPermissionCard({ data, onDeletePermission }) {
+export default function UserPermissionCard({ data, onDelete }) {
     return (
         <StyledUserPermissionCard>
             <UserPermissionCardLeft>
@@ -20,7 +20,7 @@ export default function UserPermissionCard({ data, onDeletePermission }) {
                     <UserPermissionCardActionsEdit to={`${AppRoutes.AdminUsersPermissionsEdit.replace(":id", data.id)}`}>
                         <UserPermissionCardActionsEditIcon src={`${process.env.PUBLIC_URL}/assets/icons/edit.svg`} alt="Edit permission" />
                     </UserPermissionCardActionsEdit>
-                    <UserPermissionCardActionsDeleteButton onClick={() => onDeletePermission(data)} disabled={data.default}>
+                    <UserPermissionCardActionsDeleteButton onClick={() => onDelete(data)} disabled={data.default}>
                         <UserPermissionCardActionsDeleteButtonIcon src={`${process.env.PUBLIC_URL}/assets/icons/close.svg`} alt="Delete permission" />
                     </UserPermissionCardActionsDeleteButton>
                 </UserPermissionCardActions>

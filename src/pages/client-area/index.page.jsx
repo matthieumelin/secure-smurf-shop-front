@@ -34,8 +34,8 @@ export default function ClientAreaIndex({ sidebarIsOpen, showLogoutModal, setSid
             Authorization: `Bearer ${token}`,
           },
         })
-        .then((res) => setOrders(res.data))
-        .catch((err) => console.error(err.response.data.message));
+        .then((res) => { if (res.status === 200) setOrders(res.data) })
+        .catch((err) => { if (err) console.error(err.response.data.message) });
     };
 
     if (token) fetchOrders();

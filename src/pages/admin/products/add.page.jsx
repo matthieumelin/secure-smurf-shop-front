@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Helmet } from 'react-helmet-async';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
@@ -17,21 +17,43 @@ import Sidebar from '../../../components/admin/sidebar.component';
 import ErrorContainer from "../../../utils/error-container.util";
 import Colors from '../../../utils/colors.util';
 import { capitalizeFirstLetter } from '../../../utils/string.util';
+import { useEffect } from 'react';
 
 export default function AdminProductAdd({ toast }) {
+    // Redux
     const token = useSelector((state) => state.user.token);
     const userData = useSelector((state) => state.user.data);
 
+    // States
+    const [productTypes, setProductTypes] = useState([]);
+
+    // Hook form
     const { reset, register, handleSubmit, formState: { errors } } = useForm();
 
     const navigate = useNavigate();
 
+    // Page access
     const isGranted = token && userData.permission.includes("admin");
+
+    useEffect(() => {
+        const fetchProductTypes = async () => {
+            await axios.get(API_ENDPOINTS.PRODUCT_TYPES, {
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
+            }).then((res) => { if (res.status === 200) setProductTypes(res.data) })
+        }
+
+        if (isGranted) fetchProductTypes();
+    }, [isGranted])
 
     const onSubmit = async (data) => {
         await axios.post(API_ENDPOINTS.PRODUCT_CREATE, {
             name: capitalizeFirstLetter(data.name),
-            shortName: data.shortName.toUpperCase(),
+            price: data.price,
+            features: data.features,
+            region: data.region.toUpperCase(),
+            type: data.type,
         }, {
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -45,7 +67,7 @@ export default function AdminProductAdd({ toast }) {
 
                     navigate(AppRoutes.AdminProducts);
                 }
-            }).catch((err) => toast.error(err.response.data.message));
+            }).catch((err) => { if (err) toast.error(err.response.data.message) });
     }
 
     if (!isGranted) {
@@ -98,31 +120,50 @@ export default function AdminProductAdd({ toast }) {
                                         )}
                                     </FormGroup>
                                     <FormGroup>
-                                        <FormGroupLabel htmlFor="shortName">Short Name</FormGroupLabel>
+                                        <FormGroupLabel htmlFor="price">Price</FormGroupLabel>
                                         <FormGroupInput
-                                            type="text"
-                                            id="shortName"
-                                            name="shortName"
-                                            error={errors.shortName}
-                                            {...register("shortName", {
+                                            type="number"
+                                            id="price"
+                                            name="price"
+                                            error={errors.price}
+                                            {...register("price", {
                                                 required: {
                                                     value: true,
-                                                    message: "You must enter a short name.",
+                                                    message: "You must enter a price.",
                                                 },
-                                                pattern: {
-                                                    value: /^[a-zA-Z]{2,4}$/,
-                                                    message: "Invalid short name format.",
-                                                },
-                                                max: {
-                                                    value: 4,
-                                                    message: "You can't put more than four characters."
-                                                }
                                             })}
                                         />
-                                        {errors.shortName && (
+                                        {errors.price && (
                                             <ErrorMessage
                                                 errors={errors}
-                                                name="shortName"
+                                                name="price"
+                                                as={<ErrorContainer />}
+                                            />
+                                        )}
+                                    </FormGroup>
+                                    <FormGroup>
+                                        <FormGroupLabel htmlFor="type">Type</FormGroupLabel>
+                                        <FormGroupSelect
+                                            id="type"
+                                            name="type"
+                                            error={errors.type}
+                                            {...register("type", {
+                                                required: {
+                                                    value: true,
+                                                    message: "You must select a type.",
+                                                },
+                                            })}>
+                                            {productTypes.length ?
+                                                (
+                                                    productTypes.map((productType) => {
+                                                        return <FormGroupSelectOption value={productType.name}>{productType.name}</FormGroupSelectOption>
+                                                    })
+                                                ) : <FormGroupSelectOption>No type</FormGroupSelectOption>}
+                                        </FormGroupSelect>
+                                        {errors.type && (
+                                            <ErrorMessage
+                                                errors={errors}
+                                                name="type"
                                                 as={<ErrorContainer />}
                                             />
                                         )}
@@ -217,6 +258,19 @@ transition: 0.2s;
     transition: 0.2s;
     border: 1px solid ${(props) => (props.error ? Colors.red : Colors.primary)};
 }
+`;
+const FormGroupSelect = styled.select`
+margin-top: 5px;
+border: 1px solid ${(props) => (props.error ? Colors.red : "lightgray")};
+font-family: inherit;
+border-radius: 2px;
+background-color: transparent;
+outline: none;
+color: white;
+padding: 7px 10px;
+transition: 0.2s;
+`;
+const FormGroupSelectOption = styled.option`
 `;
 const FormSubmitButton = styled.button`
 margin-top: 30px;

@@ -52,12 +52,12 @@ export default function IndexDOM() {
     const fetchData = async () => {
       await axios
         .get(API_ENDPOINTS.PRODUCT_REGIONS)
-        .then((res) => setProductRegions(res.data))
-        .catch((err) => console.error(err));
+        .then((res) => { if (res.status === 200) setProductRegions(res.data) })
+        .catch((err) => { if (err) console.error(err) });
       await axios
         .get(API_ENDPOINTS.PRODUCTS)
-        .then((res) => setProducts(res.data))
-        .catch((err) => console.error(err));
+        .then((res) => { if (res.status === 200) setProducts(res.data) })
+        .catch((err) => { if (err) console.error(err) });
     };
 
     axios.get("./data.json").then((res) => {
@@ -95,14 +95,16 @@ export default function IndexDOM() {
         productId: product.stripeId,
       })
       .then(async (res) => {
-        const stripe = await stripePromise;
-        const { error } = await stripe.redirectToCheckout({
-          sessionId: res.data.id,
-        });
-        if (error) {
-          console.error(error);
+        if (res.status === 200) {
+          const stripe = await stripePromise;
+          const { error } = await stripe.redirectToCheckout({
+            sessionId: res.data.id,
+          });
+          if (error) {
+            console.error(error);
+          }
+          setLoading(false);
         }
-        setLoading(false);
       });
   };
 

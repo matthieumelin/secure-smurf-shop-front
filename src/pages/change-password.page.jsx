@@ -61,14 +61,15 @@ export default function ChangePassword({ toast }) {
       .then((res) => {
         if (res.status === 200) {
           reset();
+
           recaptchaRef.current.reset();
+          
           navigate(AppRoutes.Login);
+          
           toast.success(res.data.message);
         }
       })
-      .catch((err) => {
-        toast.error(err.response.data.message);
-      });
+      .catch((err) => { if (err) toast.error(err.response.data.message) });
   };
 
   if (accessToken) {

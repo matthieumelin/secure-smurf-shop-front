@@ -13,16 +13,22 @@ import Navbar from '../../../../components/admin/navbar.component';
 import Sidebar from '../../../../components/admin/sidebar.component';
 import Pagination from "../../../../components/utils/pagination.component"
 import UserPermissionCard from '../../../../components/admin/cards/user-permission-card.component';
+import Modal from '../../../../components/utils/modal.component';
 
 import Colors from '../../../../utils/colors.util';
 
 export default function AdminUserPermissions({ toast }) {
+    // Redux
     const token = useSelector((state) => state.user.token);
     const userData = useSelector((state) => state.user.data);
 
+    // States
     const [permissions, setPermissions] = useState([]);
     const [search, setSearch] = useState("");
+    const [selectedPermission, setSelectedPermission] = useState({});
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
 
+    // Pagination
     const [currentPage, setCurrentPage] = useState(1);
     const [recordsPerPage] = useState(10);
 
@@ -31,8 +37,10 @@ export default function AdminUserPermissions({ toast }) {
     const currentRecords = permissions.slice(indexOfFirstRecord, indexOfLastRecord);
     const pages = Math.ceil(permissions.length / recordsPerPage);
 
+    // Page access
     const isGranted = token && userData.permission.includes("admin");
 
+    // Search
     const haveSearchResult = permissions.filter((permission) => permission.name.toLowerCase().includes(search.toLowerCase())).length > 0;
 
     useEffect(() => {
@@ -45,9 +53,16 @@ export default function AdminUserPermissions({ toast }) {
         }
 
         if (isGranted) fetchUsersPermissions();
-    }, [token, isGranted])
+    }, [token, isGranted]);
 
-    const onDeletePermission = async (selectedPermission) => {
+    const onDelete = (permission) => {
+        document.body.style.overflow = "hidden";
+
+        setShowDeleteModal(true);
+        setSelectedPermission(permission);
+    }
+
+    const onConfirmDelete = async () => {
         await axios.delete(`${API_ENDPOINTS.USERS_PERMISSIONS_DELETE}/${selectedPermission.id}`, {
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -57,15 +72,22 @@ export default function AdminUserPermissions({ toast }) {
                 const updatedPermissions = permissions.filter((permission) => permission.id !== selectedPermission.id);
 
                 setPermissions(updatedPermissions);
+                setShowDeleteModal(false);
 
                 toast.success(res.data.message);
             }
-        }).catch((err) => toast.error(err.response.data.message));
+        }).catch((err) => { if (err) toast.error(err.response.data.message) });
+    }
+
+    const onCancelDelete = () => {
+        document.body.style.overflow = "initial";
+
+        setShowDeleteModal(false);
     }
 
     const renderList = (permission) => {
         return (
-            <UserPermissionCard key={`user_permission_${permission.id}`} data={permission} onDeletePermission={() => onDeletePermission(permission)} />
+            <UserPermissionCard key={`user_permission_${permission.id}`} data={permission} onDelete={() => onDelete(permission)} />
         )
     }
 
@@ -97,6 +119,13 @@ export default function AdminUserPermissions({ toast }) {
                             </ContainerHeaderButtons>
                         </ContainerHeader>
                         <ContainerBody>
+                            <Modal active={showDeleteModal}
+                                title={"Delete permission"}
+                                description={"Are your sure to delete this permission?"}
+                                onCancel={onCancelDelete}
+                                onConfirm={onConfirmDelete}
+                                buttonCancelTitle={"Cancel"}
+                                buttonConfirmTitle={"Delete"} />
                             <List>
                                 <ListHeader>
                                     <ListHeaderTitle>Users Permissions ({permissions.length})</ListHeaderTitle>

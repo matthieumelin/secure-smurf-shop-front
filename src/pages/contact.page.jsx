@@ -40,13 +40,6 @@ export default function Contact({ toast }) {
     setCaptchaResponse(value);
   };
 
-  // useEffect(() => {
-  //   axios
-  //     .get("./data.json")
-  //     .then((res) => setCards(res.data.contact.cards))
-  //     .catch((err) => console.error(err));
-  // }, []);
-
   const onSubmit = async (data) => {
     await axios
       .post(API_ENDPOINTS.CONTACT, {
@@ -65,9 +58,7 @@ export default function Contact({ toast }) {
           toast.success(res.data.message);
         }
       })
-      .catch((err) => {
-        toast.error(err.response.data.message);
-      });
+      .catch((err) => { if (err) toast.error(err.response.data.message) });
   };
 
   return (
