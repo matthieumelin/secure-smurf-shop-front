@@ -109,7 +109,6 @@ export default function AdminProducts({ toast }) {
                             <ContainerHeaderTitle>Manage Products</ContainerHeaderTitle>
                             <ContainerHeaderButtons>
                                 <ContainerHeaderButtonsLink to={AppRoutes.AdminProductAdd}>Add Product</ContainerHeaderButtonsLink>
-                                <ContainerHeaderButtonsLink to={AppRoutes.AdminProductRegions}>View Regions</ContainerHeaderButtonsLink>
                             </ContainerHeaderButtons>
                         </ContainerHeader>
                         <ContainerBody>
@@ -151,7 +150,7 @@ export default function AdminProducts({ toast }) {
                                     )}
                                 </ListBody>
                             </List>
-                            <Pagination pages={pages} currentPage={currentPage} setCurrentPage={setCurrentPage} />
+                            {products.length && <Pagination pages={pages} currentPage={currentPage} setCurrentPage={setCurrentPage} />}
                         </ContainerBody>
                     </Container>
                 </WrapperRight>
@@ -241,6 +240,7 @@ max-width: 320px;
 
 @media screen and (min-width: 1024px) {
     margin-top: 0;
+    width: 100%;
 }
 `;
 const ListHeaderSearchIcon = styled.img`

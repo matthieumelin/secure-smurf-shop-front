@@ -46,14 +46,15 @@ align-items: center;
 color: white;
 text-decoration: none;
 margin-bottom: 20px;
+
+@media screen and (min-width: 1024px) {
+  margin-bottom: 0;
+}
 `;
 const NavbarBackIcon = styled.img`
-display: block;dd
+display: block;
 width: 28px;
 height: 28px;
-border: 1px solid white;
-border-radius: 20px;
-padding: 3px;
 margin-right: 10px;
 `;
 const NavbarRight = styled.div`

@@ -117,10 +117,6 @@ export default function AdminUsers({ toast }) {
                     <Container>
                         <ContainerHeader>
                             <ContainerHeaderTitle>Manage Users</ContainerHeaderTitle>
-                            <ContainerHeaderButtons>
-                                {/* <ContainerHeaderButtonsLink to={AppRoutes.Home}>Add User</ContainerHeaderButtonsLink> */}
-                                <ContainerHeaderButtonsLink to={AppRoutes.AdminUserPermissions}>Manage Permissions</ContainerHeaderButtonsLink>
-                            </ContainerHeaderButtons>
                         </ContainerHeader>
                         <ContainerBody>
                             <Modal active={showDisableModal}
@@ -159,12 +155,12 @@ export default function AdminUsers({ toast }) {
                                     )}
                                 </ListBody>
                             </List>
-                            <Pagination pages={pages} currentPage={currentPage} setCurrentPage={setCurrentPage} />
+                            {users.length && <Pagination pages={pages} currentPage={currentPage} setCurrentPage={setCurrentPage} />}
                         </ContainerBody>
                     </Container>
                 </WrapperRight>
             </Wrapper>
-        </StyledUsers>
+        </StyledUsers >
     )
 }
 
@@ -191,35 +187,35 @@ const ContainerHeaderTitle = styled.h1`
 color: white;
 margin: 0;
 `;
-const ContainerHeaderButtons = styled.div`
-margin: 20px 0;
+// const ContainerHeaderButtons = styled.div`
+// margin: 20px 0;
 
-@media screen and (min-width: 1024px) {
-    display: flex;
-}
-`;
-const ContainerHeaderButtonsLink = styled(Link)`
-background-color: ${Colors.primary};
-color: white;
-text-decoration: none;
-padding: 5px 10px;
-display:block;
-text-align: center;
-border-radius: 2px;
-transition: 0.2s;
-margin: 20px 0;
+// @media screen and (min-width: 1024px) {
+//     display: flex;
+// }
+// `;
+// const ContainerHeaderButtonsLink = styled(Link)`
+// background-color: ${Colors.primary};
+// color: white;
+// text-decoration: none;
+// padding: 5px 10px;
+// display:block;
+// text-align: center;
+// border-radius: 2px;
+// transition: 0.2s;
+// margin: 20px 0;
 
-&:hover {
-    transition: 0.2s;
-    -moz-box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.07);
-    -webkit-box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.07);
-    box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.07);
-  }
+// &:hover {
+//     transition: 0.2s;
+//     -moz-box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.07);
+//     -webkit-box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.07);
+//     box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.07);
+//   }
 
-  @media screen and (min-width: 1024px) {
-    margin: 0 0 0 20px;
-  }
-`;
+//   @media screen and (min-width: 1024px) {
+//     margin: 0 0 0 20px;
+//   }
+// `;
 const ContainerBody = styled.div``;
 const List = styled.div`
 margin: 30px 0;
@@ -249,7 +245,7 @@ max-width: 320px;
 
 @media screen and (min-width: 1024px) {
     margin-top: 0;
-}
+    width: 100%;
 `;
 const ListHeaderSearchIcon = styled.img`
 width: 18px;

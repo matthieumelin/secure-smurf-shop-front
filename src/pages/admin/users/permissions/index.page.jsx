@@ -150,7 +150,7 @@ export default function AdminUserPermissions({ toast }) {
                                     )}
                                 </ListBody>
                             </List>
-                            <Pagination pages={pages} currentPage={currentPage} setCurrentPage={setCurrentPage} />
+                            {permissions.length && <Pagination pages={pages} currentPage={currentPage} setCurrentPage={setCurrentPage} />}
                         </ContainerBody>
                     </Container>
                 </WrapperRight>
@@ -265,6 +265,7 @@ max-width: 320px;
 
 @media screen and (min-width: 1024px) {
     margin-top: 0;
+    width: 100%;
 }
 `;
 const ListHeaderSearchIcon = styled.img`
