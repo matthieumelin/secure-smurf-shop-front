@@ -150,7 +150,7 @@ export default function AdminUserPermissions({ toast }) {
                                     )}
                                 </ListBody>
                             </List>
-                            {permissions.length && <Pagination pages={pages} currentPage={currentPage} setCurrentPage={setCurrentPage} />}
+                            {permissions.length ? <Pagination pages={pages} currentPage={currentPage} setCurrentPage={setCurrentPage} /> : null}
                         </ContainerBody>
                     </Container>
                 </WrapperRight>

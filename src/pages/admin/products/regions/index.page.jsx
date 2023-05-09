@@ -153,7 +153,7 @@ export default function AdminProductRegions({ toast }) {
                                     )}
                                 </ListBody>
                             </List>
-                            {productRegions.length && <Pagination pages={pages} currentPage={currentPage} setCurrentPage={setCurrentPage} />}
+                            {productRegions.length ? <Pagination pages={pages} currentPage={currentPage} setCurrentPage={setCurrentPage} /> : null}
                         </ContainerBody>
                     </Container>
                 </WrapperRight>

@@ -155,7 +155,7 @@ export default function AdminUsers({ toast }) {
                                     )}
                                 </ListBody>
                             </List>
-                            {users.length && <Pagination pages={pages} currentPage={currentPage} setCurrentPage={setCurrentPage} />}
+                            {users.length ? <Pagination pages={pages} currentPage={currentPage} setCurrentPage={setCurrentPage} /> : null}
                         </ContainerBody>
                     </Container>
                 </WrapperRight>

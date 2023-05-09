@@ -150,7 +150,7 @@ export default function AdminProducts({ toast }) {
                                     )}
                                 </ListBody>
                             </List>
-                            {products.length && <Pagination pages={pages} currentPage={currentPage} setCurrentPage={setCurrentPage} />}
+                            {products.length ? <Pagination pages={pages} currentPage={currentPage} setCurrentPage={setCurrentPage} /> : null}
                         </ContainerBody>
                     </Container>
                 </WrapperRight>

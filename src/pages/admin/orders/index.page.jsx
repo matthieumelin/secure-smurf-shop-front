@@ -105,7 +105,7 @@ export default function AdminOrders() {
                                     )}
                                 </ListBody>
                             </List>
-                            <Pagination pages={pages} currentPage={currentPage} setCurrentPage={setCurrentPage} />
+                            {orders.length ? <Pagination pages={pages} currentPage={currentPage} setCurrentPage={setCurrentPage} /> : null}
                         </ContainerBody>
                     </Container>
                 </WrapperRight>
