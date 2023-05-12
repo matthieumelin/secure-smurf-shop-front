@@ -105,7 +105,7 @@ export default function Profile({ toast, sidebarIsOpen, showLogoutModal, setSide
 
   const onConfirmDisable = async () => {
     await axios
-      .put(API_ENDPOINTS.USER_DISABLE, {
+      .put(API_ENDPOINTS.USER_DELETE, {
         id: userData.id,
       }, {
         headers: {
@@ -117,6 +117,8 @@ export default function Profile({ toast, sidebarIsOpen, showLogoutModal, setSide
           setShowDisableModal(false);
 
           navigate(AppRoutes.Logout);
+
+          toast.success(res.data.message);
         }
       })
       .catch((err) => { if (err) toast.error(err.response.data.message) });
@@ -136,12 +138,15 @@ export default function Profile({ toast, sidebarIsOpen, showLogoutModal, setSide
 
   const onConfirmLogout = () => {
     document.body.style.overflow = "initial";
+
     navigate(AppRoutes.Logout);
+
     setShowLogoutModal(false);
   }
 
   const onCancelLogout = () => {
     document.body.style.overflow = "initial";
+
     setShowLogoutModal(false);
   }
 
@@ -163,16 +168,16 @@ export default function Profile({ toast, sidebarIsOpen, showLogoutModal, setSide
         />
         <Main>
           <Navbar setSidebarIsOpen={setSidebarIsOpen} />
-          <Modal
-            title={"Delete Account"}
-            description={"Are you sure you wait to delete your account? If you delete your account, you will permanently lose your data."}
-            active={showDisableModal}
-            onConfirm={onConfirmDisable}
-            onCancel={onCancelDisable}
-            buttonCancelTitle={"Cancel"}
-            buttonConfirmTitle={"Delete"}
-          />
           <MainContent>
+            <Modal
+              title={"Delete Account"}
+              description={"Are you sure you wait to delete your account? If you delete your account, you will permanently lose your data."}
+              active={showDisableModal}
+              onConfirm={onConfirmDisable}
+              onCancel={onCancelDisable}
+              buttonCancelTitle={"Cancel"}
+              buttonConfirmTitle={"Delete"}
+            />
             <Modal
               title={"Logout"}
               description={"Are you sure you want to logout?"}

@@ -29,13 +29,14 @@ const FormTypes = {
 };
 
 export default function Login({ toast }) {
+  // Redux
   const token = useSelector((state) => state.user.token);
-
   const dispatch = useDispatch();
 
+  // States
   const [captchaResponse, setCaptchaResponse] = useState(null);
   const [formType, setFormType] = useState(FormTypes.LOGIN);
-
+  
   const recaptchaRef = useRef();
 
   const {
@@ -71,6 +72,7 @@ export default function Login({ toast }) {
 
   const onChangeFormType = (event, type) => {
     event.preventDefault();
+    
     setFormType(type);
   };
 
@@ -119,6 +121,8 @@ export default function Login({ toast }) {
           .then((res) => {
             if (res.status === 201) {
               reset();
+
+              setFormType(FormTypes.LOGIN);
 
               recaptchaRef.current.reset();
 
@@ -374,6 +378,33 @@ export default function Login({ toast }) {
                   />
                 )}
               </FormGroup>
+              <FormGroup>
+                <FormGroupWrapper>
+                  <FormGroupInput type="checkbox"
+                    id="cgu"
+                    name="cgu"
+                    error={errors.cgu}
+                    {...register("cgu", {
+                      required: {
+                        value: true,
+                        message: "You must check CGU.",
+                      },
+                    })}
+                  />
+                  <FormGroupText>
+                    I have read and accepted the {" "}
+                    <FormGroupLink to={AppRoutes.ToS}>Terms of Use</FormGroupLink>{" "}
+                    and <FormGroupLink to={AppRoutes.PrivacyPolicy}>Privacy Policy</FormGroupLink>.
+                  </FormGroupText>
+                </FormGroupWrapper>
+                {errors.cgu && (
+                  <ErrorMessage
+                    errors={errors}
+                    name="cgu"
+                    as={<ErrorContainer />}
+                  />
+                )}
+              </FormGroup>
               <FormGroupRecaptcha>
                 <ReCAPTCHA
                   ref={recaptchaRef}
@@ -518,6 +549,9 @@ const FormLink = styled.button`
   padding: 0;
 `;
 const FormGroups = styled.div``;
+const FormGroupWrapper = styled.div`
+display: flex;
+`;
 const FormGroup = styled.div`
   margin: 0 0 20px 0;
 
@@ -525,11 +559,17 @@ const FormGroup = styled.div`
     margin: 20px 0 0 0;
   }
 `;
+const FormGroupText = styled.p`
+color: white;
+margin: 0;
+`;
+const FormGroupLink = styled(Link)`
+color: ${Colors.primary};
+`;
 const FormGroupLabel = styled.label`
   color: white;
 `;
 const FormGroupInput = styled.input`
-  margin: 10px 0 0 0;
   background-color: ${Colors.primaryLowOp};
   border-radius: 10px;
   width: 100%;
@@ -538,6 +578,13 @@ const FormGroupInput = styled.input`
   color: #ffffff;
   outline: none;
   font-family: inherit;
+  margin: 10px 10px 0 0;
+
+  &[type="checkbox"] {
+    accent-color: ${Colors.primary};
+    height: 16px;
+    width: 16px;
+  }
 `;
 const FormGroupRecaptcha = styled.div`
   transform: scale(0.85);

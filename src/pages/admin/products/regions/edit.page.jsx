@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Helmet } from 'react-helmet-async';
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
@@ -19,15 +19,21 @@ import Colors from '../../../../utils/colors.util';
 import { capitalizeFirstLetter } from '../../../../utils/string.util';
 
 export default function AdminProductRegionEdit({ toast }) {
+    // Router
     const { id } = useParams();
+    const navigate = useNavigate();
 
+    // Redux
     const token = useSelector((state) => state.user.token);
     const userData = useSelector((state) => state.user.data);
 
+    // States
+    const [processing, setProcessing] = useState(false);
+
+    // Hook form
     const { reset, register, handleSubmit, setValue, formState: { errors } } = useForm();
 
-    const navigate = useNavigate();
-
+    // Page access
     const isGranted = id && token && userData.permission.includes("admin");
 
     useEffect(() => {
@@ -38,16 +44,20 @@ export default function AdminProductRegionEdit({ toast }) {
                 }
             }).then((res) => {
                 if (res.status === 200) {
-                    setValue("name", capitalizeFirstLetter(res.data.name));
-                    setValue("shortName", res.data.shortName.toUpperCase())
+                    const data = res.data;
+
+                    setValue("name", capitalizeFirstLetter(data.name));
+                    setValue("shortName", data.shortName.toUpperCase());
                 }
-            }).catch(() => navigate(AppRoutes.AdminUserPermissions));
+            }).catch(() => navigate(AppRoutes.AdminProductRegions));
         }
 
         if (isGranted) fetchProductRegion();
-    }, [token, isGranted])
+    }, [id, token, isGranted, navigate, setValue])
 
     const onSubmit = async (data) => {
+        setProcessing(true);
+
         await axios.put(API_ENDPOINTS.PRODUCT_REGIONS_UPDATE, {
             id: id,
             name: capitalizeFirstLetter(data.name),
@@ -61,12 +71,14 @@ export default function AdminProductRegionEdit({ toast }) {
                 if (res.status === 200) {
                     reset();
 
+                    setProcessing(false);
+
                     toast.success(res.data.message);
 
                     navigate(AppRoutes.AdminProductRegions);
                 }
             }).catch((err) => { if (err) toast.error(err.response.data.message) });
-        }
+    }
 
     if (!isGranted) {
         return <Navigate to={AppRoutes.Login} />
@@ -84,12 +96,14 @@ export default function AdminProductRegionEdit({ toast }) {
                 <WrapperRight>
                     <Navbar />
                     <Container>
-                        <ContainerHeaderLeft>
-                            <ContainerHeaderLeftBack to={AppRoutes.AdminProductRegions}>
-                                <ContainerHeaderLeftBackIcon src={`${process.env.PUBLIC_URL}/assets/icons/chevron-left.png`} alt='Back' />
-                            </ContainerHeaderLeftBack>
-                            <ContainerHeaderLeftTitle>Edit Region</ContainerHeaderLeftTitle>
-                        </ContainerHeaderLeft>
+                        <ContainerHeader>
+                            <ContainerHeaderLeft>
+                                <ContainerHeaderLeftBack to={AppRoutes.AdminProductRegions}>
+                                    <ContainerHeaderLeftBackIcon src={`${process.env.PUBLIC_URL}/assets/icons/chevron-left.png`} alt='Back' />
+                                </ContainerHeaderLeftBack>
+                                <ContainerHeaderLeftTitle>Edit Region</ContainerHeaderLeftTitle>
+                            </ContainerHeaderLeft>
+                        </ContainerHeader>
                         <ContainerBody>
                             <Form onSubmit={handleSubmit(onSubmit)}>
                                 <FormGroups>
@@ -146,7 +160,7 @@ export default function AdminProductRegionEdit({ toast }) {
                                         )}
                                     </FormGroup>
                                     <FormGroup>
-                                        <FormSubmitButton type='submit'>Submit</FormSubmitButton>
+                                        <FormSubmitButton type='submit' disabled={processing}>{processing ? "Processing.." : "Submit"}</FormSubmitButton>
                                     </FormGroup>
                                 </FormGroups>
                             </Form>
@@ -237,7 +251,6 @@ transition: 0.2s;
 }
 `;
 const FormSubmitButton = styled.button`
-margin-top: 30px;
 background-color: ${Colors.primary};
 color: white;
 text-decoration: none;
@@ -251,10 +264,20 @@ font-family: inherit;
 font-weight: 600;
 cursor: pointer;
 
+${(props) => {
+        if (props.disabled) {
+            return `
+background-color: rgba(255, 255, 255, 0.1);
+color: rgba(255, 255, 255, 0.7);
+`;
+        } else {
+            return `
 &:hover {
     transition: 0.2s;
     -moz-box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.07);
     -webkit-box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.07);
     box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.07);
-  }
+  }`
+        }
+    }}
 `;

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Helmet } from 'react-helmet-async';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
@@ -19,16 +19,25 @@ import Colors from '../../../../utils/colors.util';
 import { capitalizeFirstLetter } from '../../../../utils/string.util';
 
 export default function AdminProductRegionAdd({ toast }) {
+    // Redux
     const token = useSelector((state) => state.user.token);
     const userData = useSelector((state) => state.user.data);
 
+    // States
+    const [processing, setProcessing] = useState(false);
+
+    // Hook form
     const { reset, register, handleSubmit, formState: { errors } } = useForm();
 
+    // Router
     const navigate = useNavigate();
 
+    // Page access
     const isGranted = token && userData.permission.includes("admin");
 
     const onSubmit = async (data) => {
+        setProcessing(true);
+
         await axios.post(API_ENDPOINTS.PRODUCT_REGIONS_CREATE, {
             name: capitalizeFirstLetter(data.name),
             shortName: data.shortName.toUpperCase(),
@@ -41,12 +50,14 @@ export default function AdminProductRegionAdd({ toast }) {
                 if (res.status === 201) {
                     reset();
 
+                    setProcessing(false);
+
                     toast.success(res.data.message);
 
                     navigate(AppRoutes.AdminProductRegions);
                 }
             }).catch((err) => { if (err) toast.error(err.response.data.message) });
-        }
+    }
 
     if (!isGranted) {
         return <Navigate to={AppRoutes.Login} />
@@ -64,12 +75,14 @@ export default function AdminProductRegionAdd({ toast }) {
                 <WrapperRight>
                     <Navbar />
                     <Container>
-                        <ContainerHeaderLeft>
-                            <ContainerHeaderLeftBack to={AppRoutes.AdminProductRegions}>
-                                <ContainerHeaderLeftBackIcon src={`${process.env.PUBLIC_URL}/assets/icons/chevron-left.png`} alt='Back' />
-                            </ContainerHeaderLeftBack>
-                            <ContainerHeaderLeftTitle>Add Region</ContainerHeaderLeftTitle>
-                        </ContainerHeaderLeft>
+                        <ContainerHeader>
+                            <ContainerHeaderLeft>
+                                <ContainerHeaderLeftBack to={AppRoutes.AdminProductRegions}>
+                                    <ContainerHeaderLeftBackIcon src={`${process.env.PUBLIC_URL}/assets/icons/chevron-left.png`} alt='Back' />
+                                </ContainerHeaderLeftBack>
+                                <ContainerHeaderLeftTitle>Add Region</ContainerHeaderLeftTitle>
+                            </ContainerHeaderLeft>
+                        </ContainerHeader>
                         <ContainerBody>
                             <Form onSubmit={handleSubmit(onSubmit)}>
                                 <FormGroups>
@@ -126,7 +139,7 @@ export default function AdminProductRegionAdd({ toast }) {
                                         )}
                                     </FormGroup>
                                     <FormGroup>
-                                        <FormSubmitButton type='submit'>Submit</FormSubmitButton>
+                                        <FormSubmitButton type='submit' disabled={processing}>{processing ? "Processing.." : "Submit"}</FormSubmitButton>
                                     </FormGroup>
                                 </FormGroups>
                             </Form>
@@ -217,7 +230,6 @@ transition: 0.2s;
 }
 `;
 const FormSubmitButton = styled.button`
-margin-top: 30px;
 background-color: ${Colors.primary};
 color: white;
 text-decoration: none;
@@ -231,10 +243,20 @@ font-family: inherit;
 font-weight: 600;
 cursor: pointer;
 
-&:hover {
-    transition: 0.2s;
-    -moz-box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.07);
-    -webkit-box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.07);
-    box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.07);
-  }
+${(props) => {
+        if (props.disabled) {
+            return `
+background-color: rgba(255, 255, 255, 0.1);
+color: rgba(255, 255, 255, 0.7);
+`;
+        } else {
+            return `
+        &:hover {
+            transition: 0.2s;
+            -moz-box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.07);
+            -webkit-box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.07);
+            box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.07);
+          }`
+        }
+    }}
 `;

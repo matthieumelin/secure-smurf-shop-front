@@ -13,6 +13,7 @@ export default function ProductCategoryCard({ data, onDelete }) {
         <StyledProductCategoryCard>
             <ProductCategoryCardLeft>
                 <ProductCategoryCardLeftName>{capitalizeFirstLetter(data.name)}</ProductCategoryCardLeftName>
+                <ProductCategoryCardLeftBadge enabled={data.enabled}>{data.enabled ? "Enabled" : "Disabled"}</ProductCategoryCardLeftBadge>
             </ProductCategoryCardLeft>
             <ProductCategoryCardActions>
                 <ProductCategoryCardActionsButton to={`${AppRoutes.AdminProductCategoryEdit.replace(":id", data.id)}`}>
@@ -44,6 +45,23 @@ align-items: center;
 const ProductCategoryCardLeftName = styled.p`
 margin: 0;
 color: white;
+`;
+const ProductCategoryCardLeftBadge = styled.div`
+border: 1px solid lightgray;
+color: lightgray;
+border-radius: 20px;
+padding: 3px 10px;
+font-size: 0.85rem;
+margin-left: 10px;
+
+${props => {
+    if (props.enabled) {
+        return `
+        border: 1px solid ${Colors.green};
+        color: ${Colors.green};
+        `;
+    }
+}}
 `;
 const ProductCategoryCardActions = styled.div`
 margin-top: 10px;

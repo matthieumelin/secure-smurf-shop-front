@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Helmet } from 'react-helmet-async';
-import { Link, Navigate, useNavigate } from 'react-router-dom';
+import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
@@ -17,50 +17,62 @@ import Sidebar from '../../../components/admin/sidebar.component';
 import ErrorContainer from "../../../utils/error-container.util";
 import Colors from '../../../utils/colors.util';
 import { capitalizeFirstLetter } from '../../../utils/string.util';
-import { useEffect } from 'react';
 
-export default function AdminProductAdd({ toast }) {
+export default function AdminProductEdit({ toast }) {
+    // Router
+    const { id } = useParams();
+    const navigate = useNavigate();
+
     // Redux
     const token = useSelector((state) => state.user.token);
     const userData = useSelector((state) => state.user.data);
 
     // States
     const [regions, setRegions] = useState([]);
+    const [currentRegion, setCurrentRegion] = useState({});
     const [processing, setProcessing] = useState(false);
 
     // Hook form
-    const { reset, register, handleSubmit, setValue, formState: { errors } } = useForm({
-        mode: "onChange",
-        defaultValues: {
-            region: "",
-        }
-    });
+    const { reset, register, handleSubmit, setValue, formState: { errors } } = useForm();
 
-    // Router
-    const navigate = useNavigate();
-
-    // Page access
-    const isGranted = token && userData.permission.includes("admin");
+    // Pages access
+    const isGranted = id && token && userData.permission.includes("admin");
 
     useEffect(() => {
         const fetchRegions = async () => {
-            await axios.get(API_ENDPOINTS.PRODUCT_REGIONS).then((res) => {
+            await axios.get(API_ENDPOINTS.PRODUCT_REGIONS).then((res) => { if (res.status === 200) setRegions(res.data) });
+        }
+
+        const fetchProduct = async () => {
+            await axios.get(`${API_ENDPOINTS.PRODUCTS}/${id}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            }).then((res) => {
                 if (res.status === 200) {
                     const data = res.data;
 
-                    setRegions(data);
-                    setValue("region", data[0].shortName);
+                    setValue("name", capitalizeFirstLetter(data.name));
+                    setValue("price", data.price);
+                    setValue("blueEssence", data.blueEssence);
+                    setValue("level", data.level);
+
+                    setCurrentRegion(data.region.toUpperCase());
                 }
-            })
+            }).catch(() => navigate(AppRoutes.AdminProducts));
         }
 
-        if (isGranted) fetchRegions();
-    }, [isGranted, token, setValue])
+        if (isGranted) {
+            fetchRegions();
+            fetchProduct();
+        }
+    }, [id, token, isGranted, navigate, setValue])
 
     const onSubmit = async (data) => {
         setProcessing(true);
 
-        await axios.post(API_ENDPOINTS.PRODUCT_CREATE, {
+        await axios.put(API_ENDPOINTS.PRODUCT_UPDATE, {
+            id: id,
             name: capitalizeFirstLetter(data.name),
             price: data.price,
             blueEssence: data.blueEssence,
@@ -72,7 +84,7 @@ export default function AdminProductAdd({ toast }) {
             }
         })
             .then((res) => {
-                if (res.status === 201) {
+                if (res.status === 200) {
                     reset();
 
                     setProcessing(false);
@@ -91,7 +103,7 @@ export default function AdminProductAdd({ toast }) {
     return (
         <StyledUsers>
             <Helmet>
-                <title>Admin Add Product</title>
+                <title>Admin Edit Product</title>
             </Helmet>
             <Wrapper>
                 <WrapperLeft>
@@ -105,7 +117,7 @@ export default function AdminProductAdd({ toast }) {
                                 <ContainerHeaderLeftBack to={AppRoutes.AdminProducts}>
                                     <ContainerHeaderLeftBackIcon src={`${process.env.PUBLIC_URL}/assets/icons/chevron-left.png`} alt='Back' />
                                 </ContainerHeaderLeftBack>
-                                <ContainerHeaderLeftTitle>Add Product</ContainerHeaderLeftTitle>
+                                <ContainerHeaderLeftTitle>Edit Product</ContainerHeaderLeftTitle>
                             </ContainerHeaderLeft>
                         </ContainerHeader>
                         <ContainerBody>
@@ -165,6 +177,7 @@ export default function AdminProductAdd({ toast }) {
                                                 id="region"
                                                 name="region"
                                                 error={errors.region}
+                                                defaultValue={regions.find((region) => region.id === currentRegion.id)}
                                                 {...register("region", {
                                                     required: {
                                                         value: true,
@@ -229,7 +242,7 @@ export default function AdminProductAdd({ toast }) {
                                         )}
                                     </FormGroup>
                                     <FormGroup>
-                                        <FormSubmitButton type='submit' disabled={processing}>{processing ? `Processing..` : `Submit`}</FormSubmitButton>
+                                        <FormSubmitButton type='submit' disabled={processing}>{processing ? "Processing.." : "Submit"}</FormSubmitButton>
                                     </FormGroup>
                                 </FormGroups>
                             </Form>
@@ -300,6 +313,19 @@ display: flex;
 flex-direction: column;
 margin-top: 20px;
 `;
+const FormGroupSelect = styled.select`
+margin-top: 5px;
+border: 1px solid ${(props) => (props.error ? Colors.red : "lightgray")};
+font-family: inherit;
+border-radius: 2px;
+background-color: transparent;
+outline: none;
+color: white;
+padding: 7px 10px;
+transition: 0.2s;
+`;
+const FormGroupSelectOption = styled.option`
+`;
 const FormGroupLink = styled(Link)`
 color: ${Colors.primary};
 `;
@@ -332,19 +358,6 @@ transition: 0.2s;
     }
   }
 `;
-const FormGroupSelect = styled.select`
-margin-top: 5px;
-border: 1px solid ${(props) => (props.error ? Colors.red : "lightgray")};
-font-family: inherit;
-border-radius: 2px;
-background-color: transparent;
-outline: none;
-color: white;
-padding: 7px 10px;
-transition: 0.2s;
-`;
-const FormGroupSelectOption = styled.option`
-`;
 const FormSubmitButton = styled.button`
 background-color: ${Colors.primary};
 color: white;
@@ -359,20 +372,20 @@ font-family: inherit;
 font-weight: 600;
 cursor: pointer;
 
-  ${(props) => {
+${(props) => {
         if (props.disabled) {
             return `
-    background-color: rgba(255, 255, 255, 0.1);
-    color: rgba(255, 255, 255, 0.7);
-    `;
+background-color: rgba(255, 255, 255, 0.1);
+color: rgba(255, 255, 255, 0.7);
+`;
         } else {
             return `
-            &:hover {
-                transition: 0.2s;
-                -moz-box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.07);
-                -webkit-box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.07);
-                box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.07);
-              }`
+    &:hover {
+        transition: 0.2s;
+        -moz-box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.07);
+        -webkit-box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.07);
+        box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.07);
+      }`
         }
     }}
 `;

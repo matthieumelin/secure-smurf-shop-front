@@ -24,9 +24,14 @@ export default function AdminProducts({ toast }) {
 
     // States
     const [products, setProducts] = useState([]);
+
     const [search, setSearch] = useState("");
+
     const [selectedProduct, setSelectedProduct] = useState({});
+
     const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+    const [processing, setProcessing] = useState(false);
 
     // Pagination
     const [currentPage, setCurrentPage] = useState(1);
@@ -42,8 +47,7 @@ export default function AdminProducts({ toast }) {
 
     // Search
     const haveSearchResult = products.filter((product) => product.name.toLowerCase().includes(search.toLowerCase())
-        || product.region.toLowerCase().includes(search.toLowerCase())
-        || product.type.toLowerCase().includes(search.toLowerCase())).length > 0;
+        || product.region.toLowerCase().includes(search.toLowerCase())).length > 0;
 
     useEffect(() => {
         const fetchProducts = async () => {
@@ -61,6 +65,9 @@ export default function AdminProducts({ toast }) {
     }
 
     const onConfirmDelete = async () => {
+        setShowDeleteModal(false);
+        setProcessing(true);
+
         await axios.delete(`${API_ENDPOINTS.PRODUCT_DELETE}/${selectedProduct.id}`, {
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -69,8 +76,10 @@ export default function AdminProducts({ toast }) {
             if (res.status === 200) {
                 const updatedProducts = products.filter((product) => product.id !== selectedProduct.id);
 
+                document.body.style.overflow = "initial";
+
+                setProcessing(false);
                 setProducts(updatedProducts);
-                setShowDeleteModal(false);
 
                 toast.success(res.data.message);
             }
@@ -113,6 +122,7 @@ export default function AdminProducts({ toast }) {
                         </ContainerHeader>
                         <ContainerBody>
                             <Modal active={showDeleteModal}
+                                processing={processing}
                                 title={"Delete product"}
                                 description={"Are your sure to delete this product?"}
                                 onCancel={onCancelDelete}
@@ -131,8 +141,7 @@ export default function AdminProducts({ toast }) {
                                     {search ? (
                                         haveSearchResult ? (
                                             products.filter((product) => product.name.toLowerCase().includes(search.toLowerCase())
-                                                || product.region.toLowerCase().includes(search.toLowerCase())
-                                                || product.type.toLowerCase().includes(search.toLowerCase())).map((product) => {
+                                                || product.region.toLowerCase().includes(search.toLowerCase())).map((product) => {
                                                     return renderList(product);
                                                 })
                                         ) : (
@@ -140,7 +149,7 @@ export default function AdminProducts({ toast }) {
                                         )
                                     ) : (
                                         currentRecords.length ? (
-                                            currentRecords.map((currentRecord) => {
+                                            currentRecords.sort((a, b) => a.region > b.region ? 1 : -1).map((currentRecord) => {
                                                 return renderList(currentRecord);
                                             })
                                         ) :
@@ -263,8 +272,11 @@ margin: 30px 0;
 ${props => {
         if (props.haveResult) {
             return `
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
+            @media screen and (min-width: 1024px) {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                grid-gap: 20px;
+            }
         `;
         }
     }}

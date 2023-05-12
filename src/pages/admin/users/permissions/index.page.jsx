@@ -71,6 +71,8 @@ export default function AdminUserPermissions({ toast }) {
             if (res.status === 200) {
                 const updatedPermissions = permissions.filter((permission) => permission.id !== selectedPermission.id);
 
+                document.body.style.overflow = "initial";
+
                 setPermissions(updatedPermissions);
                 setShowDeleteModal(false);
 

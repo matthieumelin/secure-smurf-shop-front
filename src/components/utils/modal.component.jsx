@@ -4,29 +4,35 @@ import styled from "styled-components";
 
 import Colors from "../../utils/colors.util";
 
-export default function Modal({ title, description, active, onConfirm, onCancel, buttonConfirmTitle, buttonCancelTitle }) {
+export default function Modal({ active, processing, title, description, onConfirm, onCancel, buttonConfirmTitle, buttonCancelTitle }) {
   return (
     <StyledModal active={active}>
-      <ModalContainer>
-        <ModalTitle>{title}</ModalTitle>
-        <ModalDescription>{description}</ModalDescription>
-        <ModalButtons>
-          <ModalButton type="button" onClick={onCancel}>
-            {buttonCancelTitle}
-          </ModalButton>
-          <ModalButton
-            type="button"
-            onClick={onConfirm}
-            style={{
-              border: "none",
-              backgroundColor: Colors.red,
-            }}
-          >
-            {buttonConfirmTitle}
-          </ModalButton>
-        </ModalButtons>
-      </ModalContainer>
-    </StyledModal>
+      {processing ?
+        (
+          <ModalLoading src={`${process.env.PUBLIC_URL}/assets/images/pulse.svg`} alt="Loading" />
+        ) : (
+          <ModalContainer>
+            <ModalTitle>{title}</ModalTitle>
+            <ModalDescription>{description}</ModalDescription>
+            <ModalButtons>
+              <ModalButton type="button" onClick={onCancel}>
+                {buttonCancelTitle}
+              </ModalButton>
+              <ModalButton
+                type="button"
+                onClick={onConfirm}
+                style={{
+                  border: "none",
+                  backgroundColor: Colors.red,
+                }}
+              >
+                {buttonConfirmTitle}
+              </ModalButton>
+            </ModalButtons>
+          </ModalContainer >
+        )
+      }
+    </StyledModal >
   );
 }
 
@@ -62,6 +68,14 @@ const ModalContainer = styled.div`
   background-color: ${Colors.lightGray};
   border-radius: 10px;
   padding: 30px;
+`;
+const ModalLoading = styled.img`
+position: absolute;
+left: 50%;
+top: 50%;
+transform: translate(-50%, -50%);
+display: block;
+max-width: 100%;
 `;
 const ModalTitle = styled.h3`
   margin: 0;

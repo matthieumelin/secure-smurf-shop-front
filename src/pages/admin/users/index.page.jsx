@@ -22,9 +22,14 @@ export default function AdminUsers({ toast }) {
 
     // States
     const [users, setUsers] = useState([]);
+
     const [search, setSearch] = useState("");
+
     const [selectedUser, setSelectedUser] = useState({});
+
     const [showDisableModal, setShowDisableModal] = useState(false);
+
+    const [processing, setProcessing] = useState(false);
 
     // Pagination
     const [currentPage, setCurrentPage] = useState(1);
@@ -66,6 +71,9 @@ export default function AdminUsers({ toast }) {
     }
 
     const onConfirmDisable = async () => {
+        setShowDisableModal(false);
+        setProcessing(true);
+
         await axios.put(API_ENDPOINTS.USER_DISABLE, {
             id: selectedUser.id
         }, {
@@ -76,8 +84,10 @@ export default function AdminUsers({ toast }) {
             if (res.status === 200) {
                 const updatedUsers = users.filter((user) => user.id !== selectedUser.id);
 
+                document.body.style.overflow = "initial";
+
+                setProcessing(false);
                 setUsers(updatedUsers);
-                setShowDisableModal(false);
 
                 toast.success(res.data.message);
             }
@@ -117,6 +127,7 @@ export default function AdminUsers({ toast }) {
                         </ContainerHeader>
                         <ContainerBody>
                             <Modal active={showDisableModal}
+                                processing={processing}
                                 title={"Disable user"}
                                 description={"Are your sure to disable this user?"}
                                 onCancel={onCancelDisable}
@@ -264,8 +275,10 @@ margin: 30px 0;
 ${props => {
         if (props.haveSearchResult) {
             return `
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
+            @media screen and (min-width: 1024px) {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+            }
         `;
         }
     }}

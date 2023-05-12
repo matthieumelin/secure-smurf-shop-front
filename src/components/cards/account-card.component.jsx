@@ -3,10 +3,9 @@ import React from "react";
 import styled from "styled-components";
 
 import Colors from "../../utils/colors.util";
+import { kFormatter } from "../../utils/number.util";
 
 export default function AccountCard({ data, loading, onClick }) {
-  const parsedFeatures = JSON.parse(data.features);
-
   return (
     <StyledAccountCard>
       <AccountCardHeader>
@@ -18,20 +17,42 @@ export default function AccountCard({ data, loading, onClick }) {
       </AccountCardHeader>
       <AccountCardBody>
         <AccountCardBodyFeatures>
-          {parsedFeatures &&
-            parsedFeatures.map((feature, index) => {
-              return (
-                <AccountCardBodyFeaturesItem key={`feature_${index}`}>
-                  <AccountCardBodyFeaturesItemIcon>
-                    <AccountCardBodyFeaturesItemIconImage
-                      src={`${process.env.PUBLIC_URL}/assets/icons/done.svg`}
-                      alt="Feature"
-                    />
-                  </AccountCardBodyFeaturesItemIcon>
-                  {feature}
-                </AccountCardBodyFeaturesItem>
-              );
-            })}
+          <AccountCardBodyFeaturesItem>
+            <AccountCardBodyFeaturesItemIcon>
+              <AccountCardBodyFeaturesItemIconImage
+                src={`${process.env.PUBLIC_URL}/assets/icons/done.svg`}
+                alt="Feature"
+              />
+            </AccountCardBodyFeaturesItemIcon>
+            <AccountCardBodyFeaturesItemStrong>{kFormatter(data.blueEssence)}</AccountCardBodyFeaturesItemStrong>Blue Essence
+          </AccountCardBodyFeaturesItem>
+          <AccountCardBodyFeaturesItem>
+            <AccountCardBodyFeaturesItemIcon>
+              <AccountCardBodyFeaturesItemIconImage
+                src={`${process.env.PUBLIC_URL}/assets/icons/done.svg`}
+                alt="Feature"
+              />
+            </AccountCardBodyFeaturesItemIcon>
+            Level ~{data.level}
+          </AccountCardBodyFeaturesItem>
+          <AccountCardBodyFeaturesItem>
+            <AccountCardBodyFeaturesItemIcon>
+              <AccountCardBodyFeaturesItemIconImage
+                src={`${process.env.PUBLIC_URL}/assets/icons/done.svg`}
+                alt="Feature"
+              />
+            </AccountCardBodyFeaturesItemIcon>
+            Ranked Ready
+          </AccountCardBodyFeaturesItem>
+          <AccountCardBodyFeaturesItem>
+            <AccountCardBodyFeaturesItemIcon>
+              <AccountCardBodyFeaturesItemIconImage
+                src={`${process.env.PUBLIC_URL}/assets/icons/done.svg`}
+                alt="Feature"
+              />
+            </AccountCardBodyFeaturesItemIcon>
+            Life-time Warranty
+          </AccountCardBodyFeaturesItem>
         </AccountCardBodyFeatures>
         {!data.stock ? (
           <AccountCardBuyButton type="submit" disabled={!data.stock}>
@@ -39,15 +60,6 @@ export default function AccountCard({ data, loading, onClick }) {
           </AccountCardBuyButton>
         ) : (
           <AccountCardBuyWrapper>
-            <AccountCardBuyQuantitySelect>
-              {[...Array(10)].map((value, index) => {
-                return (
-                  <AccountCardBuyQuantitySelectOption key={`quantity_${index}`} value={value}>
-                    {value}
-                  </AccountCardBuyQuantitySelectOption>
-                );
-              })}
-            </AccountCardBuyQuantitySelect>
             <AccountCardBuyButton
               type="submit"
               onClick={onClick}
@@ -112,6 +124,10 @@ const AccountCardBodyFeaturesItem = styled.li`
   align-items: center;
   margin: 0 0 10px 0;
 `;
+const AccountCardBodyFeaturesItemStrong = styled.p`
+font-weight: 700;
+margin: 0 5px 0 0;
+`;
 const AccountCardBodyFeaturesItemIcon = styled.div`
   border-radius: 100px;
   width: 22px;
@@ -157,8 +173,6 @@ const AccountCardBuyButton = styled.button`
     }
   }}
 `;
-const AccountCardBuyQuantitySelect = styled.select``;
-const AccountCardBuyQuantitySelectOption = styled.option``;
 const AccountCardBuyLimitedStock = styled.div`
   display: flex;
   justify-content: center;

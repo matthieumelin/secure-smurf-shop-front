@@ -1,10 +1,13 @@
 import React, { useState } from 'react'
-import { NavLink } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 import styled from 'styled-components'
 import AppRoutes from '../../router/app.routes'
 
 export default function Sidebar() {
+  // Router
+  const { pathname } = useLocation();
+
   // States
   const [isOpen, setIsOpen] = useState(false);
 
@@ -25,9 +28,8 @@ export default function Sidebar() {
           <SidebarMenuTitle>Analytics</SidebarMenuTitle>
           <SidebarMenuList>
             <SidebarMenuListItem>
-              <SidebarMenuListItemLink to={AppRoutes.AdminDashboard} className={({ isActive, isPending }) =>
-                isPending ? "pending" : isActive ? "active" : ""
-              } end>
+              <SidebarMenuListItemLink to={AppRoutes.AdminDashboard}
+                data-active={pathname === AppRoutes.AdminDashboard}>
                 <SidebarMenuListItemLinkIcon src={`${process.env.PUBLIC_URL}/assets/icons/home.svg`} alt="Dashboard" /> Dashboard
               </SidebarMenuListItemLink>
             </SidebarMenuListItem>
@@ -37,49 +39,38 @@ export default function Sidebar() {
           <SidebarMenuTitle>Users</SidebarMenuTitle>
           <SidebarMenuList>
             <SidebarMenuListItem>
-              <SidebarMenuListItemLink to={AppRoutes.AdminUsers} className={({ isActive, isPending }) =>
-                isPending ? "pending" : isActive ? "active" : ""
-              } end>
+              <SidebarMenuListItemLink to={AppRoutes.AdminUsers}
+                data-active={pathname === AppRoutes.AdminUsers}>
                 <SidebarMenuListItemLinkIcon src={`${process.env.PUBLIC_URL}/assets/icons/profile.svg`} alt="Users" /> Users
               </SidebarMenuListItemLink>
             </SidebarMenuListItem>
-            <SidebarMenuListItem>
-              <SidebarMenuListItemLink to={AppRoutes.AdminUserPermissions} className={({ isActive, isPending }) =>
-                isPending ? "pending" : isActive ? "active" : ""
-              } end>
+            {/* <SidebarMenuListItem>
+              <SidebarMenuListItemLink to={AppRoutes.AdminUserPermissions}
+                data-active={pathname.includes(AppRoutes.AdminUserPermissions)}>
                 <SidebarMenuListItemLinkIcon src={`${process.env.PUBLIC_URL}/assets/icons/profile.svg`} alt="Permissions" /> Permissions
               </SidebarMenuListItemLink>
-            </SidebarMenuListItem>
+            </SidebarMenuListItem> */}
           </SidebarMenuList>
         </SidebarMenu>
         <SidebarMenu>
           <SidebarMenuTitle>Products</SidebarMenuTitle>
           <SidebarMenuList>
             <SidebarMenuListItem>
-              <SidebarMenuListItemLink to={AppRoutes.AdminProducts} className={({ isActive, isPending }) =>
-                isPending ? "pending" : isActive ? "active" : ""
-              } end>
+              <SidebarMenuListItemLink to={AppRoutes.AdminProducts}
+                data-active={pathname === AppRoutes.AdminProducts}>
                 <SidebarMenuListItemLinkIcon src={`${process.env.PUBLIC_URL}/assets/icons/product.svg`} alt="Products" /> Products
               </SidebarMenuListItemLink>
             </SidebarMenuListItem>
             <SidebarMenuListItem>
-              <SidebarMenuListItemLink to={AppRoutes.AdminProductRegions} className={({ isActive, isPending }) =>
-                isPending ? "pending" : isActive ? "active" : ""
-              } end>
+              <SidebarMenuListItemLink to={AppRoutes.AdminProductRegions}
+                data-active={pathname.includes(AppRoutes.AdminProductRegions)}>
                 <SidebarMenuListItemLinkIcon src={`${process.env.PUBLIC_URL}/assets/icons/flag.svg`} alt="Regions" /> Regions
-              </SidebarMenuListItemLink>
-            </SidebarMenuListItem>
-            <SidebarMenuListItem>
-              <SidebarMenuListItemLink to={AppRoutes.AdminProductCategories} className={({ isActive, isPending }) =>
-                isPending ? "pending" : isActive ? "active" : ""
-              } end>
-                <SidebarMenuListItemLinkIcon src={`${process.env.PUBLIC_URL}/assets/icons/category.svg`} alt="Categories" /> Categories
               </SidebarMenuListItemLink>
             </SidebarMenuListItem>
           </SidebarMenuList>
         </SidebarMenu>
       </SidebarMenus>
-    </StyledSidebar>
+    </StyledSidebar >
   )
 }
 
@@ -97,7 +88,7 @@ align-items: center;
 justify-content: space-between;
 padding: 0 20px;
 `;
-const SidebarWrapperLink = styled(NavLink)``;
+const SidebarWrapperLink = styled(Link)``;
 const SidebarWrapperToggle = styled.div`
 background-color: white;
 border-radius: 2px;
@@ -200,7 +191,7 @@ list-style: none;
 padding: 0;
 `;
 const SidebarMenuListItem = styled.li``;
-const SidebarMenuListItemLink = styled(NavLink)`
+const SidebarMenuListItemLink = styled(Link)`
 text-decoration: none;
 display: flex;
 align-items: center;
@@ -209,7 +200,7 @@ transition: 0.2s;
 padding: 8px 20px;
 white-space: nowrap;
 
-&:hover, &.active {
+&:hover, &[data-active=true] {
   background-color: rgba(255,255,255,.1);
   padding: 8px 20px;
   transition: 0.2s;

@@ -8,7 +8,7 @@ import Colors from '../../../utils/colors.util';
 export default function ProductRegionCard({ data, onDeleteProductRegion }) {
     return (
         <StyledProductRegionCard>
-            <ProductRegionCardImage src={`${process.env.PUBLIC_URL}/assets/images/servers/${data.shortName.toUpperCase()}.png`} alt={data.name} />
+            <ProductRegionCardImage src={`${process.env.PUBLIC_URL}/assets/images/regions/${data.shortName.toUpperCase()}.png`} alt={data.name} />
             <ProductRegionCardRight>
                 <ProductRegionCardRightInfos>
                     <ProductRegionCardRightInfosName>

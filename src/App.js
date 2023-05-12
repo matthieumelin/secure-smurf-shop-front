@@ -25,11 +25,10 @@ import AdminUserPermissionEdit from "./pages/admin/users/permissions/edit.page";
 import AdminOrders from "./pages/admin/orders/index.page";
 import AdminProducts from "./pages/admin/products/index.page";
 import AdminProductAdd from "./pages/admin/products/add.page";
+import AdminProductEdit from "./pages/admin/products/edit.page";
 import AdminProductRegionAdd from "./pages/admin/products/regions/add.page";
 import AdminProductRegionEdit from "./pages/admin/products/regions/edit.page";
 import AdminProductRegions from "./pages/admin/products/regions/index.page";
-import AdminProductCategoryAdd from "./pages/admin/products/categories/add.page";
-import AdminProductCategories from "./pages/admin/products/categories/index.page";
 
 import AuthVerify from "./user/auth-verify.user";
 
@@ -71,14 +70,6 @@ export default function App() {
       />
       <Routes>
         <Route
-          path={AppRoutes.AdminProductCategoryAdd}
-          element={<AdminProductCategoryAdd toast={toast} />}
-        />
-        <Route
-          path={AppRoutes.AdminProductCategories}
-          element={<AdminProductCategories toast={toast} />}
-        />
-        <Route
           path={AppRoutes.AdminUserPermissionEdit}
           element={<AdminUserPermissionEdit toast={toast} />}
         />
@@ -103,6 +94,10 @@ export default function App() {
         <Route
           path={AppRoutes.AdminProductRegions}
           element={<AdminProductRegions toast={toast} />}
+        />
+        <Route
+          path={AppRoutes.AdminProductEdit}
+          element={<AdminProductEdit toast={toast} />}
         />
         <Route
           path={AppRoutes.AdminProductAdd}

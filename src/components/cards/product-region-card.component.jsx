@@ -9,7 +9,7 @@ export default function ProductRegionCard({ data, onSelectProductRegion }) {
     <StyledProductRegionCard onClick={() => onSelectProductRegion(data)}>
       <ProductRegionCardImage
         src={`${process.env.PUBLIC_URL
-          }/assets/images/servers/${data.shortName.toLowerCase()}.png`}
+          }/assets/images/regions/${data.shortName.toLowerCase()}.png`}
       />
       <ProductRegionCardInfos>
         <ProductRegionCardInfosName>{data.name}</ProductRegionCardInfosName>

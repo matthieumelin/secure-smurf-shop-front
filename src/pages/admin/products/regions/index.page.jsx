@@ -24,9 +24,14 @@ export default function AdminProductRegions({ toast }) {
 
     // States
     const [productRegions, setProductRegions] = useState([]);
+
     const [search, setSearch] = useState("");
+
     const [selectedProductRegion, setSelectedProductRegion] = useState({});
+
     const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+    const [processing, setProcessing] = useState(false);
 
     // Pagination
     const [currentPage, setCurrentPage] = useState(1);
@@ -60,6 +65,9 @@ export default function AdminProductRegions({ toast }) {
     }
 
     const onConfirmDelete = async () => {
+        setShowDeleteModal(false);
+        setProcessing(true);
+
         await axios.delete(`${API_ENDPOINTS.PRODUCT_REGIONS_DELETE}/${selectedProductRegion.id}`, {
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -68,8 +76,10 @@ export default function AdminProductRegions({ toast }) {
             if (res.status === 200) {
                 const updatedProductRegions = productRegions.filter((productRegion) => productRegion.id !== selectedProductRegion.id);
 
+                document.body.style.overflow = "initial";
+
+                setProcessing(false);
                 setProductRegions(updatedProductRegions);
-                setShowDeleteModal(false);
 
                 toast.success(res.data.message);
             }
@@ -116,7 +126,9 @@ export default function AdminProductRegions({ toast }) {
                             </ContainerHeaderLeftButtons>
                         </ContainerHeader>
                         <ContainerBody>
-                            <Modal active={showDeleteModal}
+                            <Modal
+                                active={showDeleteModal}
+                                processing={processing}
                                 title={"Delete region"}
                                 description={"Are your sure to delete this region?"}
                                 onCancel={onCancelDelete}
