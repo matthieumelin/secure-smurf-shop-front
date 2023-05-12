@@ -12,7 +12,7 @@ export default function AccountCard({ data, loading, onClick }) {
         <AccountCardHeaderTitle>{data.name}</AccountCardHeaderTitle>
         <AccountCardHeaderPrice>
           <AccountCardHeaderPriceSpan>€</AccountCardHeaderPriceSpan>
-          {data.price}
+          {data.price.toFixed(2)}
         </AccountCardHeaderPrice>
       </AccountCardHeader>
       <AccountCardBody>

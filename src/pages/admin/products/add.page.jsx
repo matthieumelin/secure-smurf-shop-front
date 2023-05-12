@@ -213,6 +213,7 @@ export default function AdminProductAdd({ toast }) {
                                             id="level"
                                             name="level"
                                             error={errors.level}
+                                            min="1"
                                             {...register("level", {
                                                 required: {
                                                     value: true,

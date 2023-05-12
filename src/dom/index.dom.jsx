@@ -21,10 +21,21 @@ import Colors from "../utils/colors.util";
 import axios from "axios";
 import { API_ENDPOINTS } from "../api/api";
 import AppRoutes from "../router/app.routes";
+import Checkout from "../components/checkout.component";
 
 const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_KEY);
 
 export default function IndexDOM() {
+  // Redux
+  const token = useSelector((state) => state.user.token);
+  const userData = useSelector((state) => state.user.data);
+  const checkout = useSelector((state) => state.checkout.data);
+  const dispatch = useDispatch();
+
+  // Router
+  const navigate = useNavigate();
+
+  // States
   const [features, setFeatures] = useState([]);
   const [experience, setExperience] = useState([]);
   const [guarantee, setGuarantee] = useState([]);
@@ -38,15 +49,10 @@ export default function IndexDOM() {
 
   const [currentExperience, setCurrentExperience] = useState({});
 
-  const [loading, setLoading] = useState(false);
+  const [processing, setProcessing] = useState(false);
 
+  // Refs
   const productRegionsRef = useRef(productRegions);
-
-  const token = useSelector((state) => state.user.token);
-  const userData = useSelector((state) => state.user.data);
-
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -87,7 +93,7 @@ export default function IndexDOM() {
 
     dispatch(setCheckout(product));
 
-    setLoading(true);
+    setProcessing(true);
 
     await axios
       .post(API_ENDPOINTS.STRIPE_CREATE_CHECKOUT_SESSION, {
@@ -103,7 +109,7 @@ export default function IndexDOM() {
           if (error) {
             console.error(error);
           }
-          setLoading(false);
+          setProcessing(false);
         }
       });
   };
@@ -112,6 +118,7 @@ export default function IndexDOM() {
     <StyledIndex>
       <Header />
       <Main>
+        <Checkout active={true} product={checkout} />
         {productRegions.length && products.length ? (
           <Section>
             {!currentProductRegion && (
@@ -126,7 +133,6 @@ export default function IndexDOM() {
                     .filter((productRegion) => {
                       const filteredProducts = products.filter(
                         (product) =>
-                          product &&
                           product.region.toUpperCase() ===
                           productRegion.shortName.toUpperCase()
                       );
@@ -160,7 +166,6 @@ export default function IndexDOM() {
                           .filter((productRegion) => {
                             const filteredProducts = products.filter(
                               (product) =>
-                                product &&
                                 product.region.toUpperCase() ===
                                 productRegion.shortName.toUpperCase()
                             );
@@ -197,7 +202,7 @@ export default function IndexDOM() {
                               <AccountCard
                                 key={`product_${index}`}
                                 data={product}
-                                loading={loading}
+                                processing={processing}
                                 onClick={() => onProcessToCheckout(product)}
                               />
                             );
