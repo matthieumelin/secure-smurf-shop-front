@@ -308,9 +308,12 @@ max-width: 425px;
 ${props => {
         if (props.haveSearchResult) {
             return `
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        grid-gap: 20px;
+            display: grid;
+            grid-gap: 20px;
+            
+            @media screen and (min-width: 1024px) {
+                grid-template-columns: repeat(3, 1fr);
+            }
         `;
         }
     }}

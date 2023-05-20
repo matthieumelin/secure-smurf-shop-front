@@ -6,6 +6,7 @@ import styled from "styled-components";
 
 import Footer from "../components/footer.component";
 import Navbar from "../components/navbar.component";
+import Loading from "../components/loading.component";
 
 import Colors from "../utils/colors.util";
 
@@ -14,7 +15,7 @@ import axios from "axios";
 import { API_ENDPOINTS } from "../api/api";
 
 export default function Checkout() {
-  const [paymentStatus, setPaymentStatus] = useState("paid");
+  const [paymentStatus, setPaymentStatus] = useState();
   const [searchParams] = useSearchParams();
 
   const sessionId = searchParams.get("session_id");
@@ -27,10 +28,7 @@ export default function Checkout() {
         .get(`${API_ENDPOINTS.STRIPE_CHECKOUT_SESSION}?sessionId=${sessionId}`)
         .then((res) => {
           if (res.status === 200) {
-
-            const paymentStatus = res.data.payment_status;
-
-            setPaymentStatus(paymentStatus);
+            setPaymentStatus(res.data.payment_status);
           }
         })
         .catch(() => navigate(AppRoutes.Home));
@@ -44,6 +42,10 @@ export default function Checkout() {
 
   if (!sessionId) {
     return <Navigate to={AppRoutes.Home} />;
+  }
+
+  if (!paymentStatus) {
+    return <Loading />;
   }
 
   return (

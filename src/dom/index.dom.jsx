@@ -83,42 +83,56 @@ export default function IndexDOM() {
     setShowProductRegions(false);
   };
 
-  const onProcessToCheckout = async (product) => {
+  const onProcessToCheckout = (product) => {
     if (!token) {
       navigate(AppRoutes.Login);
       return;
     }
 
-    sessionStorage.setItem("checkout", JSON.stringify(product));
+    document.body.style.overflow = "hidden";
 
-    dispatch(setCheckout(product));
+    const newProduct = { ...product };
 
-    setProcessing(true);
+    newProduct.quantity = 1;
+    newProduct.unitPrice = product.price;
 
-    await axios
-      .post(API_ENDPOINTS.STRIPE_CREATE_CHECKOUT_SESSION, {
-        userId: userData.id,
-        productId: product.stripeId,
-      })
-      .then(async (res) => {
-        if (res.status === 200) {
-          const stripe = await stripePromise;
-          const { error } = await stripe.redirectToCheckout({
-            sessionId: res.data.id,
-          });
-          if (error) {
-            console.error(error);
-          }
-          setProcessing(false);
-        }
-      });
+    sessionStorage.setItem("checkout", JSON.stringify(newProduct));
+
+    dispatch(setCheckout(newProduct));
   };
 
+  const onProcessToPayment = async (type) => {
+    setProcessing(true);
+
+    if (type === "card") {
+      await axios
+        .post(API_ENDPOINTS.STRIPE_CREATE_CHECKOUT_SESSION, {
+          userId: userData.id,
+          productId: checkout.id,
+          quantity: checkout.quantity
+        })
+        .then(async (res) => {
+          if (res.status === 200) {
+            const stripe = await stripePromise;
+            const { error } = await stripe.redirectToCheckout({
+              sessionId: res.data.id,
+            });
+            if (error) {
+              console.error(error);
+            }
+            setProcessing(false);
+          }
+        });
+    }
+  }
   return (
     <StyledIndex>
       <Header />
       <Main>
-        <Checkout active={true} product={checkout} />
+        {Object.keys(checkout).length &&
+          <Checkout
+            processing={processing}
+            onProcessToPayment={onProcessToPayment} />}
         {productRegions.length && products.length ? (
           <Section>
             {!currentProductRegion && (
@@ -128,7 +142,7 @@ export default function IndexDOM() {
             )}
             <SectionContent>
               {showProductRegions ? (
-                <Regions>
+                <Regions columns={productRegions.length}>
                   {productRegions
                     .filter((productRegion) => {
                       const filteredProducts = products.filter(
@@ -413,7 +427,7 @@ const Regions = styled.div`
   }
 
   @media screen and (min-width: 1024px) {
-    grid-template-columns: repeat(3, max-content);
+    grid-template-columns: ${props => `repeat(${props.columns}, max-content)`};
   }
 `;
 

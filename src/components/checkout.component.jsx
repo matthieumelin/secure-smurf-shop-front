@@ -1,14 +1,60 @@
 import React from 'react'
+import { useDispatch, useSelector } from 'react-redux';
+import { setCheckout } from '../redux/reducers/checkout.reducer';
 
 import styled from 'styled-components'
-import Colors from '../utils/colors.util';
 
-export default function Checkout({ active, product }) {
+import Colors from '../utils/colors.util';
+import { kFormatter } from '../utils/number.util';
+
+export default function Checkout({ processing, onProcessToPayment }) {
+    // Redux
+    const checkout = useSelector((state) => state.checkout.data);
+    const dispatch = useDispatch();
+
+    const onRemoveQuantity = () => {
+        const newCheckout = { ...checkout }
+
+        if (newCheckout.quantity > 1) {
+            newCheckout.quantity -= 1;
+            newCheckout.price = newCheckout.unitPrice * newCheckout.quantity;
+        }
+
+        updateCheckout(newCheckout);
+    };
+
+    const onAddQuantity = () => {
+        const newCheckout = { ...checkout }
+
+        if (newCheckout.quantity < 10) {
+            if (newCheckout.quantity >= newCheckout.stock) return;
+
+            newCheckout.quantity += 1;
+            newCheckout.price = newCheckout.unitPrice * newCheckout.quantity;
+        }
+
+        updateCheckout(newCheckout);
+    };
+
+    const updateCheckout = (newCheckout) => {
+        dispatch(setCheckout(newCheckout));
+
+        sessionStorage.setItem("checkout", JSON.stringify(newCheckout));
+    };
+
+    const onClose = () => {
+        document.body.style.overflow = "initial";
+
+        sessionStorage.removeItem("checkout");
+
+        dispatch(setCheckout({}));
+    }
+
     return (
         <StyledCheckout>
-            <CheckoutForm>
+            <CheckoutForm onSubmit={(event) => event.preventDefault()}>
                 <CheckoutFormWrapper>
-                    <CheckoutFormWrapperClose>
+                    <CheckoutFormWrapperClose onClick={onClose}>
                         <CheckoutFormWrapperCloseIcon src={`${process.env.PUBLIC_URL}/assets/icons/close.svg`} alt="Close" />
                     </CheckoutFormWrapperClose>
                     <CheckoutFormTitle>Checkout</CheckoutFormTitle>
@@ -16,24 +62,41 @@ export default function Checkout({ active, product }) {
                 <CheckoutFormInfos>
                     <CheckoutFormInfosRow>
                         <CheckoutFormInfosRowTitle>Blue Essence</CheckoutFormInfosRowTitle>
-                        <CheckoutFormInfosRowValue>40,000+</CheckoutFormInfosRowValue>
+                        <CheckoutFormInfosRowValue>{kFormatter(checkout.blueEssence)}+</CheckoutFormInfosRowValue>
                     </CheckoutFormInfosRow>
                     <CheckoutFormInfosRow>
                         <CheckoutFormInfosRowTitle>Region</CheckoutFormInfosRowTitle>
-                        <CheckoutFormInfosRowValue>TR</CheckoutFormInfosRowValue>
+                        <CheckoutFormInfosRowValue>{checkout.region}</CheckoutFormInfosRowValue>
                     </CheckoutFormInfosRow>
                     <CheckoutFormInfosRow>
                         <CheckoutFormInfosRowTitle>Warranty</CheckoutFormInfosRowTitle>
-                        <CheckoutFormInfosRowValue>Life-time Warranty</CheckoutFormInfosRowValue>
+                        <CheckoutFormInfosRowValue>Life-time</CheckoutFormInfosRowValue>
+                    </CheckoutFormInfosRow>
+                    <CheckoutFormInfosRow>
+                        <CheckoutFormInfosRowTitle>Quantity</CheckoutFormInfosRowTitle>
+                        <CheckoutFormInfosRowValue>
+                            <CheckoutFormInfosRowValueQuantity>
+                                <CheckoutFormInfosRowValueQuantityButton type='button' onClick={() => onRemoveQuantity()}>-</CheckoutFormInfosRowValueQuantityButton>
+                                <CheckoutFormInfosRowValueQuantityInput type={"number"} disabled value={checkout.quantity} />
+                                <CheckoutFormInfosRowValueQuantityButton type='button' onClick={() => onAddQuantity()}>+</CheckoutFormInfosRowValueQuantityButton>
+                            </CheckoutFormInfosRowValueQuantity>
+                        </CheckoutFormInfosRowValue>
                     </CheckoutFormInfosRow>
                     <CheckoutFormInfosRow>
                         <CheckoutFormInfosRowTitle>Price</CheckoutFormInfosRowTitle>
-                        <CheckoutFormInfosRowValue>$10.00</CheckoutFormInfosRowValue>
+                        <CheckoutFormInfosRowValue>€{checkout.price}</CheckoutFormInfosRowValue>
                     </CheckoutFormInfosRow>
                 </CheckoutFormInfos>
-                <CheckoutFormButton type="button">
-                    <CheckoutFormButtonIcon src={`${process.env.PUBLIC_URL}/assets/icons/cart_add.svg`} alt="Icon" />
-                    Pay with Credit Card for $10.00</CheckoutFormButton>
+                <CheckoutFormButton type="button" onClick={() => onProcessToPayment("card")} disabled={processing}>
+                    {processing ? (
+                        "Processing.."
+                    ) : (
+                        <>
+                            <CheckoutFormButtonIcon src={`${process.env.PUBLIC_URL}/assets/icons/cart_add.svg`} alt="Icon" />
+                            Pay with Credit Card for €{checkout.price}
+                        </>
+                    )}
+                </CheckoutFormButton>
             </CheckoutForm>
         </StyledCheckout>
     )
@@ -69,10 +132,17 @@ display: flex;
 align-items: center;
 `;
 const CheckoutFormWrapperClose = styled.button`
-background-color: ${Colors.lightGray};
+background-color: ${Colors.gray};
 border-radius: 100px;
 border: 1px solid rgba(255,255,255,.1);
 padding: 5px;
+cursor: pointer;
+transition: 0.2s;
+
+&:hover {
+    transition: 0.2s;
+    background-color: ${Colors.lightGray};
+}
 `;
 const CheckoutFormWrapperCloseIcon = styled.img`
 display: block;
@@ -102,13 +172,37 @@ padding: 10px;
     border-bottom: none;
 }
 `;
-const CheckoutFormInfosRowTitle = styled.p`
+const CheckoutFormInfosRowTitle = styled.div`
 margin: 0;
 color: white;
 `;
-const CheckoutFormInfosRowValue = styled.p`
+const CheckoutFormInfosRowValue = styled.div`
 margin: 0;
 color: rgba(255,255,255,.7);
+`;
+const CheckoutFormInfosRowValueQuantity = styled.div`
+display: flex;
+border: 1px solid white;
+border-radius: 2px;
+`;
+const CheckoutFormInfosRowValueQuantityInput = styled.input`
+background-color: transparent;
+color: white;
+border-top: none;
+border-bottom: none;
+border-left: 1px solid white;
+border-right: 1px solid white;
+text-align:center;
+width: 40px;
+`;
+const CheckoutFormInfosRowValueQuantityButton = styled.button`
+font-family: inherit;
+font-size: inherit;
+color: white;
+background-color: transparent;
+border: none;
+width: 22px;
+cursor: pointer;
 `;
 const CheckoutFormButton = styled.button`
 width: 100%;
@@ -123,6 +217,26 @@ display: flex;
 align-items: center;
 justify-content: center;
 margin-top: 30px;
+transition: 0.2s;
+cursor: pointer;
+
+${(props) => {
+        if (props.disabled) {
+            return `
+    background-color: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.7);
+    `;
+        } else {
+            return `
+            &:hover {
+                transition: 0.2s;
+                -moz-box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.07);
+                -webkit-box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.07);
+                box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.07);
+              }
+            `;
+        }
+    }}
 `;
 const CheckoutFormButtonIcon = styled.img`
 display: block;

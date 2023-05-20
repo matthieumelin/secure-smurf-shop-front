@@ -3,6 +3,8 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+import socketIO from "socket.io-client";
+
 import Loading from "./components/loading.component";
 
 import Index from "./pages/index.page";
@@ -34,10 +36,12 @@ import AuthVerify from "./user/auth-verify.user";
 
 import AppRoutes from "./router/app.routes";
 
+const socket = socketIO.connect(process.env.REACT_APP_API_BASE_URL);
+
 export default function App() {
+  // States
   const [appIsLoading, setAppIsLoading] = useState(true);
 
-  // Client area props
   const [sidebarIsOpen, setSidebarIsOpen] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
 

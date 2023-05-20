@@ -9,19 +9,25 @@ import ProductCategoryCard from "../../components/client-area/cards/product-cate
 import Header from "../../components/client-area/header.component";
 import Navbar from "../../components/client-area/navbar.component";
 import Modal from "../../components/utils/modal.component";
-
-import Colors from "../../utils/colors.util";
+import TableOrders from "../../components/client-area/table-orders.component";
 
 import AppRoutes from "../../router/app.routes";
 import axios from "axios";
 import { API_ENDPOINTS } from "../../api/api";
 
-export default function ClientAreaIndex({ sidebarIsOpen, showLogoutModal, setSidebarIsOpen, setShowLogoutModal }) {
-  const [orders, setOrders] = useState([]);
+import Colors from "../../utils/colors.util";
+import OrderAccountModal from "../../components/client-area/order-account-modal-component";
 
+export default function ClientAreaIndex({ sidebarIsOpen, showLogoutModal, setSidebarIsOpen, setShowLogoutModal }) {
+  // Redux
   const token = useSelector((state) => state.user.token);
   const userData = useSelector((state) => state.user.data);
 
+  // States
+  const [orders, setOrders] = useState([]);
+  const [selectedAccount, setSelectedAccount] = useState({});
+
+  // Router
   const navigate = useNavigate();
 
   const userId = userData && userData.id;
@@ -34,7 +40,12 @@ export default function ClientAreaIndex({ sidebarIsOpen, showLogoutModal, setSid
             Authorization: `Bearer ${token}`,
           },
         })
-        .then((res) => { if (res.status === 200) setOrders(res.data) })
+        .then(async (res) => {
+          if (res.status === 200) {
+            console.log(res.data)
+            setOrders(res.data);
+          }
+        })
         .catch((err) => { if (err) console.error(err.response.data.message) });
     };
 
@@ -43,14 +54,43 @@ export default function ClientAreaIndex({ sidebarIsOpen, showLogoutModal, setSid
 
   const onConfirmLogout = () => {
     document.body.style.overflow = "initial";
+
     navigate(AppRoutes.Logout);
+
     setShowLogoutModal(false);
   }
 
   const onCancelLogout = () => {
     document.body.style.overflow = "initial";
+
     setShowLogoutModal(false);
   }
+
+  const onView = (productItem) => {
+    document.body.style.overflow = "hidden";
+
+    setSelectedAccount(productItem);
+  }
+
+  const onCloseView = () => {
+    document.body.style.overflow = "initial";
+
+    setSelectedAccount({});
+  }
+
+  // const modifiedOrders = orders.reduce((acc, order) => {
+  //   const { name } = order.product;
+  //   const existingOrder = acc.find((o) => o.product.name === name && moment(o.createdAt).isSame(moment(order.createdAt), 'day'));
+
+  //   if (existingOrder) {
+  //     existingOrder.count++;
+  //     existingOrder.productItems.push(order.productItem);
+  //   } else {
+  //     acc.push({ ...order, count: 1, productItems: [order.productItem] });
+  //   }
+
+  //   return acc;
+  // }, []);
 
   if (!token) {
     return <Navigate to={AppRoutes.Login} />;
@@ -80,6 +120,11 @@ export default function ClientAreaIndex({ sidebarIsOpen, showLogoutModal, setSid
               buttonCancelTitle={"Cancel"}
               buttonConfirmTitle={"Logout"}
             />
+            {selectedAccount && Object.keys(selectedAccount).length &&
+              <OrderAccountModal
+                selectedAccount={selectedAccount}
+                onView={onView}
+                onCloseView={onCloseView} />}
             <Container>
               <MainTitle>Welcome</MainTitle>
               <MainUsername>{userData.username}</MainUsername>
@@ -103,27 +148,10 @@ export default function ClientAreaIndex({ sidebarIsOpen, showLogoutModal, setSid
                 </LatestOrdersHeader>
                 {orders && orders.length ? (
                   <LatestOrdersContent>
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead scope="col">ID</TableHead>
-                          <TableHead scope="col">Actions</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {orders.map((order, index) => {
-                          return (
-                            <TableRow key={`order_${index}`}>
-                              <TableData data-label="ID">{order.id}</TableData>
-                              <TableData data-label="Actions">
-                                <TableDataButton>Edit</TableDataButton>
-                                <TableDataButton>Delete</TableDataButton>
-                              </TableData>
-                            </TableRow>
-                          );
-                        })}
-                      </TableBody>
-                    </Table>
+                    <TableOrders
+                      orders={orders}
+                      orderPerPage={5}
+                      onView={onView} />
                   </LatestOrdersContent>
                 ) : (
                   <LatestOrdersContent>
@@ -166,12 +194,14 @@ const MainUsername = styled.h2`
   color: white;
 `;
 const Container = styled.div`
-  @media screen and (min-width: 1024px) {
-    width: 50%;
-  }
 `;
 const ProductCategories = styled.section`
   margin: 30px 0;
+
+  @media screen and (min-width: 1024px) {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+  }
 `;
 
 const LatestOrders = styled.section`
@@ -199,7 +229,7 @@ const LatestOrdersHeaderMore = styled(Link)`
 `;
 const LatestOrdersContent = styled.div`
   background-color: ${Colors.primaryLowOp};
-  padding: 20px;
+  padding: 20px 0;
   margin: 20px 0 0 0;
   border-radius: 10px;
 `;
@@ -209,97 +239,4 @@ const LatestOrdersMessage = styled.p`
 `;
 const LatestOrdersLink = styled(Link)`
   color: ${Colors.primary};
-`;
-
-const Table = styled.table`
-  border: 1px solid #ccc;
-  border-collapse: collapse;
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  table-layout: fixed;
-
-  @media screen and (max-width: 600px) {
-    border: 0;
-  }
-`;
-const TableHeader = styled.thead`
-  @media screen and (max-width: 600px) {
-    border: none;
-    clip: rect(0 0 0 0);
-    height: 1px;
-    margin: -1px;
-    overflow: hidden;
-    padding: 0;
-    position: absolute;
-    width: 1px;
-  }
-`;
-const TableRow = styled.tr`
-  background-color: transparent;
-  border: 1px solid ${Colors.primary};
-  padding: 0.35em;
-
-  @media screen and (max-width: 600px) {
-    display: block;
-    margin-bottom: 0.625em;
-  }
-`;
-const TableHead = styled.th`
-  padding: 0.625em;
-  text-align: center;
-  font-size: 0.85em;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: white;
-`;
-const TableBody = styled.tbody``;
-const TableData = styled.td`
-  padding: 0.625em;
-  text-align: center;
-  color: white;
-
-  @media screen and (max-width: 600px) {
-    border-bottom: 1px solid ${Colors.primary};
-    display: block;
-    font-size: 0.8em;
-    text-align: right;
-
-    &::before {
-      content: attr(data-label);
-      float: left;
-      font-weight: bold;
-      text-transform: uppercase;
-    }
-
-    &:last-child {
-      border-bottom: 0;
-    }
-  }
-`;
-const TableDataButton = styled.button`
-  padding: 0.7rem;
-  background-image: linear-gradient(
-    147.16deg,
-    #5a189a 13.82%,
-    #7b2cbf 35.53%,
-    #9d4edd 76.05%
-  );
-  border: none;
-  border-radius: 100px;
-  box-shadow: 0px 4px 34px rgb(157 78 221 / 40%);
-  margin: 0 0 0 10px;
-  color: white;
-  font-family: inherit;
-  cursor: pointer;
-  width: 80px;
-  &:last-child {
-    background-image: linear-gradient(
-      147.16deg,
-      #d62828 13.82%,
-      #a81d1d 35.53%,
-      #8d1a1a 76.05%
-    );
-    box-shadow: 0px 4px 34px rgb(214 40 40 / 40%);
-  }
 `;

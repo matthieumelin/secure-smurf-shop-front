@@ -26,15 +26,17 @@ import axios from "axios";
 import { API_ENDPOINTS } from "../../api/api";
 
 export default function Profile({ toast, sidebarIsOpen, showLogoutModal, setSidebarIsOpen, setShowLogoutModal }) {
+  // Redux
   const token = useSelector((state) => state.user.token);
   const userData = useSelector((state) => state.user.data);
+  const dispatch = useDispatch();
 
+  // States
   const [countries, setCountries] = useState([]);
   const [editPersonalDetails, setEditPersonalDetails] = useState(false);
   const [showDisableModal, setShowDisableModal] = useState(false);
 
-  const dispatch = useDispatch();
-
+  // Router
   const navigate = useNavigate();
 
   const {
@@ -50,6 +52,7 @@ export default function Profile({ toast, sidebarIsOpen, showLogoutModal, setSide
           lastName: userData.lastName,
           discord: userData.discord,
           country: userData.country,
+          notifications: userData.notifications
         },
       }
       : null

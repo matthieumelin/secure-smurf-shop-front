@@ -36,7 +36,7 @@ export default function Login({ toast }) {
   // States
   const [captchaResponse, setCaptchaResponse] = useState(null);
   const [formType, setFormType] = useState(FormTypes.LOGIN);
-  
+
   const recaptchaRef = useRef();
 
   const {
@@ -72,7 +72,7 @@ export default function Login({ toast }) {
 
   const onChangeFormType = (event, type) => {
     event.preventDefault();
-    
+
     setFormType(type);
   };
 
@@ -529,12 +529,13 @@ const FormWrapperClose = styled(Link)`
   text-decoration: none;
   border-radius: 100px;
   border: 1px solid rgba(255, 255, 255, 0.7);
-  padding: 10px;
+  padding: 0.5rem;
 `;
 const FormWrapperCloseIcon = styled.img`
   display: block;
-  width: 18px;
-  height: 18px;
+  width: 22px;
+  height: 22px;
+  filter: invert(100%) sepia(100%) saturate(38%) hue-rotate(321deg) brightness(110%) contrast(110%);
 `;
 const FormText = styled.p`
   color: rgba(255, 255, 255, 0.7);
