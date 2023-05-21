@@ -235,7 +235,7 @@ const LatestOrdersContent = styled.div`
 `;
 const LatestOrdersMessage = styled.p`
   color: white;
-  margin: 0;
+  margin: 0 0 0 20px;
 `;
 const LatestOrdersLink = styled(Link)`
   color: ${Colors.primary};

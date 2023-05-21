@@ -133,13 +133,21 @@ export default function IndexDOM() {
           <Checkout
             processing={processing}
             onProcessToPayment={onProcessToPayment} />}
-        {productRegions.length && products.length ? (
+        {productRegions.length &&
+          products.length ? (
           <Section>
-            {!currentProductRegion && (
-              <SectionHeader>
-                <SectionHeaderTitle>Choose Your Region</SectionHeaderTitle>
-              </SectionHeader>
-            )}
+            {productRegions.filter((productRegion) => {
+              const filteredProducts = products.filter(
+                (product) =>
+                  product.region.toUpperCase() ===
+                  productRegion.shortName.toUpperCase()
+              );
+              return filteredProducts.some((product) => product.available);
+            }) && !currentProductRegion && (
+                <SectionHeader>
+                  <SectionHeaderTitle>Choose Your Region</SectionHeaderTitle>
+                </SectionHeader>
+              )}
             <SectionContent>
               {showProductRegions ? (
                 <Regions columns={productRegions.length}>
@@ -150,7 +158,8 @@ export default function IndexDOM() {
                           product.region.toUpperCase() ===
                           productRegion.shortName.toUpperCase()
                       );
-                      return filteredProducts.length > 0;
+                      return filteredProducts.length > 0 &&
+                        filteredProducts.some((product) => !product.disabled);
                     })
                     .map((productRegion, index) => {
                       return (
@@ -208,6 +217,7 @@ export default function IndexDOM() {
                         {products
                           .filter(
                             (product) =>
+                              !product.disabled &&
                               product.region.toUpperCase() ===
                               currentProductRegion.shortName.toUpperCase()
                           )
