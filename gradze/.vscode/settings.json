@@ -1,0 +1,7 @@
+{
+    "docwriter.style": "JSDoc",
+    "docwriter.progress.trackFunctions": false,
+    "docify.commentService.docstringFormat": "JsDoc",
+    "docify.commentService.programmingLanguage": "javascript",
+    "docify.translateService.programmingLanguage": "javascript"
+}
