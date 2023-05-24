@@ -16,11 +16,14 @@ import axios from "axios";
 import { API_ENDPOINTS } from "../../api/api";
 
 export default function Orders({ sidebarIsOpen, showLogoutModal, setSidebarIsOpen, setShowLogoutModal }) {
-  const [orders, setOrders] = useState([]);
-
+  // Redux
   const token = useSelector((state) => state.user.token);
   const userData = useSelector((state) => state.user.data);
+  
+  // States
+  const [orders, setOrders] = useState([]);
 
+  // Router
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -40,7 +43,9 @@ export default function Orders({ sidebarIsOpen, showLogoutModal, setSidebarIsOpe
 
   const onConfirmLogout = () => {
     document.body.style.overflow = "initial";
+    
     navigate(AppRoutes.Logout);
+
     setShowLogoutModal(false);
   }
 

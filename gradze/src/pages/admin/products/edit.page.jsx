@@ -105,7 +105,6 @@ export default function AdminProductEdit({ toast }) {
     if (!isGranted) {
         return <Navigate to={AppRoutes.Login} />
     }
-
     return (
         <StyledUsers>
             <Helmet>
@@ -183,7 +182,7 @@ export default function AdminProductEdit({ toast }) {
                                                 id="region"
                                                 name="region"
                                                 error={errors.region}
-                                                defaultValue={regions.find((region) => region.shortName.toUpperCase() === currentRegion.toUpperCase())}
+                                                value={currentRegion}
                                                 {...register("region", {
                                                     required: {
                                                         value: true,
@@ -192,7 +191,9 @@ export default function AdminProductEdit({ toast }) {
                                                 })}
                                             >
                                                 {regions.map((region) => {
-                                                    return <FormGroupSelectOption key={`product_region_${region.id}`} value={region.shortName}>{region.shortName}</FormGroupSelectOption>
+                                                    return <FormGroupSelectOption
+                                                        key={`product_region_${region.id}`}
+                                                        value={region.shortName}>{region.shortName}</FormGroupSelectOption>
                                                 })}
                                             </FormGroupSelect> : <FormGroupLink to={AppRoutes.AdminProductRegionAdd}>Create a region for this product.</FormGroupLink>}
                                         {errors.region && (
@@ -259,7 +260,6 @@ export default function AdminProductEdit({ toast }) {
         </StyledUsers>
     )
 }
-
 const StyledUsers = styled.div``;
 const Wrapper = styled.div`
 @media screen and (min-width: 1024px) {

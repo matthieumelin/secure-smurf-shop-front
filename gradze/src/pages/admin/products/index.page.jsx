@@ -51,10 +51,11 @@ export default function AdminProducts({ toast }) {
 
     useEffect(() => {
         const fetchProducts = async () => {
-            await axios.get(API_ENDPOINTS.PRODUCTS).then((res) => { if (res.status === 200) {
-                setProducts(res.data);
-                console.log(res.data)
-            } })
+            await axios.get(API_ENDPOINTS.PRODUCTS).then((res) => {
+                if (res.status === 200) {
+                    setProducts(res.data);
+                }
+            })
         }
 
         if (isGranted) fetchProducts();

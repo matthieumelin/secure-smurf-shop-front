@@ -42,8 +42,9 @@ export default function AuthVerify() {
   useEffect(() => {
     const interceptor = axios.interceptors.response.use((response) => {
       return response;
-    }, function (error) {
+    }, (error) => {
       const statusCode = error.response.status;
+
       if (statusCode === 403 || statusCode === 419) {
         navigate(AppRoutes.Logout);
       }
