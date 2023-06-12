@@ -45,7 +45,7 @@ export default function AuthVerify() {
     }, (error) => {
       const statusCode = error.response.status;
 
-      if (statusCode === 403 || statusCode === 419) {
+      if (statusCode !== undefined && (statusCode === 403 || statusCode === 419)) {
         navigate(AppRoutes.Logout);
       }
       return Promise.reject(error);

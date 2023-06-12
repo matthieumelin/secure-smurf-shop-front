@@ -6,49 +6,76 @@ import styled from 'styled-components'
 
 import Colors from '../utils/colors.util';
 import { kFormatter } from '../utils/number.util';
+import { lowerAndCapitalize } from "../utils/string.util"
 
-export default function Checkout({ processing, onProcessToPayment }) {
+export default function Checkout({ processing, onClose, onProcessToPayment }) {
     // Redux
     const checkout = useSelector((state) => state.checkout.data);
     const dispatch = useDispatch();
 
-    const onRemoveQuantity = () => {
-        const newCheckout = { ...checkout }
+    const getTotalPrice = (currentCheckout) => {
+        const products = currentCheckout.products;
 
-        if (newCheckout.quantity > 1) {
-            newCheckout.quantity -= 1;
-            newCheckout.price = newCheckout.unitPrice * newCheckout.quantity;
+        if (!products || !Array.isArray(products) || products.length === 0) {
+            return 0;
         }
 
-        updateCheckout(newCheckout);
-    };
+        const prices = products.map((product) => product.unitPrice * product.quantity)
+        const total = prices.reduce((acc, curr) => acc + curr);
 
-    const onAddQuantity = () => {
-        const newCheckout = { ...checkout }
+        return total.toFixed(2);
+    }
 
-        if (newCheckout.quantity < 10) {
-            if (newCheckout.quantity >= newCheckout.stock) return;
+    const onRemoveQuantity = (product) => {
+        const clonedCheckout = { ...checkout };
+        const clonedProduct = { ...product };
 
-            newCheckout.quantity += 1;
-            newCheckout.price = newCheckout.unitPrice * newCheckout.quantity;
+        if (clonedProduct.quantity > 0) {
+            clonedProduct.quantity = Math.max(clonedProduct.quantity - 1, 1);
+            clonedCheckout.totalPrice = getTotalPrice(clonedCheckout);
         }
 
-        updateCheckout(newCheckout);
+        const updatedProducts = clonedCheckout.products.map(item => (item.id === clonedProduct.id ? clonedProduct : item));
+        clonedCheckout.products = updatedProducts;
+
+        updateCheckout(clonedCheckout);
     };
+
+    const onAddQuantity = (product) => {
+        const clonedCheckout = { ...checkout };
+        const clonedProduct = { ...product };
+
+        if (clonedProduct.stock === 10 && clonedProduct.quantity === 10) return;
+        if (clonedProduct.quantity < clonedProduct.stock) {
+            clonedProduct.quantity = Math.min(clonedProduct.quantity + 1, clonedProduct.stock);
+            clonedCheckout.totalPrice = getTotalPrice(clonedCheckout);
+        }
+
+        const updatedProducts = clonedCheckout.products.map(item => (item.id === clonedProduct.id ? clonedProduct : item));
+        clonedCheckout.products = updatedProducts;
+
+        updateCheckout(clonedCheckout);
+    };
+
+    const onDeleteProduct = (product) => {
+        const filteredProducts = checkout.products.filter((item) => item.id !== product.id);
+
+        const clonedCheckout = { ...checkout, products: filteredProducts };
+
+        dispatch(setCheckout(clonedCheckout));
+
+        sessionStorage.setItem("checkout", JSON.stringify(clonedCheckout));
+
+        if (!filteredProducts.length) {
+            onClose();
+        }
+    };
+
 
     const updateCheckout = (newCheckout) => {
         dispatch(setCheckout(newCheckout));
-
         sessionStorage.setItem("checkout", JSON.stringify(newCheckout));
     };
-
-    const onClose = () => {
-        document.body.style.overflow = "initial";
-
-        sessionStorage.removeItem("checkout");
-
-        dispatch(setCheckout({}));
-    }
 
     return (
         <StyledCheckout>
@@ -59,41 +86,49 @@ export default function Checkout({ processing, onProcessToPayment }) {
                     </CheckoutFormWrapperClose>
                     <CheckoutFormTitle>Checkout</CheckoutFormTitle>
                 </CheckoutFormWrapper>
-                <CheckoutFormInfos>
-                    <CheckoutFormInfosRow>
-                        <CheckoutFormInfosRowTitle>Blue Essence</CheckoutFormInfosRowTitle>
-                        <CheckoutFormInfosRowValue>{kFormatter(checkout.blueEssence)}+</CheckoutFormInfosRowValue>
-                    </CheckoutFormInfosRow>
-                    <CheckoutFormInfosRow>
-                        <CheckoutFormInfosRowTitle>Region</CheckoutFormInfosRowTitle>
-                        <CheckoutFormInfosRowValue>{checkout.region}</CheckoutFormInfosRowValue>
-                    </CheckoutFormInfosRow>
-                    <CheckoutFormInfosRow>
-                        <CheckoutFormInfosRowTitle>Warranty</CheckoutFormInfosRowTitle>
-                        <CheckoutFormInfosRowValue>Life-time</CheckoutFormInfosRowValue>
-                    </CheckoutFormInfosRow>
-                    <CheckoutFormInfosRow>
-                        <CheckoutFormInfosRowTitle>Quantity</CheckoutFormInfosRowTitle>
-                        <CheckoutFormInfosRowValue>
-                            <CheckoutFormInfosRowValueQuantity>
-                                <CheckoutFormInfosRowValueQuantityButton type='button' onClick={() => onRemoveQuantity()}>-</CheckoutFormInfosRowValueQuantityButton>
-                                <CheckoutFormInfosRowValueQuantityInput type={"number"} disabled value={checkout.quantity} />
-                                <CheckoutFormInfosRowValueQuantityButton type='button' onClick={() => onAddQuantity()}>+</CheckoutFormInfosRowValueQuantityButton>
-                            </CheckoutFormInfosRowValueQuantity>
-                        </CheckoutFormInfosRowValue>
-                    </CheckoutFormInfosRow>
-                    <CheckoutFormInfosRow>
-                        <CheckoutFormInfosRowTitle>Price</CheckoutFormInfosRowTitle>
-                        <CheckoutFormInfosRowValue>€{checkout.price}</CheckoutFormInfosRowValue>
-                    </CheckoutFormInfosRow>
-                </CheckoutFormInfos>
-                <CheckoutFormButton type="button" onClick={() => onProcessToPayment("card")} disabled={processing}>
+                {checkout.products && checkout.products.length ?
+                    checkout.products.map((product) => {
+                        return <CheckoutFormProducts key={`checkout_product_${product.id}`}>
+                            <CheckoutFormProductsTitle>{lowerAndCapitalize(product.name)}</CheckoutFormProductsTitle>
+                            <CheckoutFormProductsRows>
+                                <CheckoutFormProductsRow>
+                                    <CheckoutFormProductsRowTitle>Blue Essence</CheckoutFormProductsRowTitle>
+                                    <CheckoutFormProductsRowValue>{kFormatter(product.blueEssence)}+</CheckoutFormProductsRowValue>
+                                </CheckoutFormProductsRow>
+                                <CheckoutFormProductsRow>
+                                    <CheckoutFormProductsRowTitle>Region</CheckoutFormProductsRowTitle>
+                                    <CheckoutFormProductsRowValue>{product.region}</CheckoutFormProductsRowValue>
+                                </CheckoutFormProductsRow>
+                                <CheckoutFormProductsRow>
+                                    <CheckoutFormProductsRowTitle>Warranty</CheckoutFormProductsRowTitle>
+                                    <CheckoutFormProductsRowValue>Life-time</CheckoutFormProductsRowValue>
+                                </CheckoutFormProductsRow>
+                                <CheckoutFormProductsRow>
+                                    <CheckoutFormProductsRowTitle>Quantity</CheckoutFormProductsRowTitle>
+                                    <CheckoutFormProductsRowValue>
+                                        <CheckoutFormProductsRowValueQuantity>
+                                            <CheckoutFormProductsRowValueQuantityButton type='button' onClick={() => onRemoveQuantity(product)}>-</CheckoutFormProductsRowValueQuantityButton>
+                                            <CheckoutFormProductsRowValueQuantityInput type={"number"} disabled value={product.quantity} />
+                                            <CheckoutFormProductsRowValueQuantityButton type='button' onClick={() => onAddQuantity(product)}>+</CheckoutFormProductsRowValueQuantityButton>
+                                        </CheckoutFormProductsRowValueQuantity>
+                                    </CheckoutFormProductsRowValue>
+                                </CheckoutFormProductsRow>
+                            </CheckoutFormProductsRows>
+                            <CheckoutFormProductsActions>
+                                <CheckoutFormProductsActionButton type="button" onClick={() => onDeleteProduct(product)}>
+                                    <CheckoutFormProductsActionButtonIcon src={`${process.env.PUBLIC_URL}/assets/icons/trash.svg`} alt="Delete" />
+                                </CheckoutFormProductsActionButton>
+                            </CheckoutFormProductsActions>
+                        </CheckoutFormProducts>
+                    }) : null
+                }
+                <CheckoutFormButton type="button" onClick={() => onProcessToPayment("card")}>
                     {processing ? (
                         "Processing.."
                     ) : (
                         <>
                             <CheckoutFormButtonIcon src={`${process.env.PUBLIC_URL}/assets/icons/cart_add.svg`} alt="Icon" />
-                            Pay with Credit Card for €{checkout.price}
+                            Pay with Credit Card for €{getTotalPrice(checkout)}
                         </>
                     )}
                 </CheckoutFormButton>
@@ -124,7 +159,7 @@ top: 50%;
 left: 50%;
 transform: translate(-50%, -50%);
 width: 100%;
-max-width: 425px;
+max-width: 1024px;
 padding: 30px;
 `;
 const CheckoutFormWrapper = styled.div`
@@ -155,37 +190,64 @@ color: white;
 font-weight: 700;
 margin: 0 0 0 20px;
 `;
-const CheckoutFormInfos = styled.div`
+const CheckoutFormProducts = styled.div`
 background-color: ${Colors.gray};
 border: 1px solid rgba(255,255,255,.1);
 border-radius: 20px;
 padding: 10px 20px;
 margin: 20px 0;
+
+@media screen and (min-width: 1024px) {
+    display: flex;
+align-items: center;
+justify-content: space-between;
+}
 `;
-const CheckoutFormInfosRow = styled.div`
+const CheckoutFormProductsTitle = styled.h3`
+color: white;
+margin: 0;
+width: 75px;
+`;
+const CheckoutFormProductsRows = styled.div`
+@media screen and (min-width: 1024px) {
+    display: flex;
+}
+`;
+const CheckoutFormProductsRow = styled.div`
 display: flex;
 justify-content: space-between;
+padding: 10px 0;
 border-bottom: 1px solid rgba(255,255,255,.1);
-padding: 10px;
+
+@media screen and (min-width: 1024px) {
+    border-right: 1px solid rgba(255,255,255,.1);
+    border-bottom: none;
+    padding: 10px;
+
+    &:last-child {
+        border-right: none;
+    }
+}
 
 &:last-child {
     border-bottom: none;
 }
 `;
-const CheckoutFormInfosRowTitle = styled.div`
-margin: 0;
+const CheckoutFormProductsRowTitle = styled.div`
+margin: 0 10px 0 0;
 color: white;
 `;
-const CheckoutFormInfosRowValue = styled.div`
+const CheckoutFormProductsRowValue = styled.div`
 margin: 0;
-color: rgba(255,255,255,.7);
+color: ${Colors.primary};
+font-weight: 500;
 `;
-const CheckoutFormInfosRowValueQuantity = styled.div`
+const CheckoutFormProductsRowValueQuantity = styled.div`
 display: flex;
 border: 1px solid white;
 border-radius: 2px;
 `;
-const CheckoutFormInfosRowValueQuantityInput = styled.input`
+const CheckoutFormProductsRowValueQuantityInput = styled.input`
 background-color: transparent;
 color: white;
 border-top: none;
@@ -195,7 +257,7 @@ border-right: 1px solid white;
 text-align:center;
 width: 40px;
 `;
-const CheckoutFormInfosRowValueQuantityButton = styled.button`
+const CheckoutFormProductsRowValueQuantityButton = styled.button`
 font-family: inherit;
 font-size: inherit;
 color: white;
@@ -203,6 +265,23 @@ background-color: transparent;
 border: none;
 width: 22px;
 cursor: pointer;
+`;
+const CheckoutFormProductsActions = styled.div``;
+const CheckoutFormProductsActionButton = styled.button`
+border-radius: 10px;
+display: flex;
+justify-content: center;
+align-items: center;
+background-color: ${Colors.red};
+border: none;
+width: 28px;
+height: 28px;
+cursor: pointer;
+`;
+const CheckoutFormProductsActionButtonIcon = styled.img`
+width: 18px;
+height: 18px;
+display: block;
 `;
 const CheckoutFormButton = styled.button`
 width: 100%;

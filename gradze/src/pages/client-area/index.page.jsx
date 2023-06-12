@@ -119,11 +119,11 @@ export default function ClientAreaIndex({ sidebarIsOpen, showLogoutModal, setSid
               buttonCancelTitle={"Cancel"}
               buttonConfirmTitle={"Logout"}
             />
-            {selectedAccount && Object.keys(selectedAccount).length &&
+            {Object.keys(selectedAccount).length ?
               <OrderAccountModal
                 selectedAccount={selectedAccount}
                 onView={onView}
-                onCloseView={onCloseView} />}
+                onCloseView={onCloseView} /> : null}
             <Container>
               <MainTitle>Welcome</MainTitle>
               <MainUsername>{userData.username}</MainUsername>

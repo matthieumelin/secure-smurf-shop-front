@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from "react";
 import gsap from "gsap";
 import chroma from "chroma-js";
 
-export default function Button({ type, title, onClick, disabled }) {
+export default function Button({ type, title, onClick, width = "130px", disabled }) {
   const buttonRef = useRef(null);
 
   useEffect(() => {
@@ -49,7 +49,7 @@ export default function Button({ type, title, onClick, disabled }) {
       onClick={onClick}
       disabled={disabled}
     >
-      <span>{title}</span>
+      <span style={{ width: width }}>{title}</span>
     </button>
   );
 }

@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const checkoutSlice = createSlice({
   name: "checkout",
   initialState: {
-    data: JSON.parse(sessionStorage.getItem("checkout")) || {},
+    data: JSON.parse(sessionStorage.getItem("checkout")) || { products: [] },
   },
   reducers: {
     setCheckout: (state, action) => {

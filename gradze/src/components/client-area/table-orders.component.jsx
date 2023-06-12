@@ -6,41 +6,48 @@ import moment from 'moment/moment';
 
 import Colors from '../../utils/colors.util';
 
-export default function TableOrders({ orders, orderPerPage = 5, onView }) {
+export default function TableOrders({ orders, orderPerPage = 2, onView }) {
   const sortedOrders = orders.sort((a, b) => b.createdAt - a.createdAt);
   const slicedOrders = sortedOrders.slice(0, orderPerPage);
-
   return (
     <StyledTable>
       <TableHeader>
         <TableRow>
           <TableHead scope="col">ID</TableHead>
-          <TableHead scope="col">Item</TableHead>
+          <TableHead scope="col">Items</TableHead>
           <TableHead scope="col">Status</TableHead>
           <TableHead scope="col">Date</TableHead>
           <TableHead scope="col">Account</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
-        {slicedOrders && slicedOrders.map((order, index) => {
-          const orderCount = order.count;
-          const orderProductName = order.product.name;
+        {slicedOrders &&
+          slicedOrders.map((order, index) => {
+            const firstProduct = order.products[0];
 
-          return <TableRow key={`order_${index}`}>
-            <TableData data-label="ID">{order.id}</TableData>
-            <TableData data-label="Item">
-              <TableDataWrapper>
-                <TableDataWrapperIcon src={`${process.env.PUBLIC_URL}/assets/icons/lol.png`} alt="Account" />
-                <TableDataWrapperValue>{orderCount > 1 ? `${orderProductName} x${orderCount}` : orderProductName}</TableDataWrapperValue>
-              </TableDataWrapper>
-            </TableData>
-            <TableData data-label="Status">{order.status}</TableData>
-            <TableData data-label="Date">{moment(order.createdAt).format("L")}</TableData>
-            <TableData data-label="Account">
-              <TableDataButton type="button" onClick={() => onView(order.productItem)}>View</TableDataButton>
-            </TableData>
-          </TableRow>
-        })}
+            return (
+              <React.Fragment key={`order_${index}`}>
+                <TableRow>
+                  <TableData data-label="ID">{order.id}</TableData>
+                  <TableData data-label="Item">
+                    <TableDataWrapper>
+                      <TableDataWrapperIcon src={`${process.env.PUBLIC_URL}/assets/icons/lol.png`} alt="Account" />
+                      <TableDataWrapperValue>
+                        {firstProduct.name}
+                      </TableDataWrapperValue>
+                    </TableDataWrapper>
+                  </TableData>
+                  <TableData data-label="Status">{order.status}</TableData>
+                  <TableData data-label="Date">{moment(order.createdAt).format("L")}</TableData>
+                  <TableData data-label="Account">
+                    <TableDataButton type="button" onClick={() => onView(order.productItems[0])}>
+                      View
+                    </TableDataButton>
+                  </TableData>
+                </TableRow>
+              </React.Fragment>
+            );
+          })}
       </TableBody>
     </StyledTable>
   )

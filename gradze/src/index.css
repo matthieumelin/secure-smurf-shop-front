@@ -87,7 +87,7 @@ code {
   --button-glow-opacity: 1;
   --button-glow-duration: 0.25s;
 }
-span {
+.glow-button span {
   z-index: 1;
   position: relative;
   display: block;
@@ -98,7 +98,7 @@ span {
   overflow: hidden;
   -webkit-mask-image: -webkit-radial-gradient(white, black);
 }
-span:before {
+.glow-button span:before {
   content: "";
   position: absolute;
   left: -16px;

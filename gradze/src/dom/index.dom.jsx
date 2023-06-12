@@ -2,9 +2,8 @@ import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { setCheckout } from "../redux/reducers/checkout.reducer";
-import { loadStripe } from "@stripe/stripe-js";
 
-import styled from "styled-components";
+import styled, { keyframes, css } from "styled-components";
 
 import Header from "../components/header.component";
 import Footer from "../components/footer.component";
@@ -23,9 +22,7 @@ import { API_ENDPOINTS } from "../api/api";
 import AppRoutes from "../router/app.routes";
 import Checkout from "../components/checkout.component";
 
-const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_KEY);
-
-export default function IndexDOM() {
+export default function IndexDom({ showCheckoutModal, setShowCheckoutModal }) {
   // Redux
   const token = useSelector((state) => state.user.token);
   const userData = useSelector((state) => state.user.data);
@@ -51,6 +48,9 @@ export default function IndexDOM() {
 
   const [processing, setProcessing] = useState(false);
 
+  // States animations
+  const [fade, setFade] = useState(false);
+
   // Refs
   const productRegionsRef = useRef(productRegions);
 
@@ -74,14 +74,15 @@ export default function IndexDOM() {
       setCurrentProductRegion(productRegionsRef.current[0]);
       setCurrentExperience(res.data.experience[0]);
     });
-
     fetchData();
   }, []);
 
   const onSelectProductRegion = (region) => {
-    setCurrentProductRegion(region);
     setShowProductRegions(false);
+    setCurrentProductRegion(region);
+    setFade(true);
   };
+
 
   const onProcessToCheckout = (product) => {
     if (!token) {
@@ -91,15 +92,37 @@ export default function IndexDOM() {
 
     document.body.style.overflow = "hidden";
 
-    const newProduct = { ...product };
+    const newProduct = {
+      userId: userData.id,
+      quantity: 1,
+      stock: product.stock,
+      id: product.id,
+      name: product.name,
+      unitPrice: product.price,
+      blueEssence: product.blueEssence,
+      region: product.region
+    };
 
-    newProduct.quantity = 1;
-    newProduct.unitPrice = product.price;
+    if (!showCheckoutModal) setShowCheckoutModal(true);
 
-    sessionStorage.setItem("checkout", JSON.stringify(newProduct));
+    const products = checkout?.products || [];
 
-    dispatch(setCheckout(newProduct));
+    const isDuplicateProduct = products.some(item => item.id === product.id);
+
+    if (isDuplicateProduct) return;
+
+    const clonedCheckout = { ...checkout, products: [...products, newProduct] };
+
+    dispatch(setCheckout(clonedCheckout));
+
+    sessionStorage.setItem("checkout", JSON.stringify(clonedCheckout));
   };
+
+  const onClose = () => {
+    document.body.style.overflow = "initial";
+
+    setShowCheckoutModal(false);
+  }
 
   const onProcessToPayment = async (type) => {
     setProcessing(true);
@@ -108,18 +131,14 @@ export default function IndexDOM() {
       await axios
         .post(API_ENDPOINTS.STRIPE_CREATE_CHECKOUT_SESSION, {
           userId: userData.id,
-          productId: checkout.id,
-          quantity: checkout.quantity
+          products: checkout.products,
         })
-        .then(async (res) => {
+        .then((res) => {
           if (res.status === 200) {
-            const stripe = await stripePromise;
-            const { error } = await stripe.redirectToCheckout({
-              sessionId: res.data.id,
-            });
-            if (error) {
-              console.error(error);
-            }
+            const url = res.data.url;
+
+            if (url) window.location.assign(url);
+
             setProcessing(false);
           }
         });
@@ -135,10 +154,11 @@ export default function IndexDOM() {
     <StyledIndex>
       <Header />
       <Main>
-        {Object.keys(checkout).length &&
+        {showCheckoutModal ?
           <Checkout
             processing={processing}
-            onProcessToPayment={onProcessToPayment} />}
+            onClose={onClose}
+            onProcessToPayment={onProcessToPayment} /> : null}
         {productRegions.length &&
           products.length ? (
           <Section>
@@ -148,7 +168,7 @@ export default function IndexDOM() {
                   product.region.toUpperCase() ===
                   productRegion.shortName.toUpperCase()
               );
-              return filteredProducts.some((product) => product.available);
+              return filteredProducts.some((product) => !product.disabled);
             }) && !currentProductRegion && (
                 <SectionHeader>
                   <SectionHeaderTitle>Choose Your Region</SectionHeaderTitle>
@@ -156,7 +176,16 @@ export default function IndexDOM() {
               )}
             <SectionContent>
               {showProductRegions ? (
-                <Regions columns={productRegions.length}>
+                <Regions regions={productRegions
+                  .filter((productRegion) => {
+                    const filteredProducts = products.filter(
+                      (product) =>
+                        product.region.toUpperCase() ===
+                        productRegion.shortName.toUpperCase()
+                    );
+                    return filteredProducts.length > 0 &&
+                      filteredProducts.some((product) => !product.disabled);
+                  }).length}>
                   {productRegions
                     .filter((productRegion) => {
                       const filteredProducts = products.filter(
@@ -167,12 +196,13 @@ export default function IndexDOM() {
                       return filteredProducts.length > 0 &&
                         filteredProducts.some((product) => !product.disabled);
                     })
+                    .sort((a, b) => new Date(b.createdAt) < new Date(a.createdAt))
                     .map((productRegion, index) => {
                       return (
                         <ProductRegionCard
                           key={`product_region_${index}`}
                           data={productRegion}
-                          onSelectProductRegion={onSelectProductRegion}
+                          onClick={() => onSelectProductRegion(productRegion)}
                         />
                       );
                     })}
@@ -193,8 +223,8 @@ export default function IndexDOM() {
                       </ProductsHeaderRegion>
                     </ProductsHeader>
                     <ProductsContent>
-                      <ProductsContentRegions active={currentProductRegion}>
-                        {productRegions
+                      {currentProductRegion &&
+                        <ProductsContentRegions regions={productRegions
                           .filter((productRegion) => {
                             const filteredProducts = products.filter(
                               (product) =>
@@ -202,27 +232,42 @@ export default function IndexDOM() {
                                 productRegion.shortName.toUpperCase()
                             );
                             return (
-                              productRegion !== currentProductRegion &&
                               filteredProducts.length > 0
                             );
-                          })
-                          .map((productRegion, index) => {
-                            return (
-                              <ProductsContentProductRegions
-                                key={`product_region_${index}`}
-                              >
-                                <ProductsContentProductRegion
-                                  onClick={() =>
-                                    setCurrentProductRegion(productRegion)
-                                  }
+                          }).length}>
+                          {productRegions
+                            .filter((productRegion) => {
+                              const filteredProducts = products.filter(
+                                (product) =>
+                                  product.region.toUpperCase() ===
+                                  productRegion.shortName.toUpperCase()
+                              );
+                              return (
+                                filteredProducts.length > 0
+                              );
+                            })
+                            .map((productRegion, index) => {
+                              return (
+                                <ProductsContentProductRegions
+                                  key={`product_region_${index}`}
                                 >
-                                  {productRegion.name}
-                                </ProductsContentProductRegion>
-                              </ProductsContentProductRegions>
-                            );
-                          })}
-                      </ProductsContentRegions>
-                      <ProductsContentProducts>
+                                  <Button width={"200px"} title={productRegion.name} type={"submit"} onClick={() => onSelectProductRegion(productRegion)
+                                  } />
+                                </ProductsContentProductRegions>
+                              );
+                            })}
+                        </ProductsContentRegions>
+                      }
+                      <ProductsContentProducts
+                        fade={fade}
+                        onAnimationEnd={() => setFade(false)}
+                        products={products
+                          .filter(
+                            (product) =>
+                              !product.disabled &&
+                              product.region.toUpperCase() ===
+                              currentProductRegion.shortName.toUpperCase()
+                          ).length}>
                         {products
                           .filter(
                             (product) =>
@@ -230,6 +275,7 @@ export default function IndexDOM() {
                               product.region.toUpperCase() ===
                               currentProductRegion.shortName.toUpperCase()
                           )
+                          .sort((a, b) => new Date(b.createdAt) < new Date(a.createdAt))
                           .map((product, index) => {
                             return (
                               <AccountCard
@@ -248,7 +294,7 @@ export default function IndexDOM() {
             </SectionContent>
           </Section>
         ) : null}
-        {features && features.length && (
+        {features.length ? (
           <Section>
             <SectionHeader>
               <SectionHeaderTitle>Our Features</SectionHeaderTitle>
@@ -263,8 +309,8 @@ export default function IndexDOM() {
               </Features>
             </SectionContent>
           </Section>
-        )}
-        {experience && experience.length && (
+        ) : null}
+        {experience.length ? (
           <Section style={{ backgroundColor: Colors.gray }}>
             <SectionHeader>
               <SectionHeaderTitle style={{ paddingTop: 30 }}>
@@ -352,8 +398,8 @@ export default function IndexDOM() {
               )}
             </SectionContent>
           </Section>
-        )}
-        {guarantee && guarantee.length && (
+        ) : null}
+        {guarantee.length ? (
           <Section>
             <SectionHeader>
               <SectionHeaderTitle>
@@ -373,8 +419,8 @@ export default function IndexDOM() {
               </Guarantee>
             </SectionContent>
           </Section>
-        )}
-        {faq && faq.length && (
+        ) : null}
+        {faq.length ? (
           <Section>
             <SectionHeader>
               <SectionHeaderTitle>
@@ -395,12 +441,21 @@ export default function IndexDOM() {
               </Faq>
             </SectionContent>
           </Section>
-        )}
+        ) : null}
         <Footer />
       </Main>
-    </StyledIndex>
+    </StyledIndex >
   );
 }
+
+const fadeInAnimation = keyframes`
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+`;
 
 const StyledIndex = styled.div`
   position: relative;
@@ -445,9 +500,15 @@ const Regions = styled.div`
     grid-template-columns: repeat(2, max-content);
   }
 
-  @media screen and (min-width: 1024px) {
-    grid-template-columns: ${props => `repeat(${props.columns}, max-content)`};
-  }
+  ${props => {
+    if (props.regions >= 3) {
+      return `
+      @media screen and (min-width: 1024px) {
+        grid-template-columns: repeat(3, max-content);
+      }
+      `;
+    }
+  }}
 `;
 
 const Experience = styled.div`
@@ -631,44 +692,43 @@ const ProductsHeaderRegionHeaderTitle = styled.h2`
 `;
 const ProductsContent = styled.div``;
 const ProductsContentRegions = styled.div`
-  display: none;
-  ${(props) => {
-    if (props.active) {
+display: grid;
+grid-gap: 20px;
+justify-content: center;
+margin-bottom: 30px;
+
+@media screen and (min-width: 768px) {
+  grid-template-columns: repeat(2, max-content);
+}
+
+${props => {
+    if (props.regions >= 3) {
       return `
-    display: flex;
-    justify-content: center;
-    margin: 0 0 20px 0;
+    @media screen and (min-width: 1024px) {
+      grid-template-columns: repeat(3, max-content);
+    }
     `;
     }
   }}
 `;
 const ProductsContentProducts = styled.div`
-  display: flex;
+  display: grid;
+  grid-gap: 20px;
   justify-content: center;
-  flex-wrap: wrap;
-`;
-const ProductsContentProductRegions = styled.div``;
-const ProductsContentProductRegion = styled.button`
-  background-color: ${Colors.primary};
-  border-radius: 10px;
-  color: white;
-  font-size: inherit;
-  font-weight: 500;
-  font-family: inherit;
-  border: none;
-  margin: 0 10px 10px 0;
-  cursor: pointer;
-  transition: 0.2s;
-  width: 150px;
+  animation: ${props => props.fade ? css`${fadeInAnimation} 0.5s ease-in-out` : 'none'};
 
-  &:hover {
-    transition: 0.2s;
-    -moz-box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.07);
-    -webkit-box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.07);
-    box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.07);
-  }
+  ${props => {
+    if (props.products >= 3) {
+      return `
+      @media screen and (min-width: 1024px) {
+        grid-template-columns: repeat(3, max-content);
+      }
+      `;
+    }
+  }}
 `;
-
+const ProductsContentProductRegions = styled.div`
+`;
 const Features = styled.div`
   margin: 30px 0;
   display: grid;

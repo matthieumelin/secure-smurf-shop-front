@@ -153,9 +153,11 @@ export default function AdminUsers({ toast }) {
                                         )
                                     ) : (
                                         currentRecords.length ? (
-                                            currentRecords.map((currentRecord) => {
-                                                return renderList(currentRecord);
-                                            })
+                                            currentRecords
+                                                .sort((a, b) => a.permission > b.permission ? 1 : -1)
+                                                .map((currentRecord) => {
+                                                    return renderList(currentRecord);
+                                                })
                                         ) :
                                             (
                                                 <ListBodyNoMatch>No users</ListBodyNoMatch>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 
 import styled from "styled-components";
@@ -11,6 +11,34 @@ import AppRoutes from "../router/app.routes";
 
 export default function Navbar() {
   const [mobileNavbarIsOpen, setMobileNavbarIsOpen] = useState(false);
+  const [prevScrollPos, setPrevScrollPos] = useState(0);
+  const [documentHeight, setDocumentHeight] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollPos =
+        window.pageYOffset || document.documentElement.scrollTop;
+      setPrevScrollPos(currentScrollPos);
+    };
+
+    const handleResize = () => {
+      const height = Math.max(
+        document.documentElement.scrollHeight,
+        document.documentElement.offsetHeight
+      );
+      setDocumentHeight(height);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("resize", handleResize);
+
+    handleResize();
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
   return (
     <StyledNavbar>
@@ -56,51 +84,49 @@ export default function Navbar() {
           </NavLink>
         </MobileNavbarContent>
       </MobileNavbar>
-      <DesktopNavbar>
-        <DesktopNavbarLeft>
-          <NavLink to={AppRoutes.Home}>
-            <DesktopNavbarBrand
-              src={`${process.env.PUBLIC_URL}/assets/images/logo_white.png`}
-              alt="Secure Smurf Shop"
-            />
-          </NavLink>
-        </DesktopNavbarLeft>
-        <DesktopNavbarCenter>
-          <DesktopNavbarMenu>
-            <DesktopNavbarMenuItem>
-              <DesktopNavbarMenuItemLink to={AppRoutes.Home}>
-                Home
-              </DesktopNavbarMenuItemLink>
-            </DesktopNavbarMenuItem>
-            <DesktopNavbarMenuItem>
-              {/* <DesktopNavbarMenuItemLink to={AppRoutes.Home}>
-                Discord
-              </DesktopNavbarMenuItemLink> */}
-            </DesktopNavbarMenuItem>
-            <DesktopNavbarMenuItem>
-              <DesktopNavbarMenuItemLink to={AppRoutes.Contact}>
-                Contact
-              </DesktopNavbarMenuItemLink>
-            </DesktopNavbarMenuItem>
-            <DesktopNavbarMenuItem>
-              <DesktopNavbarMenuItemLink to={AppRoutes.Home}>
-                Buy LoL Scripts
-              </DesktopNavbarMenuItemLink>
-            </DesktopNavbarMenuItem>
-          </DesktopNavbarMenu>
-        </DesktopNavbarCenter>
-        <DesktopNavbarRight>
-          <NavLink to={AppRoutes.ClientArea}>
-            <Button title="Client Area" />
-          </NavLink>
-        </DesktopNavbarRight>
+      <DesktopNavbar id="navbar" className={prevScrollPos >= (documentHeight / 2) ? 'scroll-mid' : "scroll-end"}>
+        <DesktopNavbarWrapper>
+          <DesktopNavbarLeft>
+            <NavLink to={AppRoutes.Home}>
+              <DesktopNavbarBrand
+                src={`${process.env.PUBLIC_URL}/assets/images/logo_white.png`}
+                alt="Secure Smurf Shop"
+              />
+            </NavLink>
+          </DesktopNavbarLeft>
+          <DesktopNavbarCenter>
+            <DesktopNavbarMenu>
+              <DesktopNavbarMenuItem>
+                <DesktopNavbarMenuItemLink to={AppRoutes.Home}>
+                  Home
+                </DesktopNavbarMenuItemLink>
+              </DesktopNavbarMenuItem>
+              <DesktopNavbarMenuItem>
+                <DesktopNavbarMenuItemLink to={AppRoutes.Contact}>
+                  Contact
+                </DesktopNavbarMenuItemLink>
+              </DesktopNavbarMenuItem>
+              <DesktopNavbarMenuItem>
+                <DesktopNavbarMenuItemLink to={AppRoutes.Home}>
+                  Buy LoL Scripts
+                </DesktopNavbarMenuItemLink>
+              </DesktopNavbarMenuItem>
+            </DesktopNavbarMenu>
+          </DesktopNavbarCenter>
+          <DesktopNavbarRight>
+            <NavLink to={AppRoutes.ClientArea}>
+              <Button title="Client Area" />
+            </NavLink>
+          </DesktopNavbarRight>
+        </DesktopNavbarWrapper>
       </DesktopNavbar>
     </StyledNavbar>
   );
 }
 
-const StyledNavbar = styled.nav``;
-const MobileNavbar = styled.nav`
+const StyledNavbar = styled.nav`
+`;
+const MobileNavbar = styled.div`
   @media screen and (min-width: 1024px) {
     display: none;
   }
@@ -228,7 +254,7 @@ const MobileNavbarRightToggle = styled.div`
     cursor: pointer;
   }
 `;
-const DesktopNavbar = styled.nav`
+const DesktopNavbar = styled.div`
   display: none;
 
   @media screen and (min-width: 1024px) {
@@ -236,10 +262,52 @@ const DesktopNavbar = styled.nav`
     align-items: center;
     justify-content: space-between;
     padding: 20px 20px 0 20px;
-    max-width: 90%;
-    margin: 0 auto;
     position: relative;
+
+    &.scroll-mid {
+      position: fixed;
+      left: 0;
+      right: 0;
+      top: -100px;
+      background-color: ${Colors.gray};
+      z-index: 999;
+      padding: 10px 20px;
+      box-shadow: 10px 10px 60px rgb(0 0 0 / 50%);
+      animation: fadeInAnimation 0.5s ease-in forwards;
+    }
+
+    &.scroll-end {
+      position: relative;
+      top: 0;
+      animation: fadeOutAnimation 0.5s ease-out forwards;
+    }
+
+    @keyframes fadeInAnimation {
+      0% {
+        top: -100px;
+      }
+      100% {
+        top: 0;
+      }
+    }
+
+    @keyframes fadeOutAnimation {
+      0% {
+        top: 10px;
+      }
+      100% {
+        top: 0;
+      }
+    }
   }
+`;
+const DesktopNavbarWrapper = styled.div`
+display: flex;
+align-items: center;
+justify-content: space-between;
+max-width: 90%;
+width: 100%;
+margin: 0 auto;
 `;
 const DesktopNavbarBrand = styled.img`
   @media screen and (min-width: 1024px) {
@@ -274,11 +342,5 @@ const DesktopNavbarMenuItemLink = styled(NavLink)`
 `;
 const DesktopNavbarLeft = styled.div``;
 const DesktopNavbarCenter = styled.div`
-  @media screen and (min-width: 1024px) {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-  }
 `;
 const DesktopNavbarRight = styled.div``;

@@ -49,7 +49,7 @@ export default function Footer() {
           </FooterInfos>
           <FooterSections>
             <FooterSection>
-              <FooterSectionTitle>Marketplace</FooterSectionTitle>
+              <FooterSectionTitle>Top Marketplace</FooterSectionTitle>
               <FooterSectionLinks>
                 <FooterSectionLinksItem>
                   <FooterSectionLinksItemLink to={AppRoutes.Home}>
@@ -66,34 +66,24 @@ export default function Footer() {
                     NA LoL Smurf
                   </FooterSectionLinksItemLink>
                 </FooterSectionLinksItem>
+              </FooterSectionLinks>
+            </FooterSection>
+            <FooterSection>
+              <FooterSectionTitle>Legal</FooterSectionTitle>
+              <FooterSectionLinks>
                 <FooterSectionLinksItem>
-                  <FooterSectionLinksItemLink to={AppRoutes.Home}>
-                    LAS LoL Smurf
+                  <FooterSectionLinksItemLink to={AppRoutes.PrivacyPolicy}>
+                    Privacy Policy
                   </FooterSectionLinksItemLink>
                 </FooterSectionLinksItem>
                 <FooterSectionLinksItem>
-                  <FooterSectionLinksItemLink to={AppRoutes.Home}>
-                    LAN LoL Smurf
+                  <FooterSectionLinksItemLink to={AppRoutes.CookiePolicy}>
+                    Cookie Policy
                   </FooterSectionLinksItemLink>
                 </FooterSectionLinksItem>
                 <FooterSectionLinksItem>
-                  <FooterSectionLinksItemLink to={AppRoutes.Home}>
-                    OCE LoL Smurf
-                  </FooterSectionLinksItemLink>
-                </FooterSectionLinksItem>
-                <FooterSectionLinksItem>
-                  <FooterSectionLinksItemLink to={AppRoutes.Home}>
-                    BR LoL Smurf
-                  </FooterSectionLinksItemLink>
-                </FooterSectionLinksItem>
-                <FooterSectionLinksItem>
-                  <FooterSectionLinksItemLink to={AppRoutes.Home}>
-                    TR LoL Smurf
-                  </FooterSectionLinksItemLink>
-                </FooterSectionLinksItem>
-                <FooterSectionLinksItem>
-                  <FooterSectionLinksItemLink to={AppRoutes.Home}>
-                    RU LoL Smurf
+                  <FooterSectionLinksItemLink to={AppRoutes.TermAndConditions}>
+                    Term and Conditions
                   </FooterSectionLinksItemLink>
                 </FooterSectionLinksItem>
               </FooterSectionLinks>
@@ -110,16 +100,6 @@ export default function Footer() {
                   {/* <FooterSectionLinksItemLink to={AppRoutes.Home}>
                     Discord
                   </FooterSectionLinksItemLink> */}
-                </FooterSectionLinksItem>
-              </FooterSectionLinks>
-            </FooterSection>
-            <FooterSection>
-              <FooterSectionTitle>Legal</FooterSectionTitle>
-              <FooterSectionLinks>
-                <FooterSectionLinksItem>
-                  <FooterSectionLinksItemLink to={AppRoutes.ToS}>
-                    Terms of Service
-                  </FooterSectionLinksItemLink>
                 </FooterSectionLinksItem>
               </FooterSectionLinks>
             </FooterSection>
@@ -196,19 +176,18 @@ const FooterName = styled.h2`
 const FooterSections = styled.div`
   @media screen and (min-width: 1024px) {
     margin: auto;
-    display: flex;
+    display: grid;
+    grid-gap: 60px;
+    grid-template-columns: repeat(3, max-content);
   }
 `;
 const FooterSection = styled.section`
-  @media screen and (min-width: 1024px) {
-    width: 200px;
-  }
 `;
 const FooterSectionTitle = styled.h3`
   color: ${Colors.primary};
 
   @media screen and (min-width: 1024px) {
-    margin: 0;
+    margin: 0 0 10px 0;
   }
 `;
 const FooterSectionLinks = styled.ul`

@@ -29,7 +29,6 @@ export default function AdminProductEdit({ toast }) {
 
     // States
     const [regions, setRegions] = useState([]);
-    const [currentRegion, setCurrentRegion] = useState("");
     const [processing, setProcessing] = useState(false);
 
     // Hook form
@@ -56,8 +55,7 @@ export default function AdminProductEdit({ toast }) {
                     setValue("price", data.price);
                     setValue("blueEssence", data.blueEssence);
                     setValue("level", data.level);
-
-                    setCurrentRegion(data.region.toUpperCase());
+                    setValue("region", data.region.toUpperCase());
                 }
             }).catch(() => navigate(AppRoutes.AdminProducts));
         }
@@ -182,7 +180,6 @@ export default function AdminProductEdit({ toast }) {
                                                 id="region"
                                                 name="region"
                                                 error={errors.region}
-                                                value={currentRegion}
                                                 {...register("region", {
                                                     required: {
                                                         value: true,

@@ -88,6 +88,17 @@ const StyledAccountCard = styled.article`
   border-radius: 10px;
   box-shadow: 0px 0px 60px rgb(0 0 0 / 7%);
   border: 1px solid ${Colors.primary};
+  transition: 0.2s;
+cursor: pointer;
+width: 100%;
+
+    &:hover {
+    transition: 0.2s;
+    box-shadow: 0 0px 43px ${Colors.primaryLowOp}, 0 0px 23px ${Colors.primaryLowOp},
+      0 0px 108px ${Colors.primaryLowOp};
+    background: linear-gradient(90deg, black 0, ${Colors.gray});
+    transform: translateY(-5px);
+  }
 `;
 const AccountCardHeader = styled.div`
   position: relative;

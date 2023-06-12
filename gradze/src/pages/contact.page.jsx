@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Helmet } from "react-helmet-async";
 import { useForm } from "react-hook-form";
 import { ErrorMessage } from "@hookform/error-message";
@@ -22,10 +22,13 @@ import { API_ENDPOINTS } from "../api/api";
 export default function Contact({ toast }) {
   // const [cards, setCards] = useState([]);
 
+  // States
   const [captchaResponse, setCaptchaResponse] = useState(null);
 
+  // Refs
   const recaptchaRef = useRef();
 
+  // Form hooks
   const {
     reset,
     register,
@@ -60,6 +63,10 @@ export default function Contact({ toast }) {
       })
       .catch((err) => { if (err) toast.error(err.response.data.message) });
   };
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [])
 
   return (
     <StyledContact>

@@ -135,7 +135,7 @@ export default function AdminProducts({ toast }) {
                                 buttonConfirmTitle={"Delete"} />
                             <List>
                                 <ListHeader>
-                                    <ListHeaderTitle>Products List ({products.length})</ListHeaderTitle>
+                                    <ListHeaderTitle>Products List ({products.filter((product) => !product.disabled).length})</ListHeaderTitle>
                                     <ListHeaderSearch>
                                         <ListHeaderSearchIcon src={`${process.env.PUBLIC_URL}/assets/icons/search.svg`} alt="Search Product" />
                                         <ListHeaderSearchInput type='text' placeholder="Search Product" onChange={(event) => setSearch(event.target.value)} />
@@ -144,8 +144,8 @@ export default function AdminProducts({ toast }) {
                                 <ListBody haveResult={haveSearchResult}>
                                     {search ? (
                                         haveSearchResult ? (
-                                            products.filter((product) => product.name.toLowerCase().includes(search.toLowerCase())
-                                                || product.region.toLowerCase().includes(search.toLowerCase())).map((product) => {
+                                            products.filter((product) => !product.disabled && (product.name.toLowerCase().includes(search.toLowerCase())
+                                                || product.region.toLowerCase().includes(search.toLowerCase()))).map((product) => {
                                                     return renderList(product);
                                                 })
                                         ) : (
@@ -153,9 +153,11 @@ export default function AdminProducts({ toast }) {
                                         )
                                     ) : (
                                         currentRecords.length ? (
-                                            currentRecords.sort((a, b) => a.region > b.region ? 1 : -1).map((currentRecord) => {
-                                                return renderList(currentRecord);
-                                            })
+                                            currentRecords
+                                                .sort((a, b) => a.region > b.region ? 1 : -1)
+                                                .filter((currentRecord) => !currentRecord.disabled).map((currentRecord) => {
+                                                    return renderList(currentRecord);
+                                                })
                                         ) :
                                             (
                                                 <ListBodyNoMatch>No products</ListBodyNoMatch>

@@ -4,9 +4,9 @@ import styled from "styled-components";
 
 import Colors from "../../utils/colors.util";
 
-export default function ProductRegionCard({ data, onSelectProductRegion }) {
+export default function ProductRegionCard({ data, onClick }) {
   return (
-    <StyledProductRegionCard onClick={() => onSelectProductRegion(data)}>
+    <StyledProductRegionCard onClick={onClick}>
       <ProductRegionCardImage
         src={`${process.env.PUBLIC_URL
           }/assets/images/regions/${data.shortName.toLowerCase()}.png`}
@@ -27,15 +27,15 @@ const StyledProductRegionCard = styled.div`
   cursor: pointer;
   box-shadow: 0 0 9px #0009;
   transition: 0.2s;
-  width: max-content;
+  width: 100%;
   border: 2px solid ${Colors.lightGray};
 
   &:hover {
     transition: 0.2s;
-    box-shadow: 0 11px 43px ${Colors.primary}, 0 21px 23px ${Colors.primary},
-      0 42px 108px ${Colors.primary};
+    box-shadow: 0 0px 43px ${Colors.primaryLowOp}, 0 0px 23px ${Colors.primaryLowOp},
+      0 0px 108px ${Colors.primaryLowOp};
     background: linear-gradient(90deg, black 0, ${Colors.gray});
-    transform: translateY(-10px);
+    transform: translateY(-5px);
     border: 2px solid ${Colors.primary};
   }
 `;

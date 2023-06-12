@@ -20,18 +20,17 @@ export default function NotFound() {
       </Helmet>
       <Navbar />
       <Main>
-        <NotFoundTitle>404</NotFoundTitle>
-        <NotFoundDescription>
+        <MainTitle>404</MainTitle>
+        <MainDescription>
           The page you were looking for does not exist.
-        </NotFoundDescription>
-        <NotFoundLink to={AppRoutes.Home}>
+        </MainDescription>
+        <MainLink to={AppRoutes.Home}>
           <Button
             bgColor={Colors.primary}
             title="Go back"
             align={"center"}
-            width={"100%"}
           />
-        </NotFoundLink>
+        </MainLink>
       </Main>
       <Footer />
     </StyledNotFound>
@@ -58,19 +57,19 @@ const Main = styled.main`
     padding: 100px;
   }
 `;
-const NotFoundTitle = styled.h1`
+const MainTitle = styled.h1`
   color: white;
   font-size: 7.5rem;
   margin: 0;
   text-align: center;
 `;
-const NotFoundDescription = styled.p`
+const MainDescription = styled.p`
   margin: 0 0 30px 0;
   color: white;
   text-align: center;
   font-size: 1.875rem;
 `;
-const NotFoundLink = styled(Link)`
+const MainLink = styled(Link)`
   text-decoration: none;
   text-align: center;
   margin: 0 auto;

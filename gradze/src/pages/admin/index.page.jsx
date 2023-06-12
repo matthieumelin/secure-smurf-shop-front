@@ -49,7 +49,7 @@ export default function AdminIndex() {
       fetchOrders();
       fetchProducts();
     };
-  }, []);
+  }, [isGranted, token]);
 
   if (!isGranted) {
     return <Navigate to={AppRoutes.Login} />
@@ -76,7 +76,7 @@ export default function AdminIndex() {
               <CardStats>
                 <CardStat data={{ icon: "profile.svg", title: "Users", value: users.length }} />
                 <CardStat data={{ icon: "order.svg", title: "Orders", value: orders.length }} />
-                <CardStat data={{ icon: "product.svg", title: "Products", value: products.length }} />
+                <CardStat data={{ icon: "product.svg", title: "Products", value: products.filter((product) => !product.disabled).length }} />
               </CardStats>
             </ContainerBody>
           </Container>

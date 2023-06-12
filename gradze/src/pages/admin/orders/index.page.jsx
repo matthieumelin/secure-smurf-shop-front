@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Helmet } from 'react-helmet-async';
-import { Link, Navigate } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
 import axios from 'axios';
@@ -13,8 +13,6 @@ import Navbar from '../../../components/admin/navbar.component';
 import Sidebar from '../../../components/admin/sidebar.component';
 import Pagination from "../../../components/utils/pagination.component"
 import OrderCard from '../../../components/admin/cards/order-card.component';
-
-import Colors from '../../../utils/colors.util';
 
 export default function AdminOrders() {
     const token = useSelector((state) => state.user.token);
@@ -143,28 +141,6 @@ margin: 20px 0;
 @media screen and (min-width: 1024px) {
     display: flex;
 }
-`;
-const ContainerHeaderButtonsLink = styled(Link)`
-background-color: ${Colors.primary};
-color: white;
-text-decoration: none;
-padding: 5px 10px;
-display:block;
-text-align: center;
-border-radius: 2px;
-transition: 0.2s;
-margin: 20px 0;
-
-&:hover {
-    transition: 0.2s;
-    -moz-box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.07);
-    -webkit-box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.07);
-    box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.07);
-  }
-
-  @media screen and (min-width: 1024px) {
-    margin: 0 0 0 20px;
-  }
 `;
 const ContainerBody = styled.div``;
 const List = styled.div`

@@ -3,15 +3,18 @@ import { Helmet } from "react-helmet-async";
 
 import styled from "styled-components";
 
-import IndexDOM from "../dom/index.dom";
+import IndexDom from "../dom/index.dom";
 
-export default function Index({ stripePromise }) {
+export default function Index({ stripePromise, showCheckoutModal, setShowCheckoutModal }) {
   return (
     <StyledIndex>
       <Helmet>
         <title>Home</title>
       </Helmet>
-      <IndexDOM stripePromise={stripePromise} />
+      <IndexDom
+        stripePromise={stripePromise}
+        showCheckoutModal={showCheckoutModal}
+        setShowCheckoutModal={setShowCheckoutModal} />
     </StyledIndex>
   );
 }

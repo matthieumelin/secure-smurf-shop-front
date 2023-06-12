@@ -19,6 +19,10 @@ import Orders from "./pages/client-area/orders.page";
 import ChangePassword from "./pages/change-password.page";
 import Checkout from "./pages/checkout.page";
 
+import PrivacyPolicy from "./pages/privacy-policy.page";
+import CookiePolicy from "./pages/cookie-policy.page";
+import TermAndConditions from "./pages/terms-and-conditions.page";
+
 import AdminIndex from "./pages/admin/index.page";
 import AdminUsers from "./pages/admin/users/index.page";
 import AdminUserPermissions from "./pages/admin/users/permissions/index.page";
@@ -44,6 +48,7 @@ export default function App() {
 
   const [sidebarIsOpen, setSidebarIsOpen] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [showCheckoutModal, setShowCheckoutModal] = useState(false);
 
   useEffect(() => {
     setTimeout(() => {
@@ -162,7 +167,21 @@ export default function App() {
         <Route path={AppRoutes.Logout} element={<Logout toast={toast} />} />
         <Route path={AppRoutes.Login} element={<Login toast={toast} />} />
         <Route path={AppRoutes.NotFound} element={<NotFound />} />
-        <Route index element={<Index />} />
+        <Route path={AppRoutes.PrivacyPolicy} element={<PrivacyPolicy />} />
+        <Route path={AppRoutes.CookiePolicy} element={<CookiePolicy />} />
+        <Route
+          path={AppRoutes.TermAndConditions}
+          element={<TermAndConditions />}
+        />
+        <Route
+          index
+          element={
+            <Index
+              showCheckoutModal={showCheckoutModal}
+              setShowCheckoutModal={setShowCheckoutModal}
+            />
+          }
+        />
         <Route
           path="*"
           element={<Navigate to={AppRoutes.NotFound} replace />}

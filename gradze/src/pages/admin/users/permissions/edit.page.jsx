@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { Helmet } from 'react-helmet-async';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
@@ -44,7 +44,7 @@ export default function AdminUserPermissionEdit({ toast }) {
         }
 
         if (isGranted) fetchUserPermission();
-    }, [token, isGranted])
+    }, [id, token, isGranted, navigate, setValue])
 
     const onSubmit = async (data) => {
         await axios.put(API_ENDPOINTS.USERS_PERMISSIONS_UPDATE, {

@@ -44,18 +44,16 @@ export default function Profile({ toast, sidebarIsOpen, showLogoutModal, setSide
     handleSubmit,
     formState: { errors },
   } = useForm(
-    userData
-      ? {
-        defaultValues: {
-          username: userData.username,
-          firstName: userData.firstName,
-          lastName: userData.lastName,
-          discord: userData.discord,
-          country: userData.country,
-          notifications: userData.notifications
-        },
-      }
-      : null
+    {
+      defaultValues: userData.length ? {
+        username: userData.username,
+        firstName: userData.firstName,
+        lastName: userData.lastName,
+        discord: userData.discord,
+        country: userData.country ? userData.country : countries[0].name,
+        notifications: userData.notifications
+      } : null
+    }
   );
 
   useEffect(() => {

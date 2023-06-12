@@ -155,9 +155,11 @@ export default function AdminProductRegions({ toast }) {
                                         )
                                     ) : (
                                         currentRecords.length ? (
-                                            currentRecords.map((currentRecord) => {
-                                                return renderList(currentRecord);
-                                            })
+                                            currentRecords
+                                                .sort((a, b) => new Date(b.createdAt) < new Date(a.createdAt))
+                                                .map((currentRecord) => {
+                                                    return renderList(currentRecord);
+                                                })
                                         ) :
                                             (
                                                 <ListBodyNoMatch>No products regions</ListBodyNoMatch>

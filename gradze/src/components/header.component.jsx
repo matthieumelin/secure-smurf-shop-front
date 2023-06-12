@@ -21,10 +21,10 @@ export default function Header() {
       <Navbar />
       <HeaderContent>
         <HeaderWrapper>
-          <HeaderTitle>Secure Smurf Shop</HeaderTitle>
+          <HeaderTitle>{process.env.REACT_APP_NAME}</HeaderTitle>
           <HeaderDescription>
             Level 30 Smurf accounts for League with high amounts of Blue
-            Essence. Full access, clean ranked history. Accounts are delivered
+            Essence. <HeaderDescriptionBreak /> Full access, clean ranked history. Accounts are delivered
             instantly 24/7.
           </HeaderDescription>
           <HeaderButtons>
@@ -34,10 +34,6 @@ export default function Header() {
             <Button title={"Buy LoL Scripts"} type={"submit"} />
           </HeaderButtons>
         </HeaderWrapper>
-        <HeaderImage
-          src={`${process.env.PUBLIC_URL}/assets/images/header_avatar.png`}
-          alt="Secure Smurf Shop"
-        />
       </HeaderContent>
     </StyledHeader>
   );
@@ -52,9 +48,9 @@ const HeaderVideoBackground = styled.div`
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.7);
   width: 100%;
   z-index: -998;
+  background-color: rgba(0,0,0, 0.5);
 `;
 const HeaderVideo = styled.video`
   position: absolute;
@@ -88,26 +84,16 @@ const HeaderTitle = styled.h2`
   }
 `;
 const HeaderDescription = styled.p`
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(255, 255, 255, 0.8);
 
   @media screen and (min-width: 1024px) {
     font-size: 1.2rem;
     max-width: 768px;
   }
 `;
+const HeaderDescriptionBreak = styled.br``;
 const HeaderButtons = styled.div`
   display: grid;
   gap: 20px;
   grid-template-columns: repeat(2, max-content);
-`;
-const HeaderImage = styled.img`
-  display: none;
-
-  @media screen and (min-width: 1024px) {
-    display: block;
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    z-index: -998;
-  }
 `;
